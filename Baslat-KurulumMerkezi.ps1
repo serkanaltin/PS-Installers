@@ -128,9 +128,9 @@ $AppMetadata = @{
     "Install_LibreOffice.ps1"              = @{ Name = "LibreOffice"; Winget = "TheDocumentFoundation.LibreOffice"; Desc = "Ücretsiz ve açık kaynaklı tam kapsamlı ofis paketi"; Preset = @(); Domain = "libreoffice.org"; Color = "#16A34A"; Mono = "LO" }
     "Install_FreeOffice.ps1"               = @{ Name = "SoftMaker FreeOffice"; Winget = "SoftMaker.FreeOffice.2021"; Desc = "Word, Excel ve PowerPoint uyumlu ücretsiz ofis paketi"; Preset = @(); Domain = "freeoffice.com"; Color = "#E11D48"; Mono = "FO" }
     "Install_OpenOffice.ps1"               = @{ Name = "Apache OpenOffice"; Winget = "Apache.OpenOffice"; Desc = "Açık kaynaklı klasik belge ve tablo paketi"; Preset = @(); Domain = "openoffice.org"; Color = "#0284C7"; Mono = "OO" }
-    "Install_Office365_Enterprise.ps1"     = @{ Name = "Microsoft 365 (Kurumsal / Enterprise)"; Winget = "Microsoft.Office"; Desc = "Resmi dağıtım aracıyla kurulan 64-bit Türkçe Kurumsal Office"; Preset = @(); Domain = "office.com"; Color = "#D97706"; Mono = "M365" }
-    "Install_Office365_Business.ps1"       = @{ Name = "Microsoft 365 (İş / Business)"; Winget = "Microsoft.Office"; Desc = "Resmi dağıtım aracıyla kurulan 64-bit Türkçe İş Office paketi"; Preset = @(); Domain = "office.com"; Color = "#EA580C"; Mono = "M365" }
-    "Install_Office365_HomePrem.ps1"       = @{ Name = "Microsoft Office 2021 Pro Plus (Bireysel)"; Winget = "Microsoft.Office"; Desc = "Word, Excel, PowerPoint, Outlook 2021 (64-Bit Türkçe Tam Paket)"; Preset = @("HemenTeslim"); Domain = "office.com"; Color = "#EA580C"; Mono = "2021" }
+    "Install_Office365_Enterprise.ps1"     = @{ Name = "Microsoft Office 2021 Pro Plus (Kurumsal)"; Winget = ""; Desc = "Yerel office_setup.exe + configuration.xml ile 64-Bit Türkçe Office 2021"; Preset = @(); IsLocal = $true; Domain = "office.com"; Color = "#D97706"; Mono = "2021" }
+    "Install_Office365_Business.ps1"       = @{ Name = "Microsoft Office 2021 Pro Plus (İş)"; Winget = ""; Desc = "Yerel office_setup.exe + configuration.xml ile 64-Bit Türkçe Office 2021"; Preset = @(); IsLocal = $true; Domain = "office.com"; Color = "#EA580C"; Mono = "2021" }
+    "Install_Office365_HomePrem.ps1"       = @{ Name = "Microsoft Office 2021 Pro Plus (Türkçe)"; Winget = ""; Desc = "Word, Excel, PowerPoint, Outlook 2021 (office_setup.exe + configuration.xml)"; Preset = @("HemenTeslim"); IsLocal = $true; Domain = "office.com"; Color = "#EA580C"; Mono = "2021" }
 
     "Install_Microsoft_Teams.ps1"          = @{ Name = "Microsoft Teams"; Winget = "Microsoft.Teams"; Desc = "Şirket içi yazışma ve görüntülü toplantı programı"; Preset = @(); Domain = "teams.microsoft.com"; Color = "#4F46E5"; Mono = "TMS" }
     "Install_Zoom.ps1"                     = @{ Name = "Zoom Workplace"; Winget = "Zoom.Zoom"; Desc = "Kurumsal MSI tabanlı görüntülü toplantı programı"; Preset = @(); Domain = "zoom.us"; Color = "#2563EB"; Mono = "ZM" }
@@ -1479,6 +1479,7 @@ $BtnStartInstall.Add_Click({
     $runspace.Open()
     $runspace.SessionStateProxy.SetVariable("syncHash", $syncHash)
     $runspace.SessionStateProxy.SetVariable("appsPayload", $appsPayload)
+    $runspace.SessionStateProxy.SetVariable("ScriptRoot", $ScriptRoot)
 
     $psCmd = [powershell]::Create().AddScript({
         $ProgressPreference = 'SilentlyContinue'
@@ -1525,27 +1526,35 @@ $BtnStartInstall.Add_Click({
 
                 $isOfficeApp = ($app.Id -like "*Office365*")
 
-                if (Test-Path -LiteralPath $app.ScriptPath) {
+                if ($isOfficeApp) {
+                    $officeExe = Join-Path $ScriptRoot "office_setup.exe"
+                    $officeXml = Join-Path $ScriptRoot "configuration.xml"
+                    Send-AppState -AppId $app.Id -State "Installing" -Detail "office_setup.exe /configure configuration.xml ile Office 2021 kuruluyor..."
+                    $syncHash.LogQueue.Enqueue("   [1/2] Yerel office_setup.exe ve configuration.xml (ProPlus2021Volume tr-tr) başlatılıyor...")
+                    $proc = Start-Process -FilePath $officeExe -ArgumentList "/configure `"$officeXml`"" -PassThru -WindowStyle Hidden
+                    $lastOfficeNoticeSec = 0
+                    while (-not $proc.HasExited) {
+                        Start-Sleep -Milliseconds 500
+                        $elapsedNow = [int]$sw.Elapsed.TotalSeconds
+                        if ($elapsedNow -ge ($lastOfficeNoticeSec + 20)) {
+                            $lastOfficeNoticeSec = $elapsedNow
+                            Send-AppState -AppId $app.Id -State "Installing" -Detail "Microsoft Office 2021 kuruluyor ($elapsedNow sn geçti, lütfen bekleyin)..."
+                        }
+                    }
+                    $proc.WaitForExit()
+                    $installed = ($proc.ExitCode -eq 0 -or $proc.ExitCode -eq 3010)
+                }
+                elseif (Test-Path -LiteralPath $app.ScriptPath) {
                     $proc = Start-Process -FilePath "powershell.exe" -ArgumentList "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$($app.ScriptPath)`"" -PassThru -WindowStyle Hidden
 
                     $switchedToInstalling = $app.IsLocal
-                    $lastOfficeNoticeSec = 0
                     while (-not $proc.HasExited) {
                         Start-Sleep -Milliseconds 500
                         $elapsedNow = [int]$sw.Elapsed.TotalSeconds
                         if (-not $switchedToInstalling -and $elapsedNow -ge 3) {
                             $switchedToInstalling = $true
-                            if ($isOfficeApp) {
-                                Send-AppState -AppId $app.Id -State "Installing" -Detail "Adım 2/2: Microsoft CDN üzerinden Office 2021 paketleri indiriliyor ve kuruluyor..."
-                                $syncHash.LogQueue.Enqueue("   [2/2] Microsoft Click-to-Run üzerinden Office 2021 (Word, Excel, PowerPoint, Outlook) indiriliyor ve sessiz kuruluyor...")
-                            } else {
-                                Send-AppState -AppId $app.Id -State "Installing" -Detail "Adım 2/2: İndirildi, onay beklemeden sessiz kuruluyor..."
-                                $syncHash.LogQueue.Enqueue("   [2/2] Kurulum paketi arka planda sessiz parametrelerle (/qn /S) kuruluyor...")
-                            }
-                        }
-                        if ($isOfficeApp -and $elapsedNow -ge ($lastOfficeNoticeSec + 25)) {
-                            $lastOfficeNoticeSec = $elapsedNow
-                            Send-AppState -AppId $app.Id -State "Installing" -Detail "Microsoft Office 2021 arka planda kuruluyor ($elapsedNow sn geçti, lütfen bekleyin)..."
+                            Send-AppState -AppId $app.Id -State "Installing" -Detail "Adım 2/2: İndirildi, onay beklemeden sessiz kuruluyor..."
+                            $syncHash.LogQueue.Enqueue("   [2/2] Kurulum paketi arka planda sessiz parametrelerle (/qn /S) kuruluyor...")
                         }
                     }
                     $proc.WaitForExit()
