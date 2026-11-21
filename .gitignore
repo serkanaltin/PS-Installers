@@ -1,0 +1,17 @@
+# Uygulama İkon Önbelleği (Çalışma zamanında otomatik indirilir)
+.icons/
+
+# İlgisiz / Harici Klasörler (GitHub Deposuna Dahil Edilmez)
+disable-windows-defender-main/
+Microsoft-Activation-Scripts-master/
+
+# Büyük Yerel Kurulum Dosyaları (GitHub 100 MB dosya sınırına takılmamak için; betikler depoda kalır)
+# Not: Yerel MSI/EXE paketlerini de GitHub'a yüklemek isterseniz aşağıdaki 2 satırı silebilirsiniz:
+# E İMZA/*.msi
+# E İMZA/*.exe
+
+# Geçici ve Sistem Dosyaları
+*.log
+*.tmp
+Thumbs.db
+.DS_Store
