@@ -1,38 +1,48 @@
 $ProgressPreference = 'SilentlyContinue'
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$dlLink = Invoke-WebRequest -UseBasicParsing -Uri "https://www.microsoft.com/en-us/download/details.aspx?id=49117" | Select-Object -ExpandProperty Links | Where-Object {$_.href -like "*officedeploymenttool*" } | Select-Object -ExpandProperty href | Select-Object -First 1
-$file = $dlLink -Split "/" | Select-Object -Last 1
-$InstallerPath = Join-Path $env:TEMP $file
-(New-Object System.Net.WebClient).DownloadFile($dlLink, $InstallerPath)
-Start-Process $InstallerPath -Wait -ArgumentList "/extract:$env:TEMP /quiet" -Verb RunAs
-Remove-Item $InstallerPath
-# Remove the extra configuration files that are bundled with the ODT:
-Remove-Item "$env:TEMP\configuration-Office*.xml"
-$configFileContents =
-'<Configuration>
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 -bor [Net.SecurityProtocolType]::Tls13
+
+$html = (Invoke-WebRequest -UseBasicParsing -Uri "https://www.microsoft.com/en-us/download/details.aspx?id=49117" -ErrorAction SilentlyContinue).Content
+$dlLink = [regex]::Match($html, 'https://download\.microsoft\.com/download/[^"''\s]+/officedeploymenttool_[^"''\s]+\.exe').Value
+if (-not $dlLink) {
+    $dlLink = "https://download.microsoft.com/download/6c1eeb25-cf8b-41d9-8d0d-cc1dbc032140/officedeploymenttool_20527-20150.exe"
+}
+
+$workDir = Join-Path $env:TEMP ("ODT_Office_" + [guid]::NewGuid().ToString("N").Substring(0, 8))
+New-Item -ItemType Directory -Path $workDir -Force | Out-Null
+
+$odtExe = Join-Path $workDir "odt_installer.exe"
+(New-Object System.Net.WebClient).DownloadFile($dlLink, $odtExe)
+Start-Process -FilePath $odtExe -ArgumentList "/extract:`"$workDir`" /quiet" -Wait -WindowStyle Hidden
+Remove-Item -LiteralPath $odtExe -Force -ErrorAction SilentlyContinue
+Remove-Item -Path (Join-Path $workDir "configuration*.xml") -Force -ErrorAction SilentlyContinue
+
+$configFileContents = @'
+<Configuration>
   <Add OfficeClientEdition="64" Channel="Current" MigrateArch="TRUE">
     <Product ID="O365ProPlusRetail">
+      <Language ID="tr-tr" />
       <Language ID="MatchOS" />
-      <Language ID="MatchPreviousMSI" />
       <ExcludeApp ID="Groove" />
       <ExcludeApp ID="Lync" />
     </Product>
   </Add>
+  <Property Name="FORCEAPPSHUTDOWN" Value="TRUE" />
   <Updates Enabled="TRUE" />
   <RemoveMSI />
-  <AppSettings>
-    <User Key="software\microsoft\office\16.0\excel\options" Name="defaultformat" Value="51" Type="REG_DWORD" App="excel16" Id="L_SaveExcelfilesas" />
-    <User Key="software\microsoft\office\16.0\powerpoint\options" Name="defaultformat" Value="27" Type="REG_DWORD" App="ppt16" Id="L_SavePowerPointfilesas" />
-    <User Key="software\microsoft\office\16.0\word\options" Name="defaultformat" Value="" Type="REG_SZ" App="word16" Id="L_SaveWordfilesas" />
-  </AppSettings>
   <Display Level="None" AcceptEULA="TRUE" />
-</Configuration>'
-$configFileName = "Configuration-Office365-Enterprise.xml"
-$configFilePath = Join-Path $env:TEMP $configFileName
-Out-File -FilePath $configFilePath -InputObject $configFileContents -Encoding utf8
-# Installs O365 Enterprise with bare minimum configuration
-$file = "setup.exe"
-$InstallerPath = Join-Path $env:TEMP $file
-Start-Process $InstallerPath -Wait -ArgumentList "/configure $configFilePath" -Verb RunAs
-Remove-Item $configFilePath
-Remove-Item $InstallerPath
+</Configuration>
+'@
+
+$configFilePath = Join-Path $workDir "Configuration-Office365-Enterprise.xml"
+[System.IO.File]::WriteAllText($configFilePath, $configFileContents, (New-Object System.Text.UTF8Encoding($false)))
+
+$setupExe = Join-Path $workDir "setup.exe"
+if (Test-Path -LiteralPath $setupExe) {
+    $proc = Start-Process -FilePath $setupExe -ArgumentList "/configure `"$configFilePath`"" -Wait -PassThru -WindowStyle Hidden -Verb RunAs
+    $exitCode = $proc.ExitCode
+} else {
+    $exitCode = 1
+}
+
+Remove-Item -LiteralPath $workDir -Recurse -Force -ErrorAction SilentlyContinue
+if ($exitCode -ne 0 -and $exitCode -ne 3010) { exit $exitCode }

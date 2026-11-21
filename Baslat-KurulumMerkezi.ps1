@@ -128,9 +128,9 @@ $AppMetadata = @{
     "Install_LibreOffice.ps1"              = @{ Name = "LibreOffice"; Winget = "TheDocumentFoundation.LibreOffice"; Desc = "Ücretsiz ve açık kaynaklı tam kapsamlı ofis paketi"; Preset = @(); Domain = "libreoffice.org"; Color = "#16A34A"; Mono = "LO" }
     "Install_FreeOffice.ps1"               = @{ Name = "SoftMaker FreeOffice"; Winget = "SoftMaker.FreeOffice.2021"; Desc = "Word, Excel ve PowerPoint uyumlu ücretsiz ofis paketi"; Preset = @(); Domain = "freeoffice.com"; Color = "#E11D48"; Mono = "FO" }
     "Install_OpenOffice.ps1"               = @{ Name = "Apache OpenOffice"; Winget = "Apache.OpenOffice"; Desc = "Açık kaynaklı klasik belge ve tablo paketi"; Preset = @(); Domain = "openoffice.org"; Color = "#0284C7"; Mono = "OO" }
-    "Install_Office365_Enterprise.ps1"     = @{ Name = "Microsoft 365 (Kurumsal / Enterprise)"; Winget = "Microsoft.Office"; Desc = "Resmi dağıtım aracıyla kurulan 64-bit Kurumsal Office"; Preset = @(); Domain = "office.com"; Color = "#D97706"; Mono = "M365" }
-    "Install_Office365_Business.ps1"       = @{ Name = "Microsoft 365 (İş / Business)"; Winget = "Microsoft.Office"; Desc = "Resmi dağıtım aracıyla kurulan 64-bit İş Office paketi"; Preset = @(); Domain = "office.com"; Color = "#EA580C"; Mono = "M365" }
-    "Install_Office365_HomePrem.ps1"       = @{ Name = "Microsoft 365 (Bireysel / Ev)"; Winget = "Microsoft.Office"; Desc = "Word, Excel, PowerPoint, Outlook 64-bit Bireysel paket"; Preset = @("HemenTeslim"); Domain = "office.com"; Color = "#EA580C"; Mono = "M365" }
+    "Install_Office365_Enterprise.ps1"     = @{ Name = "Microsoft 365 (Kurumsal / Enterprise)"; Winget = "Microsoft.Office"; Desc = "Resmi dağıtım aracıyla kurulan 64-bit Türkçe Kurumsal Office"; Preset = @(); Domain = "office.com"; Color = "#D97706"; Mono = "M365" }
+    "Install_Office365_Business.ps1"       = @{ Name = "Microsoft 365 (İş / Business)"; Winget = "Microsoft.Office"; Desc = "Resmi dağıtım aracıyla kurulan 64-bit Türkçe İş Office paketi"; Preset = @(); Domain = "office.com"; Color = "#EA580C"; Mono = "M365" }
+    "Install_Office365_HomePrem.ps1"       = @{ Name = "Microsoft Office 2021 Pro Plus (Bireysel)"; Winget = "Microsoft.Office"; Desc = "Word, Excel, PowerPoint, Outlook 2021 (64-Bit Türkçe Tam Paket)"; Preset = @("HemenTeslim"); Domain = "office.com"; Color = "#EA580C"; Mono = "2021" }
 
     "Install_Microsoft_Teams.ps1"          = @{ Name = "Microsoft Teams"; Winget = "Microsoft.Teams"; Desc = "Şirket içi yazışma ve görüntülü toplantı programı"; Preset = @(); Domain = "teams.microsoft.com"; Color = "#4F46E5"; Mono = "TMS" }
     "Install_Zoom.ps1"                     = @{ Name = "Zoom Workplace"; Winget = "Zoom.Zoom"; Desc = "Kurumsal MSI tabanlı görüntülü toplantı programı"; Preset = @(); Domain = "zoom.us"; Color = "#2563EB"; Mono = "ZM" }
@@ -620,8 +620,12 @@ $AllApps = $AllApps | Sort-Object CategoryIndex, Name
                         <Border Grid.Column="2" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="12,8">
                             <DockPanel>
                                 <Grid DockPanel.Dock="Top" Margin="0,0,0,6">
-                                    <TextBlock Text="CANLI İŞLEM GÜNLÜĞÜ (İNDİRME VE KURULUM ADIMLARI)" FontSize="11" FontWeight="Bold" Foreground="#64748B"/>
-                                    <TextBlock x:Name="ProgressStepText" Text="Kurulum için program seçin" FontSize="11.5" FontWeight="Bold" Foreground="#38BDF8" HorizontalAlignment="Right"/>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="CANLI İŞLEM GÜNLÜĞÜ" FontSize="11" FontWeight="Bold" Foreground="#64748B" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="ProgressStepText" Grid.Column="1" Text="Kurulum için program seçin" FontSize="11.5" FontWeight="Bold" Foreground="#38BDF8" HorizontalAlignment="Right" Margin="12,0,0,0" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
                                 </Grid>
                                 <TextBox x:Name="LogTextBox" Background="Transparent" Foreground="#A7F3D0" BorderThickness="0"
                                          FontFamily="Consolas" FontSize="12" IsReadOnly="True" TextWrapping="Wrap"
