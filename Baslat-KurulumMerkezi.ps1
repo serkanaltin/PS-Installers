@@ -1523,23 +1523,36 @@ $BtnStartInstall.Add_Click({
                     $syncHash.LogQueue.Enqueue("   [1/2] Resmi sunucudan güncel 64-bit kurulum paketi indiriliyor...")
                 }
 
+                $isOfficeApp = ($app.Id -like "*Office365*")
+
                 if (Test-Path -LiteralPath $app.ScriptPath) {
                     $proc = Start-Process -FilePath "powershell.exe" -ArgumentList "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$($app.ScriptPath)`"" -PassThru -WindowStyle Hidden
 
                     $switchedToInstalling = $app.IsLocal
+                    $lastOfficeNoticeSec = 0
                     while (-not $proc.HasExited) {
                         Start-Sleep -Milliseconds 500
-                        if (-not $switchedToInstalling -and $sw.Elapsed.TotalSeconds -ge 3) {
+                        $elapsedNow = [int]$sw.Elapsed.TotalSeconds
+                        if (-not $switchedToInstalling -and $elapsedNow -ge 3) {
                             $switchedToInstalling = $true
-                            Send-AppState -AppId $app.Id -State "Installing" -Detail "Adım 2/2: İndirildi, onay beklemeden sessiz kuruluyor..."
-                            $syncHash.LogQueue.Enqueue("   [2/2] Kurulum paketi arka planda sessiz parametrelerle (/qn /S) kuruluyor...")
+                            if ($isOfficeApp) {
+                                Send-AppState -AppId $app.Id -State "Installing" -Detail "Adım 2/2: Microsoft CDN üzerinden Office 2021 paketleri indiriliyor ve kuruluyor..."
+                                $syncHash.LogQueue.Enqueue("   [2/2] Microsoft Click-to-Run üzerinden Office 2021 (Word, Excel, PowerPoint, Outlook) indiriliyor ve sessiz kuruluyor...")
+                            } else {
+                                Send-AppState -AppId $app.Id -State "Installing" -Detail "Adım 2/2: İndirildi, onay beklemeden sessiz kuruluyor..."
+                                $syncHash.LogQueue.Enqueue("   [2/2] Kurulum paketi arka planda sessiz parametrelerle (/qn /S) kuruluyor...")
+                            }
+                        }
+                        if ($isOfficeApp -and $elapsedNow -ge ($lastOfficeNoticeSec + 25)) {
+                            $lastOfficeNoticeSec = $elapsedNow
+                            Send-AppState -AppId $app.Id -State "Installing" -Detail "Microsoft Office 2021 arka planda kuruluyor ($elapsedNow sn geçti, lütfen bekleyin)..."
                         }
                     }
                     $proc.WaitForExit()
-                    $installed = ($proc.ExitCode -eq 0)
+                    $installed = ($proc.ExitCode -eq 0 -or $proc.ExitCode -eq 3010)
                 }
 
-                if (-not $installed -and $hasWinget -and $app.WingetId) {
+                if (-not $installed -and -not $isOfficeApp -and $hasWinget -and $app.WingetId) {
                     Send-AppState -AppId $app.Id -State "Fallback" -Detail "Alternatif: Windows Paket Yöneticisi (Winget) ile kuruluyor..."
                     $syncHash.LogQueue.Enqueue("   [YEDEK ADIM] Yerel betik tamamlanamadı, Winget üzerinden sessiz kuruluyor ($($app.WingetId))...")
                     $installed = Invoke-WingetSilent -PackageId $app.WingetId

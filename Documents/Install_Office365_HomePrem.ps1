@@ -1,25 +1,26 @@
-$ProgressPreference = 'SilentlyContinue'
+﻿$ProgressPreference = 'SilentlyContinue'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 -bor [Net.SecurityProtocolType]::Tls13
 
-$html = (Invoke-WebRequest -UseBasicParsing -Uri "https://www.microsoft.com/en-us/download/details.aspx?id=49117" -ErrorAction SilentlyContinue).Content
-$dlLink = [regex]::Match($html, 'https://download\.microsoft\.com/download/[^"''\s]+/officedeploymenttool_[^"''\s]+\.exe').Value
-if (-not $dlLink) {
-    $dlLink = "https://download.microsoft.com/download/6c1eeb25-cf8b-41d9-8d0d-cc1dbc032140/officedeploymenttool_20527-20150.exe"
-}
+# 1. Windows 10/11 üzerinde önceden yüklü gelen "Office" (Microsoft.Office.Desktop) Mağaza/UWP taslak uygulamasını kaldır (Click-to-Run çakışmasını önler)
+Get-AppxPackage -Name "*Microsoft.Office.Desktop*" -AllUsers -ErrorAction SilentlyContinue | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue
+Get-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue | Where-Object { $_.PackageName -like "*Microsoft.Office.Desktop*" } | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue
 
-$workDir = Join-Path $env:TEMP ("ODT_Office_" + [guid]::NewGuid().ToString("N").Substring(0, 8))
+# 2. Daha önceki yarıda kalmış kurulumlardan asılı kalan setup.exe / OfficeClickToRun işlemlerini temizle
+Get-Process -Name "setup", "OfficeC2RClient" -ErrorAction SilentlyContinue | Where-Object { $_.Path -like "*Temp*" -or $_.Path -like "*ClickToRun*" } | Stop-Process -Force -ErrorAction SilentlyContinue
+
+# 3. Doğrudan Microsoft Resmi Office CDN üzerinden saf setup.exe motorunu indir (eski 49117 arşiv paketi hatasını tamamen aşar)
+$dlLink = "https://officecdn.microsoft.com/pr/wsus/setup.exe"
+$workDir = Join-Path $env:TEMP ("ODT_Office2021_" + [guid]::NewGuid().ToString("N").Substring(0, 8))
 New-Item -ItemType Directory -Path $workDir -Force | Out-Null
 
-$odtExe = Join-Path $workDir "odt_installer.exe"
-(New-Object System.Net.WebClient).DownloadFile($dlLink, $odtExe)
-Start-Process -FilePath $odtExe -ArgumentList "/extract:`"$workDir`" /quiet" -Wait -WindowStyle Hidden
-Remove-Item -LiteralPath $odtExe -Force -ErrorAction SilentlyContinue
-Remove-Item -Path (Join-Path $workDir "configuration*.xml") -Force -ErrorAction SilentlyContinue
+$setupExe = Join-Path $workDir "setup.exe"
+(New-Object System.Net.WebClient).DownloadFile($dlLink, $setupExe)
 
+# 4. Office 2021 Pro Plus (64-Bit Türkçe, Sessiz Kurulum) Yapılandırma Dosyası
 $configFileContents = @'
 <Configuration>
-  <Add OfficeClientEdition="64" Channel="Current" MigrateArch="TRUE">
-    <Product ID="ProPlus2021Retail">
+  <Add OfficeClientEdition="64" Channel="PerpetualVL2021" MigrateArch="TRUE">
+    <Product ID="ProPlus2021Volume">
       <Language ID="tr-tr" />
       <Language ID="MatchOS" />
       <ExcludeApp ID="Groove" />
@@ -34,15 +35,19 @@ $configFileContents = @'
 </Configuration>
 '@
 
-$configFilePath = Join-Path $workDir "Configuration-Office2021-ProPlus.xml"
+$configFilePath = Join-Path $workDir "Configuration-Office2021.xml"
 [System.IO.File]::WriteAllText($configFilePath, $configFileContents, (New-Object System.Text.UTF8Encoding($false)))
 
-$setupExe = Join-Path $workDir "setup.exe"
-if (Test-Path -LiteralPath $setupExe) {
-    $proc = Start-Process -FilePath $setupExe -ArgumentList "/configure `"$configFilePath`"" -Wait -PassThru -WindowStyle Hidden -Verb RunAs
+# 5. Sessiz kurulumu başlat ve tamamlanana kadar bekle
+$proc = Start-Process -FilePath $setupExe -ArgumentList "/configure `"$configFilePath`"" -WorkingDirectory $workDir -Wait -PassThru -WindowStyle Hidden
+$exitCode = $proc.ExitCode
+
+# Eğer kurumsal/volume kanal yerine Retail kanalı tercih edilirse otomatik yedek olarak ProPlus2021Retail dene
+if ($exitCode -ne 0 -and $exitCode -ne 3010) {
+    $retailConfig = $configFileContents.Replace('Channel="PerpetualVL2021"', 'Channel="Current"').Replace('Product ID="ProPlus2021Volume"', 'Product ID="ProPlus2021Retail"')
+    [System.IO.File]::WriteAllText($configFilePath, $retailConfig, (New-Object System.Text.UTF8Encoding($false)))
+    $proc = Start-Process -FilePath $setupExe -ArgumentList "/configure `"$configFilePath`"" -WorkingDirectory $workDir -Wait -PassThru -WindowStyle Hidden
     $exitCode = $proc.ExitCode
-} else {
-    $exitCode = 1
 }
 
 Remove-Item -LiteralPath $workDir -Recurse -Force -ErrorAction SilentlyContinue
