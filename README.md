@@ -61,7 +61,7 @@ Arayüz içerisinde tüm yazılımlar aşağıdaki Türkçe kategoriler altında
 | **İnternet Tarayıcıları (6)** | Google Chrome (Enterprise MSI), Mozilla Firefox, Microsoft Edge, Brave, Opera, Vivaldi |
 | **Arşiv ve Dosya Sıkıştırma (3)** | WinRAR (64-Bit), 7-Zip, PeaZip |
 | **Uzak Masaüstü ve Sistem (8)** | AnyDesk, TeamViewer, OpenVPN Connect, Everything Search, Revo Uninstaller, WinDirStat, ImgBurn, NVDA Ekran Okuyucu |
-| **İletişim ve Toplantı (8)** | Microsoft Teams, Zoom Workplace, Discord, Telegram, Signal, Mozilla Thunderbird, eM Client, TeamSpeak |
+| **İletişim ve Toplantı (9)** | Yeastar Linkus (Dahili Santral & Çağrı), Microsoft Teams, Zoom Workplace, Discord, Telegram, Signal, Mozilla Thunderbird, eM Client, TeamSpeak |
 | **Ses, Video ve Ekran Kaydı (8)** | VLC Media Player, K-Lite Codec Pack Full, OBS Studio, Bandicam, Audacity, Spotify, Apple iTunes, foobar2000 |
 | **Görsel ve Ekran Görüntüsü (5)** | ShareX, Greenshot, Paint.NET, GIMP, Blender |
 | **Bulut Depolama (3)** | Google Drive Masaüstü, Microsoft OneDrive, Dropbox |
