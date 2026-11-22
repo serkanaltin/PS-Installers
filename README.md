@@ -13,6 +13,22 @@
 
 ---
 
+## Ekran Görüntüleri (Screenshots)
+
+### 1. Ana Dashboard & Otomatik Yüklü Program Algılama (`YÜKLÜ` Rozeti)
+![Ana Dashboard](screenshots/1-ana-dashboard.png)
+
+### 2. "Hemen Teslim Et Paketi" & Adım Adım Canlı Kurulum Süreci Takibi
+![Adım Adım Kurulum Süreci](screenshots/2-hemen-teslim-paketi-kurulum-sureci.png)
+
+### 3. Sistemde Yüklü Programlar Filtresi & Daraltılmış (`☰`) Kompakt Görünüm
+![Yüklü Programlar ve Kompakt Görünüm](screenshots/3-yuklu-programlar-ve-kompakt-gorunum.png)
+
+### 4. Departmanlara Özel Paket Oluşturma & Düzenleme (`ozel_paketler.json`)
+![Özel Paket Oluşturma](screenshots/4-ozel-paket-olusturma-penceresi.png)
+
+---
+
 ## Öne Çıkan Özellikler
 
 ### 1. Modern Koyu Tema (Dark Slate) Dashboard Arayüzü

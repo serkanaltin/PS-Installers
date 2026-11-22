@@ -38,7 +38,13 @@ Add-Type -AssemblyName PresentationCore
 Add-Type -AssemblyName WindowsBase
 Add-Type -AssemblyName System.Drawing
 
-$ScriptRoot       = if ($PSScriptRoot) { $PSScriptRoot } else { (Get-Location).Path }
+$ScriptRoot       = if ($MyInvocation.MyCommand.Path -and (Test-Path -LiteralPath (Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) "Documents"))) {
+    Split-Path -Parent $MyInvocation.MyCommand.Path
+} elseif ($PSScriptRoot -and (Test-Path -LiteralPath (Join-Path $PSScriptRoot "Documents"))) {
+    $PSScriptRoot
+} else {
+    (Get-Location).Path
+}
 $IconsCacheDir    = Join-Path $ScriptRoot ".icons"
 $PackagesJsonPath = Join-Path $ScriptRoot "ozel_paketler.json"
 
@@ -1428,7 +1434,7 @@ $BtnToggleLogPanel.Add_Click({
 $BtnToggleSidebar.Add_Click({
     $script:IsSidebarCollapsed = -not $script:IsSidebarCollapsed
     if ($script:IsSidebarCollapsed) {
-        $SidebarColumn.Width = New-Object Windows.GridLength(64)
+        $SidebarColumn.Width = New-Object Windows.GridLength(74)
         $SidebarBorder.Padding = New-Object Windows.Thickness(4, 14, 4, 14)
         $SidebarHeaderTitle.Visibility = [Windows.Visibility]::Collapsed
         $DeveloperCardTextStack.Visibility = [Windows.Visibility]::Collapsed
