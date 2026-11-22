@@ -3,7 +3,8 @@
     Hızlı Kurulum Merkezi (Modern Dashboard Arayüzlü Katılımsız Yazılım Kurulum Aracı)
 .DESCRIPTION
     Bilgi İşlem (BT) ekipleri için tasarlanmış, gerçek uygulama logolu, kategorize edilmiş,
-    hazır paket ve adım adım canlı kurulum takip destekli modern kurulum paneli (Dashboard).
+    yüklü programları otomatik algılayan ("YÜKLÜ" rozetli), özel paket oluşturma/düzenleme/silme
+    (`ozel_paketler.json`) ve adım adım canlı kurulum takip destekli modern kurulum paneli (Dashboard).
     Geliştirici: Serkan Altın
     Açık Kaynak Altyapı & Atıf: Tyler Lurie - PS-Installers (https://github.com/tylerlurie/PS-Installers)
 .LINK
@@ -37,8 +38,10 @@ Add-Type -AssemblyName PresentationCore
 Add-Type -AssemblyName WindowsBase
 Add-Type -AssemblyName System.Drawing
 
-$ScriptRoot = if ($PSScriptRoot) { $PSScriptRoot } else { (Get-Location).Path }
-$IconsCacheDir = Join-Path $ScriptRoot ".icons"
+$ScriptRoot       = if ($PSScriptRoot) { $PSScriptRoot } else { (Get-Location).Path }
+$IconsCacheDir    = Join-Path $ScriptRoot ".icons"
+$PackagesJsonPath = Join-Path $ScriptRoot "ozel_paketler.json"
+
 if (-not (Test-Path -LiteralPath $IconsCacheDir)) {
     New-Item -ItemType Directory -Path $IconsCacheDir -Force | Out-Null
 }
@@ -104,110 +107,110 @@ $CategoryGlyphs = @{
     "Oyun Platformları"               = [string][char]0xE7FC
 }
 
-# Uygulama Kataloğu: Marka Rengi (Color), Logo Kısaltması (Mono), Resmi Logo Alan Adı (Domain)
+# Uygulama Kataloğu: Marka Rengi (Color), Logo Kısaltması (Mono), Resmi Logo Alan Adı (Domain), Kayıt Defteri Algılama Deseni (DetectPattern)
 $AppMetadata = @{
-    "Install_DtxgateSigner.ps1"            = @{ Name = "Dtxgate Signer (E-İmza İstemcisi)"; Winget = ""; Desc = "Yerel MSI paketi (DtxgateSigner-1.0.23.msi) ile sessiz kurulum"; Preset = @("HemenTeslim"); IsLocal = $true; Domain = "arksigner.com"; Color = "#0284C7"; Mono = "DTX" }
-    "Install_SafeNet_SAC.ps1"              = @{ Name = "SafeNet Authentication Client 10.4"; Winget = ""; Desc = "Akıllı kart ve E-İmza token sürücüsü (SAC-x64-10.4.msi)"; Preset = @("HemenTeslim"); IsLocal = $true; Domain = "thalesgroup.com"; Color = "#4F46E5"; Mono = "SAC" }
-    "Install_Java_JRE_8.ps1"               = @{ Name = "Java JRE 8u513 (E-İmza Uyumlu)"; Winget = "Oracle.JavaRuntimeEnvironment"; Desc = "E-İmza uygulamaları için Java 8 çalışma zamanı (jre-8u513)"; Preset = @("HemenTeslim"); IsLocal = $true; Domain = "java.com"; Color = "#EA580C"; Mono = "JRE" }
+    "Install_DtxgateSigner.ps1"            = @{ Name = "Dtxgate Signer (E-İmza İstemcisi)"; Winget = ""; Desc = "Yerel MSI paketi (DtxgateSigner-1.0.23.msi) ile sessiz kurulum"; Preset = @("HemenTeslim"); IsLocal = $true; Domain = "arksigner.com"; Color = "#0284C7"; Mono = "DTX"; Detect = "Dtxgate|ArkSigner" }
+    "Install_SafeNet_SAC.ps1"              = @{ Name = "SafeNet Authentication Client 10.4"; Winget = ""; Desc = "Akıllı kart ve E-İmza token sürücüsü (SAC-x64-10.4.msi)"; Preset = @("HemenTeslim"); IsLocal = $true; Domain = "thalesgroup.com"; Color = "#4F46E5"; Mono = "SAC"; Detect = "SafeNet Authentication Client" }
+    "Install_Java_JRE_8.ps1"               = @{ Name = "Java JRE 8u513 (E-İmza Uyumlu)"; Winget = "Oracle.JavaRuntimeEnvironment"; Desc = "E-İmza uygulamaları için Java 8 çalışma zamanı (jre-8u513)"; Preset = @("HemenTeslim"); IsLocal = $true; Domain = "java.com"; Color = "#EA580C"; Mono = "JRE"; Detect = "^Java 8 Update|Java\(TM\) SE Runtime" }
 
-    "Install_Google_Chrome.ps1"            = @{ Name = "Google Chrome (Kurumsal)"; Winget = "Google.Chrome"; Desc = "Tüm kullanıcılar için 64-bit kurumsal MSI sürümü"; Preset = @("HemenTeslim"); Domain = "google.com/chrome"; Color = "#2563EB"; Mono = "GC" }
-    "Install_Firefox.ps1"                  = @{ Name = "Mozilla Firefox"; Winget = "Mozilla.Firefox"; Desc = "Hızlı ve gizlilik odaklı internet tarayıcısı"; Preset = @(); Domain = "mozilla.org"; Color = "#EA580C"; Mono = "FF" }
-    "Install_Brave.ps1"                    = @{ Name = "Brave Tarayıcı"; Winget = "Brave.Brave"; Desc = "Dahili reklam engelleyicili Chromium tarayıcı"; Preset = @(); Domain = "brave.com"; Color = "#F97316"; Mono = "BR" }
-    "Install_Microsoft_Edge.ps1"           = @{ Name = "Microsoft Edge"; Winget = "Microsoft.Edge"; Desc = "Microsoft kurumsal internet tarayıcısı"; Preset = @(); Domain = "microsoft.com/edge"; Color = "#0284C7"; Mono = "EDG" }
-    "Install_Opera.ps1"                    = @{ Name = "Opera Tarayıcı"; Winget = "Opera.Opera"; Desc = "Dahili araçlara sahip hızlı internet tarayıcısı"; Preset = @(); Domain = "opera.com"; Color = "#DC2626"; Mono = "OP" }
-    "Install_Vivaldi.ps1"                  = @{ Name = "Vivaldi"; Winget = "Vivaldi.Vivaldi"; Desc = "Gelişmiş sekme yönetimli internet tarayıcısı"; Preset = @(); Domain = "vivaldi.com"; Color = "#E11D48"; Mono = "VV" }
+    "Install_Google_Chrome.ps1"            = @{ Name = "Google Chrome (Kurumsal)"; Winget = "Google.Chrome"; Desc = "Tüm kullanıcılar için 64-bit kurumsal MSI sürümü"; Preset = @("HemenTeslim"); Domain = "google.com/chrome"; Color = "#2563EB"; Mono = "GC"; Detect = "^Google Chrome$" }
+    "Install_Firefox.ps1"                  = @{ Name = "Mozilla Firefox"; Winget = "Mozilla.Firefox"; Desc = "Hızlı ve gizlilik odaklı internet tarayıcısı"; Preset = @(); Domain = "mozilla.org"; Color = "#EA580C"; Mono = "FF"; Detect = "^Mozilla Firefox" }
+    "Install_Brave.ps1"                    = @{ Name = "Brave Tarayıcı"; Winget = "Brave.Brave"; Desc = "Dahili reklam engelleyicili Chromium tarayıcı"; Preset = @(); Domain = "brave.com"; Color = "#F97316"; Mono = "BR"; Detect = "^Brave$" }
+    "Install_Microsoft_Edge.ps1"           = @{ Name = "Microsoft Edge"; Winget = "Microsoft.Edge"; Desc = "Microsoft kurumsal internet tarayıcısı"; Preset = @(); Domain = "microsoft.com/edge"; Color = "#0284C7"; Mono = "EDG"; Detect = "^Microsoft Edge$" }
+    "Install_Opera.ps1"                    = @{ Name = "Opera Tarayıcı"; Winget = "Opera.Opera"; Desc = "Dahili araçlara sahip hızlı internet tarayıcısı"; Preset = @(); Domain = "opera.com"; Color = "#DC2626"; Mono = "OP"; Detect = "^Opera Stable" }
+    "Install_Vivaldi.ps1"                  = @{ Name = "Vivaldi"; Winget = "Vivaldi.Vivaldi"; Desc = "Gelişmiş sekme yönetimli internet tarayıcısı"; Preset = @(); Domain = "vivaldi.com"; Color = "#E11D48"; Mono = "VV"; Detect = "^Vivaldi$" }
 
-    "Install_7-Zip.ps1"                    = @{ Name = "7-Zip"; Winget = "7zip.7zip"; Desc = "Ücretsiz ve yüksek hızlı ZIP/7Z arşiv yöneticisi"; Preset = @("Temel"); Domain = "7-zip.org"; Color = "#475569"; Mono = "7Z" }
-    "Install_WinRAR.ps1"                   = @{ Name = "WinRAR (64-Bit)"; Winget = "RARLab.WinRAR"; Desc = "RAR ve ZIP arşiv dosyalarını açma ve sıkıştırma aracı"; Preset = @("HemenTeslim"); Domain = "win-rar.com"; Color = "#7C3AED"; Mono = "RAR" }
-    "Install_PeaZip.ps1"                   = @{ Name = "PeaZip"; Winget = "Giorgiotani.Peazip"; Desc = "Açık kaynaklı çoklu format arşiv yöneticisi"; Preset = @(); Domain = "peazip.github.io"; Color = "#16A34A"; Mono = "PZ" }
+    "Install_7-Zip.ps1"                    = @{ Name = "7-Zip"; Winget = "7zip.7zip"; Desc = "Ücretsiz ve yüksek hızlı ZIP/7Z arşiv yöneticisi"; Preset = @("Temel"); Domain = "7-zip.org"; Color = "#475569"; Mono = "7Z"; Detect = "^7-Zip" }
+    "Install_WinRAR.ps1"                   = @{ Name = "WinRAR (64-Bit)"; Winget = "RARLab.WinRAR"; Desc = "RAR ve ZIP arşiv dosyalarını açma ve sıkıştırma aracı"; Preset = @("HemenTeslim"); Domain = "win-rar.com"; Color = "#7C3AED"; Mono = "RAR"; Detect = "^WinRAR" }
+    "Install_PeaZip.ps1"                   = @{ Name = "PeaZip"; Winget = "Giorgiotani.Peazip"; Desc = "Açık kaynaklı çoklu format arşiv yöneticisi"; Preset = @(); Domain = "peazip.github.io"; Color = "#16A34A"; Mono = "PZ"; Detect = "^PeaZip" }
 
-    "Install_Adobe_Acrobat_Reader.ps1"     = @{ Name = "Adobe Acrobat Reader DC"; Winget = "Adobe.Acrobat.Reader.64-bit"; Desc = "Ücretsiz standart PDF görüntüleme ve yazdırma aracı"; Preset = @(); Domain = "adobe.com"; Color = "#DC2626"; Mono = "PDF" }
-    "Install_Adobe_Acrobat_Pro.ps1"        = @{ Name = "Adobe Acrobat Pro"; Winget = "Adobe.Acrobat.Pro"; Desc = "Kapsamlı PDF düzenleme, dönüştürme ve imzalama paketi"; Preset = @("HemenTeslim"); Domain = "adobe.com"; Color = "#B91C1C"; Mono = "PRO" }
-    "Install_Foxit_Reader.ps1"             = @{ Name = "Foxit PDF Reader"; Winget = "Foxit.FoxitReader"; Desc = "Hızlı açılan hafif PDF görüntüleme programı"; Preset = @(); Domain = "foxit.com"; Color = "#EA580C"; Mono = "FX" }
-    "Install_Sumatra_PDF.ps1"              = @{ Name = "Sumatra PDF"; Winget = "SumatraPDF.SumatraPDF"; Desc = "Çok hafif ve hızlı PDF, ePub ve çizgi roman okuyucu"; Preset = @(); Domain = "sumatrapdfreader.org"; Color = "#CA8A04"; Mono = "SUM" }
-    "Install_LibreOffice.ps1"              = @{ Name = "LibreOffice"; Winget = "TheDocumentFoundation.LibreOffice"; Desc = "Ücretsiz ve açık kaynaklı tam kapsamlı ofis paketi"; Preset = @(); Domain = "libreoffice.org"; Color = "#16A34A"; Mono = "LO" }
-    "Install_FreeOffice.ps1"               = @{ Name = "SoftMaker FreeOffice"; Winget = "SoftMaker.FreeOffice.2021"; Desc = "Word, Excel ve PowerPoint uyumlu ücretsiz ofis paketi"; Preset = @(); Domain = "freeoffice.com"; Color = "#E11D48"; Mono = "FO" }
-    "Install_OpenOffice.ps1"               = @{ Name = "Apache OpenOffice"; Winget = "Apache.OpenOffice"; Desc = "Açık kaynaklı klasik belge ve tablo paketi"; Preset = @(); Domain = "openoffice.org"; Color = "#0284C7"; Mono = "OO" }
-    "Install_Office365_Enterprise.ps1"     = @{ Name = "Microsoft Office 2021 Pro Plus (Kurumsal)"; Winget = ""; Desc = "Yerel office_setup.exe + configuration.xml ile 64-Bit Türkçe Office 2021"; Preset = @(); IsLocal = $true; Domain = "office.com"; Color = "#D97706"; Mono = "2021" }
-    "Install_Office365_Business.ps1"       = @{ Name = "Microsoft Office 2021 Pro Plus (İş)"; Winget = ""; Desc = "Yerel office_setup.exe + configuration.xml ile 64-Bit Türkçe Office 2021"; Preset = @(); IsLocal = $true; Domain = "office.com"; Color = "#EA580C"; Mono = "2021" }
-    "Install_Office365_HomePrem.ps1"       = @{ Name = "Microsoft Office 2021 Pro Plus (Türkçe)"; Winget = ""; Desc = "Word, Excel, PowerPoint, Outlook 2021 (office_setup.exe + configuration.xml)"; Preset = @("HemenTeslim"); IsLocal = $true; Domain = "office.com"; Color = "#EA580C"; Mono = "2021" }
+    "Install_Adobe_Acrobat_Reader.ps1"     = @{ Name = "Adobe Acrobat Reader DC"; Winget = "Adobe.Acrobat.Reader.64-bit"; Desc = "Ücretsiz standart PDF görüntüleme ve yazdırma aracı"; Preset = @(); Domain = "adobe.com"; Color = "#DC2626"; Mono = "PDF"; Detect = "Adobe Acrobat Reader" }
+    "Install_Adobe_Acrobat_Pro.ps1"        = @{ Name = "Adobe Acrobat Pro"; Winget = "Adobe.Acrobat.Pro"; Desc = "Kapsamlı PDF düzenleme, dönüştürme ve imzalama paketi"; Preset = @("HemenTeslim"); Domain = "adobe.com"; Color = "#B91C1C"; Mono = "PRO"; Detect = "^Adobe Acrobat \(64-bit\)|Adobe Acrobat DC|Adobe Acrobat Pro" }
+    "Install_Foxit_Reader.ps1"             = @{ Name = "Foxit PDF Reader"; Winget = "Foxit.FoxitReader"; Desc = "Hızlı açılan hafif PDF görüntüleme programı"; Preset = @(); Domain = "foxit.com"; Color = "#EA580C"; Mono = "FX"; Detect = "Foxit PDF Reader|Foxit Reader" }
+    "Install_Sumatra_PDF.ps1"              = @{ Name = "Sumatra PDF"; Winget = "SumatraPDF.SumatraPDF"; Desc = "Çok hafif ve hızlı PDF, ePub ve çizgi roman okuyucu"; Preset = @(); Domain = "sumatrapdfreader.org"; Color = "#CA8A04"; Mono = "SUM"; Detect = "^SumatraPDF$" }
+    "Install_LibreOffice.ps1"              = @{ Name = "LibreOffice"; Winget = "TheDocumentFoundation.LibreOffice"; Desc = "Ücretsiz ve açık kaynaklı tam kapsamlı ofis paketi"; Preset = @(); Domain = "libreoffice.org"; Color = "#16A34A"; Mono = "LO"; Detect = "^LibreOffice" }
+    "Install_FreeOffice.ps1"               = @{ Name = "SoftMaker FreeOffice"; Winget = "SoftMaker.FreeOffice.2021"; Desc = "Word, Excel ve PowerPoint uyumlu ücretsiz ofis paketi"; Preset = @(); Domain = "freeoffice.com"; Color = "#E11D48"; Mono = "FO"; Detect = "SoftMaker FreeOffice" }
+    "Install_OpenOffice.ps1"               = @{ Name = "Apache OpenOffice"; Winget = "Apache.OpenOffice"; Desc = "Açık kaynaklı klasik belge ve tablo paketi"; Preset = @(); Domain = "openoffice.org"; Color = "#0284C7"; Mono = "OO"; Detect = "^OpenOffice" }
+    "Install_Office365_Enterprise.ps1"     = @{ Name = "Microsoft Office 2021 Pro Plus (Kurumsal)"; Winget = ""; Desc = "Yerel office_setup.exe + configuration.xml ile 64-Bit Türkçe Office 2021"; Preset = @(); IsLocal = $true; Domain = "office.com"; Color = "#D97706"; Mono = "2021"; Detect = "Microsoft Office LTSC Professional Plus 2021|Microsoft Office Professional Plus 2021|Microsoft 365 Apps for enterprise|O365ProPlusRetail" }
+    "Install_Office365_Business.ps1"       = @{ Name = "Microsoft Office 2021 Pro Plus (İş)"; Winget = ""; Desc = "Yerel office_setup.exe + configuration.xml ile 64-Bit Türkçe Office 2021"; Preset = @(); IsLocal = $true; Domain = "office.com"; Color = "#EA580C"; Mono = "2021"; Detect = "Microsoft Office LTSC Professional Plus 2021|Microsoft Office Professional Plus 2021|Microsoft 365 Apps for business|O365BusinessRetail" }
+    "Install_Office365_HomePrem.ps1"       = @{ Name = "Microsoft Office 2021 Pro Plus (Türkçe)"; Winget = ""; Desc = "Word, Excel, PowerPoint, Outlook 2021 (office_setup.exe + configuration.xml)"; Preset = @("HemenTeslim"); IsLocal = $true; Domain = "office.com"; Color = "#EA580C"; Mono = "2021"; Detect = "Microsoft Office LTSC Professional Plus 2021|Microsoft Office Professional Plus 2021|ProPlus2021Volume|ProPlus2021Retail|Microsoft 365" }
 
-    "Install_Microsoft_Teams.ps1"          = @{ Name = "Microsoft Teams"; Winget = "Microsoft.Teams"; Desc = "Şirket içi yazışma ve görüntülü toplantı programı"; Preset = @(); Domain = "teams.microsoft.com"; Color = "#4F46E5"; Mono = "TMS" }
-    "Install_Zoom.ps1"                     = @{ Name = "Zoom Workplace"; Winget = "Zoom.Zoom"; Desc = "Kurumsal MSI tabanlı görüntülü toplantı programı"; Preset = @(); Domain = "zoom.us"; Color = "#2563EB"; Mono = "ZM" }
-    "Install_Discord.ps1"                  = @{ Name = "Discord"; Winget = "Discord.Discord"; Desc = "Sesli, görüntülü ve yazılı iletişim platformu"; Preset = @(); Domain = "discord.com"; Color = "#4F46E5"; Mono = "DC" }
-    "Install_Telegram.ps1"                 = @{ Name = "Telegram Masaüstü"; Winget = "Telegram.TelegramDesktop"; Desc = "Hızlı ve bulut tabanlı mesajlaşma uygulaması"; Preset = @(); Domain = "telegram.org"; Color = "#0284C7"; Mono = "TG" }
-    "Install_Signal.ps1"                   = @{ Name = "Signal Masaüstü"; Winget = "OpenWhisperSystems.Signal"; Desc = "Uçtan uca şifreli güvenli mesajlaşma uygulaması"; Preset = @(); Domain = "signal.org"; Color = "#2563EB"; Mono = "SIG" }
-    "Install_Thunderbird.ps1"              = @{ Name = "Mozilla Thunderbird"; Winget = "Mozilla.Thunderbird"; Desc = "Ücretsiz gelişmiş e-posta ve takvim istemcisi"; Preset = @(); Domain = "thunderbird.net"; Color = "#0284C7"; Mono = "TB" }
-    "Install_eM_Client.ps1"                = @{ Name = "eM Client"; Winget = "eMClient.eMClient"; Desc = "Modern arayüzlü kurumsal e-posta istemcisi"; Preset = @(); Domain = "emclient.com"; Color = "#F97316"; Mono = "eM" }
-    "Install_TeamSpeak.ps1"                = @{ Name = "TeamSpeak"; Winget = "TeamSpeakSystems.TeamSpeakClient"; Desc = "Düşük gecikmeli sesli iletişim istemcisi"; Preset = @(); Domain = "teamspeak.com"; Color = "#1E40AF"; Mono = "TS" }
+    "Install_Microsoft_Teams.ps1"          = @{ Name = "Microsoft Teams"; Winget = "Microsoft.Teams"; Desc = "Şirket içi yazışma ve görüntülü toplantı programı"; Preset = @(); Domain = "teams.microsoft.com"; Color = "#4F46E5"; Mono = "TMS"; Detect = "Microsoft Teams|MSTeams" }
+    "Install_Zoom.ps1"                     = @{ Name = "Zoom Workplace"; Winget = "Zoom.Zoom"; Desc = "Kurumsal MSI tabanlı görüntülü toplantı programı"; Preset = @(); Domain = "zoom.us"; Color = "#2563EB"; Mono = "ZM"; Detect = "^Zoom" }
+    "Install_Discord.ps1"                  = @{ Name = "Discord"; Winget = "Discord.Discord"; Desc = "Sesli, görüntülü ve yazılı iletişim platformu"; Preset = @(); Domain = "discord.com"; Color = "#4F46E5"; Mono = "DC"; Detect = "^Discord$" }
+    "Install_Telegram.ps1"                 = @{ Name = "Telegram Masaüstü"; Winget = "Telegram.TelegramDesktop"; Desc = "Hızlı ve bulut tabanlı mesajlaşma uygulaması"; Preset = @(); Domain = "telegram.org"; Color = "#0284C7"; Mono = "TG"; Detect = "^Telegram Desktop$" }
+    "Install_Signal.ps1"                   = @{ Name = "Signal Masaüstü"; Winget = "OpenWhisperSystems.Signal"; Desc = "Uçtan uca şifreli güvenli mesajlaşma uygulaması"; Preset = @(); Domain = "signal.org"; Color = "#2563EB"; Mono = "SIG"; Detect = "^Signal " }
+    "Install_Thunderbird.ps1"              = @{ Name = "Mozilla Thunderbird"; Winget = "Mozilla.Thunderbird"; Desc = "Ücretsiz gelişmiş e-posta ve takvim istemcisi"; Preset = @(); Domain = "thunderbird.net"; Color = "#0284C7"; Mono = "TB"; Detect = "^Mozilla Thunderbird" }
+    "Install_eM_Client.ps1"                = @{ Name = "eM Client"; Winget = "eMClient.eMClient"; Desc = "Modern arayüzlü kurumsal e-posta istemcisi"; Preset = @(); Domain = "emclient.com"; Color = "#F97316"; Mono = "eM"; Detect = "^eM Client$" }
+    "Install_TeamSpeak.ps1"                = @{ Name = "TeamSpeak"; Winget = "TeamSpeakSystems.TeamSpeakClient"; Desc = "Düşük gecikmeli sesli iletişim istemcisi"; Preset = @(); Domain = "teamspeak.com"; Color = "#1E40AF"; Mono = "TS"; Detect = "^TeamSpeak 3 Client$" }
 
-    "Install_AnyDesk.ps1"                  = @{ Name = "AnyDesk"; Winget = "AnyDeskSoftwareGmbH.AnyDesk"; Desc = "Bilgi işlem uzaktan bağlantı ve teknik destek aracı"; Preset = @("HemenTeslim", "Temel"); Domain = "anydesk.com"; Color = "#EF4444"; Mono = "AD" }
-    "Install_TeamViewer.ps1"               = @{ Name = "TeamViewer"; Winget = "TeamViewer.TeamViewer"; Desc = "Uzaktan masaüstü bağlantısı ve teknik destek yazılımı"; Preset = @(); Domain = "teamviewer.com"; Color = "#2563EB"; Mono = "TV" }
-    "Install_OpenVPN.ps1"                  = @{ Name = "OpenVPN Connect"; Winget = "OpenVPNTechnologies.OpenVPN"; Desc = "Şirket ağına uzaktan güvenli bağlantı (VPN) istemcisi"; Preset = @(); Domain = "openvpn.net"; Color = "#EA580C"; Mono = "VPN" }
-    "Install_Revo_Uninstaller.ps1"         = @{ Name = "Revo Uninstaller"; Winget = "RevoUninstaller.RevoUninstaller"; Desc = "Programları kayıt defteri kalıntısı bırakmadan kaldırma aracı"; Preset = @(); Domain = "revouninstaller.com"; Color = "#0284C7"; Mono = "REV" }
-    "Install_WinDirStat.ps1"               = @{ Name = "WinDirStat"; Winget = "WinDirStat.WinDirStat"; Desc = "Diskte yer kaplayan klasörleri görsel olarak analiz etme aracı"; Preset = @("Temel"); Domain = "windirstat.net"; Color = "#059669"; Mono = "WDS" }
-    "Install_ImgBurn.ps1"                  = @{ Name = "ImgBurn"; Winget = "LIGHTNINGUK.ImgBurn"; Desc = "CD/DVD ve ISO kalıp dosyası yazdırma aracı"; Preset = @(); Domain = "imgburn.com"; Color = "#EA580C"; Mono = "ISO" }
-    "Install_Everything.ps1"               = @{ Name = "Everything (Anında Dosya Arama)"; Winget = "voidtools.Everything"; Desc = "Bilgisayardaki milyonlarca dosyayı saniyede bulan arama aracı"; Preset = @("Temel"); Domain = "voidtools.com"; Color = "#D97706"; Mono = "EV" }
-    "Install_NV_Access.ps1"                = @{ Name = "NVDA Ekran Okuyucu"; Winget = "NVAccess.NVDA"; Desc = "Görme engelli kullanıcılar için Türkçe sesli ekran okuyucu"; Preset = @(); Domain = "nvaccess.org"; Color = "#7C3AED"; Mono = "NV" }
+    "Install_AnyDesk.ps1"                  = @{ Name = "AnyDesk"; Winget = "AnyDeskSoftwareGmbH.AnyDesk"; Desc = "Bilgi işlem uzaktan bağlantı ve teknik destek aracı"; Preset = @("HemenTeslim", "Temel"); Domain = "anydesk.com"; Color = "#EF4444"; Mono = "AD"; Detect = "^AnyDesk$" }
+    "Install_TeamViewer.ps1"               = @{ Name = "TeamViewer"; Winget = "TeamViewer.TeamViewer"; Desc = "Uzaktan masaüstü bağlantısı ve teknik destek yazılımı"; Preset = @(); Domain = "teamviewer.com"; Color = "#2563EB"; Mono = "TV"; Detect = "^TeamViewer$" }
+    "Install_OpenVPN.ps1"                  = @{ Name = "OpenVPN Connect"; Winget = "OpenVPNTechnologies.OpenVPN"; Desc = "Şirket ağına uzaktan güvenli bağlantı (VPN) istemcisi"; Preset = @(); Domain = "openvpn.net"; Color = "#EA580C"; Mono = "VPN"; Detect = "^OpenVPN" }
+    "Install_Revo_Uninstaller.ps1"         = @{ Name = "Revo Uninstaller"; Winget = "RevoUninstaller.RevoUninstaller"; Desc = "Programları kayıt defteri kalıntısı bırakmadan kaldırma aracı"; Preset = @(); Domain = "revouninstaller.com"; Color = "#0284C7"; Mono = "REV"; Detect = "^Revo Uninstaller" }
+    "Install_WinDirStat.ps1"               = @{ Name = "WinDirStat"; Winget = "WinDirStat.WinDirStat"; Desc = "Diskte yer kaplayan klasörleri görsel olarak analiz etme aracı"; Preset = @("Temel"); Domain = "windirstat.net"; Color = "#059669"; Mono = "WDS"; Detect = "^WinDirStat$" }
+    "Install_ImgBurn.ps1"                  = @{ Name = "ImgBurn"; Winget = "LIGHTNINGUK.ImgBurn"; Desc = "CD/DVD ve ISO kalıp dosyası yazdırma aracı"; Preset = @(); Domain = "imgburn.com"; Color = "#EA580C"; Mono = "ISO"; Detect = "^ImgBurn$" }
+    "Install_Everything.ps1"               = @{ Name = "Everything (Anında Dosya Arama)"; Winget = "voidtools.Everything"; Desc = "Bilgisayardaki milyonlarca dosyayı saniyede bulan arama aracı"; Preset = @("Temel"); Domain = "voidtools.com"; Color = "#D97706"; Mono = "EV"; Detect = "^Everything " }
+    "Install_NV_Access.ps1"                = @{ Name = "NVDA Ekran Okuyucu"; Winget = "NVAccess.NVDA"; Desc = "Görme engelli kullanıcılar için Türkçe sesli ekran okuyucu"; Preset = @(); Domain = "nvaccess.org"; Color = "#7C3AED"; Mono = "NV"; Detect = "^NVDA" }
 
-    "Install_Visual_Studio_Code.ps1"       = @{ Name = "Visual Studio Code"; Winget = "Microsoft.VisualStudioCode"; Desc = "Modern ve eklenti destekli kaynak kod düzenleyicisi"; Preset = @(); Domain = "code.visualstudio.com"; Color = "#0284C7"; Mono = "VSC" }
-    "Install_Notepad-Plus-Plus.ps1"        = @{ Name = "Notepad++"; Winget = "Notepad++.Notepad++"; Desc = "Sistem yöneticileri için gelişmiş metin ve kod editörü"; Preset = @("Temel"); Domain = "notepad-plus-plus.org"; Color = "#16A34A"; Mono = "N++" }
-    "Install_Sublime_Text.ps1"             = @{ Name = "Sublime Text"; Winget = "SublimeHQ.SublimeText.4"; Desc = "Çok hızlı açılan hafif kod ve metin düzenleyici"; Preset = @(); Domain = "sublimetext.com"; Color = "#D97706"; Mono = "ST" }
-    "Install_PuTTY.ps1"                    = @{ Name = "PuTTY"; Winget = "PuTTY.PuTTY"; Desc = "Sunucu ve ağ cihazları yönetimi için SSH / Telnet istemcisi"; Preset = @("Temel"); Domain = "putty.org"; Color = "#2563EB"; Mono = "SSH" }
-    "Install_WinSCP.ps1"                   = @{ Name = "WinSCP"; Winget = "WinSCP.WinSCP"; Desc = "Sunuculara güvenli SFTP, SCP ve FTP dosya aktarım aracı"; Preset = @("Temel"); Domain = "winscp.net"; Color = "#0284C7"; Mono = "SCP" }
-    "Install_FileZilla.ps1"                = @{ Name = "FileZilla Client"; Winget = "TimKosse.FileZilla.Client"; Desc = "Hızlı FTP / FTPS / SFTP dosya transfer istemcisi"; Preset = @(); Domain = "filezilla-project.org"; Color = "#DC2626"; Mono = "FZ" }
-    "Install_Python_3.ps1"                 = @{ Name = "Python 3 (64-Bit)"; Winget = "Python.Python.3.12"; Desc = "Güncel Python 3 programlama dili çalışma ortamı"; Preset = @(); Domain = "python.org"; Color = "#0284C7"; Mono = "PY3" }
-    "Install_Python_2.7.ps1"               = @{ Name = "Python 2.7 (Eski Sistem)"; Winget = "Python.Python.2"; Desc = "Eski yazılımlar için Python 2.7 sürümü"; Preset = @(); Domain = "python.org"; Color = "#475569"; Mono = "PY2" }
-    "Install_Java_JDK.ps1"                 = @{ Name = "Java SE Development Kit (JDK)"; Winget = "Oracle.JDK.21"; Desc = "Java tabanlı kurumsal uygulamalar için geliştirme kiti"; Preset = @(); Domain = "oracle.com"; Color = "#DC2626"; Mono = "JDK" }
-    "Install_Visual_Studio_Community.ps1"  = @{ Name = "Visual Studio Community"; Winget = "Microsoft.VisualStudio.2022.Community"; Desc = "Microsoft .NET ve C++ yazılım geliştirme ortamı (IDE)"; Preset = @(); Domain = "visualstudio.microsoft.com"; Color = "#7C3AED"; Mono = "VS" }
+    "Install_Visual_Studio_Code.ps1"       = @{ Name = "Visual Studio Code"; Winget = "Microsoft.VisualStudioCode"; Desc = "Modern ve eklenti destekli kaynak kod düzenleyicisi"; Preset = @(); Domain = "code.visualstudio.com"; Color = "#0284C7"; Mono = "VSC"; Detect = "Microsoft Visual Studio Code" }
+    "Install_Notepad-Plus-Plus.ps1"        = @{ Name = "Notepad++"; Winget = "Notepad++.Notepad++"; Desc = "Sistem yöneticileri için gelişmiş metin ve kod editörü"; Preset = @("Temel"); Domain = "notepad-plus-plus.org"; Color = "#16A34A"; Mono = "N++"; Detect = "^Notepad\+\+" }
+    "Install_Sublime_Text.ps1"             = @{ Name = "Sublime Text"; Winget = "SublimeHQ.SublimeText.4"; Desc = "Çok hızlı açılan hafif kod ve metin düzenleyici"; Preset = @(); Domain = "sublimetext.com"; Color = "#D97706"; Mono = "ST"; Detect = "^Sublime Text" }
+    "Install_PuTTY.ps1"                    = @{ Name = "PuTTY"; Winget = "PuTTY.PuTTY"; Desc = "Sunucu ve ağ cihazları yönetimi için SSH / Telnet istemcisi"; Preset = @("Temel"); Domain = "putty.org"; Color = "#2563EB"; Mono = "SSH"; Detect = "^PuTTY release" }
+    "Install_WinSCP.ps1"                   = @{ Name = "WinSCP"; Winget = "WinSCP.WinSCP"; Desc = "Sunuculara güvenli SFTP, SCP ve FTP dosya aktarım aracı"; Preset = @("Temel"); Domain = "winscp.net"; Color = "#0284C7"; Mono = "SCP"; Detect = "^WinSCP " }
+    "Install_FileZilla.ps1"                = @{ Name = "FileZilla Client"; Winget = "TimKosse.FileZilla.Client"; Desc = "Hızlı FTP / FTPS / SFTP dosya transfer istemcisi"; Preset = @(); Domain = "filezilla-project.org"; Color = "#DC2626"; Mono = "FZ"; Detect = "^FileZilla" }
+    "Install_Python_3.ps1"                 = @{ Name = "Python 3 (64-Bit)"; Winget = "Python.Python.3.12"; Desc = "Güncel Python 3 programlama dili çalışma ortamı"; Preset = @(); Domain = "python.org"; Color = "#0284C7"; Mono = "PY3"; Detect = "^Python 3\." }
+    "Install_Python_2.7.ps1"               = @{ Name = "Python 2.7 (Eski Sistem)"; Winget = "Python.Python.2"; Desc = "Eski yazılımlar için Python 2.7 sürümü"; Preset = @(); Domain = "python.org"; Color = "#475569"; Mono = "PY2"; Detect = "^Python 2\.7" }
+    "Install_Java_JDK.ps1"                 = @{ Name = "Java SE Development Kit (JDK)"; Winget = "Oracle.JDK.21"; Desc = "Java tabanlı kurumsal uygulamalar için geliştirme kiti"; Preset = @(); Domain = "oracle.com"; Color = "#DC2626"; Mono = "JDK"; Detect = "Java\(TM\) SE Development Kit" }
+    "Install_Visual_Studio_Community.ps1"  = @{ Name = "Visual Studio Community"; Winget = "Microsoft.VisualStudio.2022.Community"; Desc = "Microsoft .NET ve C++ yazılım geliştirme ortamı (IDE)"; Preset = @(); Domain = "visualstudio.microsoft.com"; Color = "#7C3AED"; Mono = "VS"; Detect = "Visual Studio Community" }
 
-    "Install_VLC_Media_Player.ps1"         = @{ Name = "VLC Media Player"; Winget = "VideoLAN.VLC"; Desc = "Tüm ses ve video formatlarını sorunsuz açan oynatıcı"; Preset = @("Temel"); Domain = "videolan.org"; Color = "#EA580C"; Mono = "VLC" }
-    "Install_K-Lite_Codec_Pack_Full.ps1"   = @{ Name = "K-Lite Codec Pack Full"; Winget = "CodecGuide.K-LiteCodecPack.Full"; Desc = "Açılmayan video ve ses formatları için tam çözücü paketi"; Preset = @(); Domain = "codecguide.com"; Color = "#0284C7"; Mono = "KLC" }
-    "Install_Audacity.ps1"                 = @{ Name = "Audacity"; Winget = "Audacity.Audacity"; Desc = "Ücretsiz ses kaydetme, kesme ve düzenleme programı"; Preset = @(); Domain = "audacityteam.org"; Color = "#2563EB"; Mono = "AUD" }
-    "Install_Spotify.ps1"                  = @{ Name = "Spotify"; Winget = "Spotify.Spotify"; Desc = "Masaüstü müzik ve podcast dinleme uygulaması"; Preset = @(); Domain = "spotify.com"; Color = "#16A34A"; Mono = "SP" }
-    "Install_iTunes.ps1"                   = @{ Name = "Apple iTunes"; Winget = "Apple.iTunes"; Desc = "iPhone/iPad yedekleme ve medya yönetim programı"; Preset = @(); Domain = "apple.com"; Color = "#E11D48"; Mono = "iT" }
-    "Install_foobar2000.ps1"               = @{ Name = "foobar2000"; Winget = "PeterPawlowski.foobar2000"; Desc = "Düşük bellek tüketen gelişmiş müzik oynatıcısı"; Preset = @(); Domain = "foobar2000.org"; Color = "#475569"; Mono = "FB" }
-    "Install_OBS_Studio.ps1"               = @{ Name = "OBS Studio"; Winget = "OBSProject.OBSStudio"; Desc = "Ücretsiz profesyonel ekran kaydı ve canlı yayın programı"; Preset = @(); Domain = "obsproject.com"; Color = "#334155"; Mono = "OBS" }
-    "Install_Bandicam.ps1"                 = @{ Name = "Bandicam"; Winget = "BandicamCompany.Bandicam"; Desc = "Yüksek kaliteli ekran ve uygulama videosu kaydetme aracı"; Preset = @(); Domain = "bandicam.com"; Color = "#DC2626"; Mono = "BDC" }
+    "Install_VLC_Media_Player.ps1"         = @{ Name = "VLC Media Player"; Winget = "VideoLAN.VLC"; Desc = "Tüm ses ve video formatlarını sorunsuz açan oynatıcı"; Preset = @("Temel"); Domain = "videolan.org"; Color = "#EA580C"; Mono = "VLC"; Detect = "^VLC media player$" }
+    "Install_K-Lite_Codec_Pack_Full.ps1"   = @{ Name = "K-Lite Codec Pack Full"; Winget = "CodecGuide.K-LiteCodecPack.Full"; Desc = "Açılmayan video ve ses formatları için tam çözücü paketi"; Preset = @(); Domain = "codecguide.com"; Color = "#0284C7"; Mono = "KLC"; Detect = "^K-Lite Codec Pack" }
+    "Install_Audacity.ps1"                 = @{ Name = "Audacity"; Winget = "Audacity.Audacity"; Desc = "Ücretsiz ses kaydetme, kesme ve düzenleme programı"; Preset = @(); Domain = "audacityteam.org"; Color = "#2563EB"; Mono = "AUD"; Detect = "^Audacity" }
+    "Install_Spotify.ps1"                  = @{ Name = "Spotify"; Winget = "Spotify.Spotify"; Desc = "Masaüstü müzik ve podcast dinleme uygulaması"; Preset = @(); Domain = "spotify.com"; Color = "#16A34A"; Mono = "SP"; Detect = "^Spotify$" }
+    "Install_iTunes.ps1"                   = @{ Name = "Apple iTunes"; Winget = "Apple.iTunes"; Desc = "iPhone/iPad yedekleme ve medya yönetim programı"; Preset = @(); Domain = "apple.com"; Color = "#E11D48"; Mono = "iT"; Detect = "^iTunes$" }
+    "Install_foobar2000.ps1"               = @{ Name = "foobar2000"; Winget = "PeterPawlowski.foobar2000"; Desc = "Düşük bellek tüketen gelişmiş müzik oynatıcısı"; Preset = @(); Domain = "foobar2000.org"; Color = "#475569"; Mono = "FB"; Detect = "^foobar2000" }
+    "Install_OBS_Studio.ps1"               = @{ Name = "OBS Studio"; Winget = "OBSProject.OBSStudio"; Desc = "Ücretsiz profesyonel ekran kaydı ve canlı yayın programı"; Preset = @(); Domain = "obsproject.com"; Color = "#334155"; Mono = "OBS"; Detect = "^OBS Studio$" }
+    "Install_Bandicam.ps1"                 = @{ Name = "Bandicam"; Winget = "BandicamCompany.Bandicam"; Desc = "Yüksek kaliteli ekran ve uygulama videosu kaydetme aracı"; Preset = @(); Domain = "bandicam.com"; Color = "#DC2626"; Mono = "BDC"; Detect = "^Bandicam$" }
 
-    "Install_ShareX.ps1"                   = @{ Name = "ShareX"; Winget = "ShareX.ShareX"; Desc = "Gelişmiş ekran görüntüsü alma, GIF kaydetme ve çizim aracı"; Preset = @(); Domain = "getsharex.com"; Color = "#0284C7"; Mono = "SX" }
-    "Install_Greenshot.ps1"                = @{ Name = "Greenshot"; Winget = "Greenshot.Greenshot"; Desc = "Ofis kullanıcıları için pratik ekran görüntüsü alma aracı"; Preset = @(); Domain = "getgreenshot.org"; Color = "#16A34A"; Mono = "GS" }
-    "Install_Paint.NET.ps1"                = @{ Name = "Paint.NET"; Winget = "dotPDN.PaintDotNet"; Desc = "Katman destekli, hızlı fotoğraf ve görsel düzenleme aracı"; Preset = @(); Domain = "getpaint.net"; Color = "#2563EB"; Mono = "PDN" }
-    "Install_GIMP.ps1"                     = @{ Name = "GIMP"; Winget = "GIMP.GIMP"; Desc = "Ücretsiz profesyonel fotoğraf ve grafik tasarım programı"; Preset = @(); Domain = "gimp.org"; Color = "#78350F"; Mono = "GMP" }
-    "Install_Blender.ps1"                  = @{ Name = "Blender"; Winget = "BlenderFoundation.Blender"; Desc = "3 boyutlu modelleme, animasyon ve tasarım yazılımı"; Preset = @(); Domain = "blender.org"; Color = "#EA580C"; Mono = "BLD" }
+    "Install_ShareX.ps1"                   = @{ Name = "ShareX"; Winget = "ShareX.ShareX"; Desc = "Gelişmiş ekran görüntüsü alma, GIF kaydetme ve çizim aracı"; Preset = @(); Domain = "getsharex.com"; Color = "#0284C7"; Mono = "SX"; Detect = "^ShareX$" }
+    "Install_Greenshot.ps1"                = @{ Name = "Greenshot"; Winget = "Greenshot.Greenshot"; Desc = "Ofis kullanıcıları için pratik ekran görüntüsü alma aracı"; Preset = @(); Domain = "getgreenshot.org"; Color = "#16A34A"; Mono = "GS"; Detect = "^Greenshot" }
+    "Install_Paint.NET.ps1"                = @{ Name = "Paint.NET"; Winget = "dotPDN.PaintDotNet"; Desc = "Katman destekli, hızlı fotoğraf ve görsel düzenleme aracı"; Preset = @(); Domain = "getpaint.net"; Color = "#2563EB"; Mono = "PDN"; Detect = "^paint\.net$" }
+    "Install_GIMP.ps1"                     = @{ Name = "GIMP"; Winget = "GIMP.GIMP"; Desc = "Ücretsiz profesyonel fotoğraf ve grafik tasarım programı"; Preset = @(); Domain = "gimp.org"; Color = "#78350F"; Mono = "GMP"; Detect = "^GIMP " }
+    "Install_Blender.ps1"                  = @{ Name = "Blender"; Winget = "BlenderFoundation.Blender"; Desc = "3 boyutlu modelleme, animasyon ve tasarım yazılımı"; Preset = @(); Domain = "blender.org"; Color = "#EA580C"; Mono = "BLD"; Detect = "^Blender" }
 
-    "Install_Google_Drive_for_Desktop.ps1" = @{ Name = "Google Drive Masaüstü"; Winget = "Google.GoogleDrive"; Desc = "Google Drive dosyalarını bilgisayarla eşitleme programı"; Preset = @(); Domain = "drive.google.com"; Color = "#16A34A"; Mono = "DRV" }
-    "Install_OneDrive.ps1"                 = @{ Name = "Microsoft OneDrive"; Winget = "Microsoft.OneDrive"; Desc = "Microsoft 365 bulut yedekleme ve dosya senkronizasyonu"; Preset = @(); Domain = "onedrive.live.com"; Color = "#0284C7"; Mono = "OD" }
-    "Install_Dropbox.ps1"                  = @{ Name = "Dropbox"; Winget = "Dropbox.Dropbox"; Desc = "Dropbox bulut klasör eşitleme ve paylaşım uygulaması"; Preset = @(); Domain = "dropbox.com"; Color = "#2563EB"; Mono = "DBX" }
+    "Install_Google_Drive_for_Desktop.ps1" = @{ Name = "Google Drive Masaüstü"; Winget = "Google.GoogleDrive"; Desc = "Google Drive dosyalarını bilgisayarla eşitleme programı"; Preset = @(); Domain = "drive.google.com"; Color = "#16A34A"; Mono = "DRV"; Detect = "^Google Drive$" }
+    "Install_OneDrive.ps1"                 = @{ Name = "Microsoft OneDrive"; Winget = "Microsoft.OneDrive"; Desc = "Microsoft 365 bulut yedekleme ve dosya senkronizasyonu"; Preset = @(); Domain = "onedrive.live.com"; Color = "#0284C7"; Mono = "OD"; Detect = "^Microsoft OneDrive$" }
+    "Install_Dropbox.ps1"                  = @{ Name = "Dropbox"; Winget = "Dropbox.Dropbox"; Desc = "Dropbox bulut klasör eşitleme ve paylaşım uygulaması"; Preset = @(); Domain = "dropbox.com"; Color = "#2563EB"; Mono = "DBX"; Detect = "^Dropbox$" }
 
-    "Install_.NET_8_Desktop_Runtime.ps1"   = @{ Name = ".NET 8 Masaüstü Çalışma Zamanı"; Winget = "Microsoft.DotNet.DesktopRuntime.8"; Desc = "Güncel .NET 8 masaüstü programlarını çalıştıran bileşen"; Preset = @("Temel"); Domain = "dotnet.microsoft.com"; Color = "#6D28D9"; Mono = ".N8" }
-    "Install_.NET_7_Desktop_Runtime.ps1"   = @{ Name = ".NET 7 Masaüstü Çalışma Zamanı"; Winget = "Microsoft.DotNet.DesktopRuntime.7"; Desc = ".NET 7 tabanlı Windows uygulamaları için çalışma zamanı"; Preset = @(); Domain = "dotnet.microsoft.com"; Color = "#6D28D9"; Mono = ".N7" }
-    "Install_.NET_6_Desktop_Runtime.ps1"   = @{ Name = ".NET 6 Masaüstü Çalışma Zamanı"; Winget = "Microsoft.DotNet.DesktopRuntime.6"; Desc = ".NET 6 LTS tabanlı programlar için çalışma zamanı"; Preset = @("Temel"); Domain = "dotnet.microsoft.com"; Color = "#6D28D9"; Mono = ".N6" }
-    "Install_.NET_5_Desktop_Runtime.ps1"   = @{ Name = ".NET 5 Masaüstü Çalışma Zamanı"; Winget = "Microsoft.DotNet.DesktopRuntime.5"; Desc = ".NET 5 tabanlı programlar için çalışma zamanı"; Preset = @(); Domain = "dotnet.microsoft.com"; Color = "#6D28D9"; Mono = ".N5" }
-    "Install_.NET_3.1_Desktop_Runtime.ps1" = @{ Name = ".NET Core 3.1 Çalışma Zamanı"; Winget = "Microsoft.DotNet.DesktopRuntime.3_1"; Desc = ".NET Core 3.1 masaüstü programları için çalışma zamanı"; Preset = @(); Domain = "dotnet.microsoft.com"; Color = "#6D28D9"; Mono = ".N3" }
-    "Install_.NET_Framework_4.8.ps1"       = @{ Name = ".NET Framework 4.8"; Winget = "Microsoft.DotNet.Framework.DeveloperPack_4"; Desc = "Klasik Windows ve muhasebe/ERP yazılımları için .NET 4.8"; Preset = @(); Domain = "dotnet.microsoft.com"; Color = "#4F46E5"; Mono = "4.8" }
-    "Install_VCRedist_2015-2022-x64.ps1"   = @{ Name = "Visual C++ 2015-2022 (64-Bit)"; Winget = "Microsoft.VCRedist.2015+.x64"; Desc = "Programlardaki DLL hatalarını önleyen temel C++ paketi"; Preset = @("Temel"); Domain = "visualstudio.microsoft.com"; Color = "#0284C7"; Mono = "C++" }
-    "Install_VCRedist_2013-x64.ps1"        = @{ Name = "Visual C++ 2013 (64-Bit)"; Winget = "Microsoft.VCRedist.2013.x64"; Desc = "2013 C++ tabanlı yazılımlar için sistem kütüphanesi"; Preset = @(); Domain = "visualstudio.microsoft.com"; Color = "#0369A1"; Mono = "C13" }
-    "Install_VCRedist_2012-x64.ps1"        = @{ Name = "Visual C++ 2012 (64-Bit)"; Winget = "Microsoft.VCRedist.2012.x64"; Desc = "2012 C++ tabanlı yazılımlar için sistem kütüphanesi"; Preset = @(); Domain = "visualstudio.microsoft.com"; Color = "#0369A1"; Mono = "C12" }
-    "Install_VCRedist_2010-x64.ps1"        = @{ Name = "Visual C++ 2010 (64-Bit)"; Winget = "Microsoft.VCRedist.2010.x64"; Desc = "2010 C++ tabanlı yazılımlar için sistem kütüphanesi"; Preset = @(); Domain = "visualstudio.microsoft.com"; Color = "#0369A1"; Mono = "C10" }
-    "Install_VCRedist_2008-x64.ps1"        = @{ Name = "Visual C++ 2008 (64-Bit)"; Winget = "Microsoft.VCRedist.2008.x64"; Desc = "2008 C++ tabanlı yazılımlar için sistem kütüphanesi"; Preset = @(); Domain = "visualstudio.microsoft.com"; Color = "#0369A1"; Mono = "C08" }
-    "Install_VCRedist_2005-x64.ps1"        = @{ Name = "Visual C++ 2005 (64-Bit)"; Winget = "Microsoft.VCRedist.2005.x64"; Desc = "2005 C++ tabanlı eski yazılımlar için sistem kütüphanesi"; Preset = @(); Domain = "visualstudio.microsoft.com"; Color = "#0369A1"; Mono = "C05" }
-    "Install_DirectX_Runtime.ps1"          = @{ Name = "DirectX End-User Runtime"; Winget = "Microsoft.DirectX"; Desc = "Grafik, çizim ve multimedya programları için DirectX"; Preset = @(); Domain = "microsoft.com"; Color = "#16A34A"; Mono = "DX" }
+    "Install_.NET_8_Desktop_Runtime.ps1"   = @{ Name = ".NET 8 Masaüstü Çalışma Zamanı"; Winget = "Microsoft.DotNet.DesktopRuntime.8"; Desc = "Güncel .NET 8 masaüstü programlarını çalıştıran bileşen"; Preset = @("Temel"); Domain = "dotnet.microsoft.com"; Color = "#6D28D9"; Mono = ".N8"; Detect = "Microsoft Windows Desktop Runtime - 8\." }
+    "Install_.NET_7_Desktop_Runtime.ps1"   = @{ Name = ".NET 7 Masaüstü Çalışma Zamanı"; Winget = "Microsoft.DotNet.DesktopRuntime.7"; Desc = ".NET 7 tabanlı Windows uygulamaları için çalışma zamanı"; Preset = @(); Domain = "dotnet.microsoft.com"; Color = "#6D28D9"; Mono = ".N7"; Detect = "Microsoft Windows Desktop Runtime - 7\." }
+    "Install_.NET_6_Desktop_Runtime.ps1"   = @{ Name = ".NET 6 Masaüstü Çalışma Zamanı"; Winget = "Microsoft.DotNet.DesktopRuntime.6"; Desc = ".NET 6 LTS tabanlı programlar için çalışma zamanı"; Preset = @("Temel"); Domain = "dotnet.microsoft.com"; Color = "#6D28D9"; Mono = ".N6"; Detect = "Microsoft Windows Desktop Runtime - 6\." }
+    "Install_.NET_5_Desktop_Runtime.ps1"   = @{ Name = ".NET 5 Masaüstü Çalışma Zamanı"; Winget = "Microsoft.DotNet.DesktopRuntime.5"; Desc = ".NET 5 tabanlı programlar için çalışma zamanı"; Preset = @(); Domain = "dotnet.microsoft.com"; Color = "#6D28D9"; Mono = ".N5"; Detect = "Microsoft Windows Desktop Runtime - 5\." }
+    "Install_.NET_3.1_Desktop_Runtime.ps1" = @{ Name = ".NET Core 3.1 Çalışma Zamanı"; Winget = "Microsoft.DotNet.DesktopRuntime.3_1"; Desc = ".NET Core 3.1 masaüstü programları için çalışma zamanı"; Preset = @(); Domain = "dotnet.microsoft.com"; Color = "#6D28D9"; Mono = ".N3"; Detect = "Microsoft Windows Desktop Runtime - 3\.1" }
+    "Install_.NET_Framework_4.8.ps1"       = @{ Name = ".NET Framework 4.8"; Winget = "Microsoft.DotNet.Framework.DeveloperPack_4"; Desc = "Klasik Windows ve muhasebe/ERP yazılımları için .NET 4.8"; Preset = @(); Domain = "dotnet.microsoft.com"; Color = "#4F46E5"; Mono = "4.8"; Detect = "Microsoft \.NET Framework 4\.8" }
+    "Install_VCRedist_2015-2022-x64.ps1"   = @{ Name = "Visual C++ 2015-2022 (64-Bit)"; Winget = "Microsoft.VCRedist.2015+.x64"; Desc = "Programlardaki DLL hatalarını önleyen temel C++ paketi"; Preset = @("Temel"); Domain = "visualstudio.microsoft.com"; Color = "#0284C7"; Mono = "C++"; Detect = "Microsoft Visual C\+\+ 2015-2022 Redistributable \(x64\)" }
+    "Install_VCRedist_2013-x64.ps1"        = @{ Name = "Visual C++ 2013 (64-Bit)"; Winget = "Microsoft.VCRedist.2013.x64"; Desc = "2013 C++ tabanlı yazılımlar için sistem kütüphanesi"; Preset = @(); Domain = "visualstudio.microsoft.com"; Color = "#0369A1"; Mono = "C13"; Detect = "Microsoft Visual C\+\+ 2013 Redistributable \(x64\)" }
+    "Install_VCRedist_2012-x64.ps1"        = @{ Name = "Visual C++ 2012 (64-Bit)"; Winget = "Microsoft.VCRedist.2012.x64"; Desc = "2012 C++ tabanlı yazılımlar için sistem kütüphanesi"; Preset = @(); Domain = "visualstudio.microsoft.com"; Color = "#0369A1"; Mono = "C12"; Detect = "Microsoft Visual C\+\+ 2012 Redistributable \(x64\)" }
+    "Install_VCRedist_2010-x64.ps1"        = @{ Name = "Visual C++ 2010 (64-Bit)"; Winget = "Microsoft.VCRedist.2010.x64"; Desc = "2010 C++ tabanlı yazılımlar için sistem kütüphanesi"; Preset = @(); Domain = "visualstudio.microsoft.com"; Color = "#0369A1"; Mono = "C10"; Detect = "Microsoft Visual C\+\+ 2010  x64 Redistributable" }
+    "Install_VCRedist_2008-x64.ps1"        = @{ Name = "Visual C++ 2008 (64-Bit)"; Winget = "Microsoft.VCRedist.2008.x64"; Desc = "2008 C++ tabanlı yazılımlar için sistem kütüphanesi"; Preset = @(); Domain = "visualstudio.microsoft.com"; Color = "#0369A1"; Mono = "C08"; Detect = "Microsoft Visual C\+\+ 2008 Redistributable - x64" }
+    "Install_VCRedist_2005-x64.ps1"        = @{ Name = "Visual C++ 2005 (64-Bit)"; Winget = "Microsoft.VCRedist.2005.x64"; Desc = "2005 C++ tabanlı eski yazılımlar için sistem kütüphanesi"; Preset = @(); Domain = "visualstudio.microsoft.com"; Color = "#0369A1"; Mono = "C05"; Detect = "Microsoft Visual C\+\+ 2005 Redistributable \(x64\)" }
+    "Install_DirectX_Runtime.ps1"          = @{ Name = "DirectX End-User Runtime"; Winget = "Microsoft.DirectX"; Desc = "Grafik, çizim ve multimedya programları için DirectX"; Preset = @(); Domain = "microsoft.com"; Color = "#16A34A"; Mono = "DX"; Detect = "^DirectX_NeverMatch$" }
 
-    "Install_Malwarebytes.ps1"             = @{ Name = "Malwarebytes"; Winget = "Malwarebytes.Malwarebytes"; Desc = "Reklam virüslerini ve zararlı yazılımları temizleme aracı"; Preset = @(); Domain = "malwarebytes.com"; Color = "#2563EB"; Mono = "MB" }
-    "Install_Avast.ps1"                    = @{ Name = "Avast Free Antivirus"; Winget = "Avast.AvastFreeAntivirus"; Desc = "Ücretsiz gerçek zamanlı antivirüs koruması"; Preset = @(); Domain = "avast.com"; Color = "#EA580C"; Mono = "AVS" }
-    "Install_AVG.ps1"                      = @{ Name = "AVG AntiVirus Free"; Winget = "AVG.AntiVirusFree"; Desc = "Temel sistem ve internet antivirüs koruması"; Preset = @(); Domain = "avg.com"; Color = "#16A34A"; Mono = "AVG" }
-    "Install_Avira.ps1"                    = @{ Name = "Avira Security"; Winget = "Avira.Security"; Desc = "Bulut tabanlı antivirüs ve güvenlik yazılımı"; Preset = @(); Domain = "avira.com"; Color = "#DC2626"; Mono = "AVR" }
-    "Install_Spybot.ps1"                   = @{ Name = "Spybot - Search & Destroy"; Winget = "SaferNetworking.SpybotSearchAndDestroy"; Desc = "Casus yazılım ve izleyici tarama/temizleme aracı"; Preset = @(); Domain = "safer-networking.org"; Color = "#0284C7"; Mono = "SPY" }
+    "Install_Malwarebytes.ps1"             = @{ Name = "Malwarebytes"; Winget = "Malwarebytes.Malwarebytes"; Desc = "Reklam virüslerini ve zararlı yazılımları temizleme aracı"; Preset = @(); Domain = "malwarebytes.com"; Color = "#2563EB"; Mono = "MB"; Detect = "^Malwarebytes version" }
+    "Install_Avast.ps1"                    = @{ Name = "Avast Free Antivirus"; Winget = "Avast.AvastFreeAntivirus"; Desc = "Ücretsiz gerçek zamanlı antivirüs koruması"; Preset = @(); Domain = "avast.com"; Color = "#EA580C"; Mono = "AVS"; Detect = "^Avast Free Antivirus$" }
+    "Install_AVG.ps1"                      = @{ Name = "AVG AntiVirus Free"; Winget = "AVG.AntiVirusFree"; Desc = "Temel sistem ve internet antivirüs koruması"; Preset = @(); Domain = "avg.com"; Color = "#16A34A"; Mono = "AVG"; Detect = "^AVG AntiVirus" }
+    "Install_Avira.ps1"                    = @{ Name = "Avira Security"; Winget = "Avira.Security"; Desc = "Bulut tabanlı antivirüs ve güvenlik yazılımı"; Preset = @(); Domain = "avira.com"; Color = "#DC2626"; Mono = "AVR"; Detect = "^Avira " }
+    "Install_Spybot.ps1"                   = @{ Name = "Spybot - Search & Destroy"; Winget = "SaferNetworking.SpybotSearchAndDestroy"; Desc = "Casus yazılım ve izleyici tarama/temizleme aracı"; Preset = @(); Domain = "safer-networking.org"; Color = "#0284C7"; Mono = "SPY"; Detect = "^Spybot - Search & Destroy" }
 
-    "Install_Oracle_VM_VirtualBox.ps1"     = @{ Name = "Oracle VM VirtualBox"; Winget = "Oracle.VirtualBox"; Desc = "Ücretsiz sanal bilgisayar oluşturma ve çalıştırma programı"; Preset = @(); Domain = "virtualbox.org"; Color = "#0284C7"; Mono = "VBX" }
-    "Install_VMware_Player.ps1"            = @{ Name = "VMware Workstation Player"; Winget = "VMware.WorkstationPlayer"; Desc = "Masaüstü sanal makine çalıştırma platformu"; Preset = @(); Domain = "vmware.com"; Color = "#D97706"; Mono = "VMW" }
-    "Install_qBittorrent.ps1"              = @{ Name = "qBittorrent"; Winget = "qBittorrent.qBittorrent"; Desc = "Reklamsız ve açık kaynaklı Torrent indirme istemcisi"; Preset = @(); Domain = "qbittorrent.org"; Color = "#0284C7"; Mono = "qB" }
-    "Install_Google_Earth.ps1"             = @{ Name = "Google Earth Pro"; Winget = "Google.EarthPro"; Desc = "3 boyutlu uydu görüntüsü, parsel ve harita inceleme aracı"; Preset = @(); Domain = "earth.google.com"; Color = "#2563EB"; Mono = "GEO" }
-    "Install_Steam.ps1"                    = @{ Name = "Steam"; Winget = "Valve.Steam"; Desc = "Steam masaüstü istemcisi"; Preset = @(); Domain = "steampowered.com"; Color = "#1E3A8A"; Mono = "STM" }
-    "Install_Epic_Games_Launcher.ps1"      = @{ Name = "Epic Games Launcher"; Winget = "EpicGames.EpicGamesLauncher"; Desc = "Unreal Engine ve Epic Games başlatıcısı"; Preset = @(); Domain = "epicgames.com"; Color = "#334155"; Mono = "EPC" }
-    "Install_Ubisoft_Connect.ps1"          = @{ Name = "Ubisoft Connect"; Winget = "Ubisoft.Connect"; Desc = "Ubisoft masaüstü istemcisi"; Preset = @(); Domain = "ubisoft.com"; Color = "#2563EB"; Mono = "UBI" }
-    "Install_Origin.ps1"                   = @{ Name = "EA App (Origin)"; Winget = "ElectronicArts.EADesktop"; Desc = "Electronic Arts masaüstü platformu"; Preset = @(); Domain = "ea.com"; Color = "#EA580C"; Mono = "EA" }
+    "Install_Oracle_VM_VirtualBox.ps1"     = @{ Name = "Oracle VM VirtualBox"; Winget = "Oracle.VirtualBox"; Desc = "Ücretsiz sanal bilgisayar oluşturma ve çalıştırma programı"; Preset = @(); Domain = "virtualbox.org"; Color = "#0284C7"; Mono = "VBX"; Detect = "Oracle .* VirtualBox" }
+    "Install_VMware_Player.ps1"            = @{ Name = "VMware Workstation Player"; Winget = "VMware.WorkstationPlayer"; Desc = "Masaüstü sanal makine çalıştırma platformu"; Preset = @(); Domain = "vmware.com"; Color = "#D97706"; Mono = "VMW"; Detect = "^VMware Player|^VMware Workstation" }
+    "Install_qBittorrent.ps1"              = @{ Name = "qBittorrent"; Winget = "qBittorrent.qBittorrent"; Desc = "Reklamsız ve açık kaynaklı Torrent indirme istemcisi"; Preset = @(); Domain = "qbittorrent.org"; Color = "#0284C7"; Mono = "qB"; Detect = "^qBittorrent" }
+    "Install_Google_Earth.ps1"             = @{ Name = "Google Earth Pro"; Winget = "Google.EarthPro"; Desc = "3 boyutlu uydu görüntüsü, parsel ve harita inceleme aracı"; Preset = @(); Domain = "earth.google.com"; Color = "#2563EB"; Mono = "GEO"; Detect = "^Google Earth Pro" }
+    "Install_Steam.ps1"                    = @{ Name = "Steam"; Winget = "Valve.Steam"; Desc = "Steam masaüstü istemcisi"; Preset = @(); Domain = "steampowered.com"; Color = "#1E3A8A"; Mono = "STM"; Detect = "^Steam$" }
+    "Install_Epic_Games_Launcher.ps1"      = @{ Name = "Epic Games Launcher"; Winget = "EpicGames.EpicGamesLauncher"; Desc = "Unreal Engine ve Epic Games başlatıcısı"; Preset = @(); Domain = "epicgames.com"; Color = "#334155"; Mono = "EPC"; Detect = "^Epic Games Launcher$" }
+    "Install_Ubisoft_Connect.ps1"          = @{ Name = "Ubisoft Connect"; Winget = "Ubisoft.Connect"; Desc = "Ubisoft masaüstü istemcisi"; Preset = @(); Domain = "ubisoft.com"; Color = "#2563EB"; Mono = "UBI"; Detect = "^Ubisoft Connect$" }
+    "Install_Origin.ps1"                   = @{ Name = "EA App (Origin)"; Winget = "ElectronicArts.EADesktop"; Desc = "Electronic Arts masaüstü platformu"; Preset = @(); Domain = "ea.com"; Color = "#EA580C"; Mono = "EA"; Detect = "^EA app$|^Origin$" }
 }
 
 # Klasörlerdeki tüm yalnızca yasal Install_*.ps1 dosyalarını tara ve listeyi oluştur
@@ -235,13 +238,14 @@ foreach ($file in $scriptFiles) {
         ($file.BaseName -replace '^Install_', '' -replace '_', ' ')
     }
 
-    $wingetId = if ($meta -and $meta.Winget) { $meta.Winget } else { "" }
-    $desc     = if ($meta -and $meta.Desc) { $meta.Desc } else { "64-bit katılımsız kurulum paketi ($($file.Name))" }
-    $presets  = if ($meta -and $meta.Preset) { $meta.Preset } else { @() }
-    $isLocal  = if ($meta -and $meta.IsLocal) { $true } else { $false }
-    $domain   = if ($meta -and $meta.Domain) { $meta.Domain } else { "" }
-    $color    = if ($meta -and $meta.Color) { $meta.Color } else { "#2563EB" }
-    $mono     = if ($meta -and $meta.Mono) { $meta.Mono } else { $displayName.Substring(0, [Math]::Min(2, $displayName.Length)).ToUpper() }
+    $wingetId      = if ($meta -and $meta.Winget) { $meta.Winget } else { "" }
+    $desc          = if ($meta -and $meta.Desc) { $meta.Desc } else { "64-bit katılımsız kurulum paketi ($($file.Name))" }
+    $presets       = if ($meta -and $meta.Preset) { $meta.Preset } else { @() }
+    $isLocal       = if ($meta -and $meta.IsLocal) { $true } else { $false }
+    $domain        = if ($meta -and $meta.Domain) { $meta.Domain } else { "" }
+    $color         = if ($meta -and $meta.Color) { $meta.Color } else { "#2563EB" }
+    $mono          = if ($meta -and $meta.Mono) { $meta.Mono } else { $displayName.Substring(0, [Math]::Min(2, $displayName.Length)).ToUpper() }
+    $detectPattern = if ($meta -and $meta.Detect) { $meta.Detect } else { [regex]::Escape($displayName) }
 
     $catIndex = $CategoryOrder.IndexOf($catTr)
     if ($catIndex -lt 0) { $catIndex = 99 }
@@ -261,8 +265,10 @@ foreach ($file in $scriptFiles) {
         Domain            = $domain
         BrandColor        = $color
         Monogram          = $mono
+        DetectPattern     = $detectPattern
         IconCachePath     = $iconFile
         IsSelected        = $false
+        IsInstalled       = $false
         InstallState      = "Idle"
         CheckBoxRef       = $null
         CardRef           = $null
@@ -275,12 +281,72 @@ foreach ($file in $scriptFiles) {
 
 $AllApps = $AllApps | Sort-Object CategoryIndex, Name
 
-# 3. Modern Dashboard WPF XAML Arayüzü (BT Logosu Kaldırıldı, İstatistik Kartları ve Uygulama İkon Yuvaları Eklendi)
+# 3. Özel ve Varsayılan Paket Yönetimi (ozel_paketler.json)
+$script:SavedPackages = New-Object System.Collections.Generic.List[PSCustomObject]
+
+function Save-PackagesToJson {
+    $exportList = @($script:SavedPackages | ForEach-Object {
+        [PSCustomObject]@{
+            Name   = $_.Name
+            Style  = $_.Style
+            AppIds = @($_.AppIds)
+        }
+    })
+    $json = ConvertTo-Json -InputObject $exportList -Depth 5
+    [System.IO.File]::WriteAllText($PackagesJsonPath, $json, (New-Object System.Text.UTF8Encoding($true)))
+}
+
+function Load-PackagesFromJson {
+    $script:SavedPackages.Clear()
+    $loaded = $false
+    if (Test-Path -LiteralPath $PackagesJsonPath) {
+        try {
+            $raw = [System.IO.File]::ReadAllText($PackagesJsonPath, [System.Text.Encoding]::UTF8)
+            $parsed = ConvertFrom-Json -InputObject $raw
+            if ($parsed) {
+                foreach ($pkg in @($parsed)) {
+                    if ($pkg.Name) {
+                        $script:SavedPackages.Add([PSCustomObject]@{
+                            Name   = [string]$pkg.Name
+                            Style  = if ($pkg.Style) { [string]$pkg.Style } else { "Custom" }
+                            AppIds = @($pkg.AppIds | ForEach-Object { [string]$_ })
+                        })
+                    }
+                }
+                $loaded = $true
+            }
+        } catch {
+            $loaded = $false
+        }
+    }
+
+    if (-not $loaded) {
+        # İlk çalıştırmada varsayılan 2 paketi oluştur ve ozel_paketler.json'a kaydet
+        $hemenTeslimIds = @($AllApps | Where-Object { $_.Presets -contains "HemenTeslim" } | Select-Object -ExpandProperty Id)
+        $temelIds       = @($AllApps | Where-Object { $_.Presets -contains "Temel" } | Select-Object -ExpandProperty Id)
+
+        $script:SavedPackages.Add([PSCustomObject]@{
+            Name   = "Hemen Teslim Et Paketi"
+            Style  = "Green"
+            AppIds = $hemenTeslimIds
+        })
+        $script:SavedPackages.Add([PSCustomObject]@{
+            Name   = "BT Teknik Destek Paketi"
+            Style  = "Default"
+            AppIds = $temelIds
+        })
+        Save-PackagesToJson
+    }
+}
+
+Load-PackagesFromJson
+
+# 4. Modern Dashboard WPF XAML Arayüzü
 [xml]$Xaml = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Hızlı Kurulum Merkezi | Geliştirici: Serkan Altın"
-        Width="1280" Height="840" MinWidth="1040" MinHeight="700"
+        Width="1300" Height="850" MinWidth="1060" MinHeight="700"
         WindowStartupLocation="CenterScreen"
         Background="#090D16" Foreground="#F8FAFC"
         FontFamily="Segoe UI">
@@ -324,7 +390,7 @@ $AllApps = $AllApps | Sort-Object CategoryIndex, Name
             <Setter Property="Foreground" Value="#E2E8F0"/>
             <Setter Property="BorderBrush" Value="#334155"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="14,8"/>
+            <Setter Property="Padding" Value="13,8"/>
             <Setter Property="FontSize" Value="12.5"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Cursor" Value="Hand"/>
@@ -349,14 +415,44 @@ $AllApps = $AllApps | Sort-Object CategoryIndex, Name
             </Setter>
         </Style>
 
-        <!-- Hemen Teslim Et Özel Vurgulu Buton Stili -->
+        <!-- + Yeni Paket Oluştur Buton Stili -->
+        <Style x:Key="NewPackageButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#1E3A8A"/>
+            <Setter Property="Foreground" Value="#93C5FD"/>
+            <Setter Property="BorderBrush" Value="#3B82F6"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="13,8"/>
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#2563EB"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.45"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Yeşil Vurgulu Paket Buton Stili -->
         <Style x:Key="HemenTeslimButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#059669"/>
             <Setter Property="Foreground" Value="#FFFFFF"/>
             <Setter Property="BorderBrush" Value="#10B981"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="18,9"/>
-            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="FontSize" Value="12.5"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
@@ -415,72 +511,57 @@ $AllApps = $AllApps | Sort-Object CategoryIndex, Name
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- ÜST DASHBOARD BAR: BAŞLIK, HIZLI ARAMA VE TEK TIKLA HAZIR PAKETLER -->
-        <Border Grid.Row="0" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="0,0,0,1" Padding="24,16">
+        <!-- ÜST DASHBOARD BAR: BAŞLIK, HIZLI ARAMA VE DİNAMİK PAKETLER -->
+        <Border Grid.Row="0" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="0,0,0,1" Padding="22,14">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="340"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Sol: Sade ve Güçlü Başlık (BT Logosu Kaldırıldı) -->
+                <!-- Sol: Sade ve Güçlü Başlık -->
                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="Hızlı Kurulum Merkezi" FontSize="21" FontWeight="Bold" Foreground="#F8FAFC" VerticalAlignment="Center"/>
-                        <Border x:Name="AdminBadge" Background="#064E3B" BorderBrush="#059669" BorderThickness="1" CornerRadius="6" Padding="9,3" Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock x:Name="AdminBadgeText" Text="YÖNETİCİ YETKİLİ" FontSize="10.5" FontWeight="Bold" Foreground="#A7F3D0"/>
+                        <TextBlock Text="Hızlı Kurulum Merkezi" FontSize="20" FontWeight="Bold" Foreground="#F8FAFC" VerticalAlignment="Center"/>
+                        <Border x:Name="AdminBadge" Background="#064E3B" BorderBrush="#059669" BorderThickness="1" CornerRadius="6" Padding="8,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock x:Name="AdminBadgeText" Text="YÖNETİCİ YETKİLİ" FontSize="10" FontWeight="Bold" Foreground="#A7F3D0"/>
                         </Border>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="Geliştirici: " FontSize="12" Foreground="#94A3B8"/>
-                        <TextBlock Text="Serkan Altın" FontSize="12" FontWeight="Bold" Foreground="#38BDF8"/>
-                        <TextBlock Text="  •  Katılımsız Kurulum ve Hazır Paket Dağıtım Paneli" FontSize="12" Foreground="#64748B"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="Geliştirici: " FontSize="11.5" Foreground="#94A3B8"/>
+                        <TextBlock Text="Serkan Altın" FontSize="11.5" FontWeight="Bold" Foreground="#38BDF8"/>
+                        <TextBlock Text="  •  Katılımsız Kurulum Paneli" FontSize="11.5" Foreground="#64748B"/>
                     </StackPanel>
                 </StackPanel>
 
                 <!-- Orta: Modern Arama Kutusu -->
-                <Border Grid.Column="1" Background="#090D16" BorderBrush="#334155" BorderThickness="1" CornerRadius="9" Margin="30,0" MaxWidth="440" Height="42" VerticalAlignment="Center">
+                <Border Grid.Column="1" Background="#090D16" BorderBrush="#334155" BorderThickness="1" CornerRadius="9" Margin="20,0,16,0" Height="40" VerticalAlignment="Center">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="36"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="&#xE721;" FontFamily="Segoe MDL2 Assets" FontSize="14" Foreground="#38BDF8" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Column="0" Text="&#xE721;" FontFamily="Segoe MDL2 Assets" FontSize="13.5" Foreground="#38BDF8" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         <TextBox x:Name="SearchBox" Grid.Column="1" Background="Transparent" Foreground="#F8FAFC" BorderThickness="0"
-                                 VerticalContentAlignment="Center" FontSize="13.5" CaretBrush="#38BDF8" Padding="2,0,8,0"/>
-                        <TextBlock x:Name="SearchPlaceholder" Grid.Column="1" Text="Program adı veya kategori ara (Chrome, E-İmza, Office, PDF)..."
-                                   Foreground="#64748B" FontSize="12.5" VerticalAlignment="Center" Margin="2,0,0,0" IsHitTestVisible="False"/>
+                                 VerticalContentAlignment="Center" FontSize="13" CaretBrush="#38BDF8" Padding="2,0,8,0"/>
+                        <TextBlock x:Name="SearchPlaceholder" Grid.Column="1" Text="Program veya kategori ara (Chrome, E-İmza, Office)..."
+                                   Foreground="#64748B" FontSize="12" VerticalAlignment="Center" Margin="2,0,0,0" IsHitTestVisible="False"/>
                         <Button x:Name="BtnClearSearch" Grid.Column="2" Content="Temizle" Visibility="Collapsed" Background="Transparent" Foreground="#38BDF8"
-                                BorderThickness="0" Padding="12,0" Cursor="Hand" FontSize="11.5" FontWeight="SemiBold"/>
+                                BorderThickness="0" Padding="10,0" Cursor="Hand" FontSize="11" FontWeight="SemiBold"/>
                     </Grid>
                 </Border>
 
-                <!-- Sağ: Tek Tıkla Hazır Paketler -->
-                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button x:Name="BtnPresetHemenTeslim" Style="{StaticResource HemenTeslimButtonStyle}" Margin="0,0,10,0"
-                            ToolTip="Office 365 Bireysel, WinRAR, AnyDesk, Google Chrome, Adobe Acrobat Pro ve 3 E-İmza Programını (Dtxgate, SafeNet SAC, Java 8) tek tıkla seçer">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="13" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="Hemen Teslim Et Paketi (8)" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button x:Name="BtnPresetBasic" Style="{StaticResource ActionButtonStyle}"
-                            ToolTip="7-Zip, AnyDesk, Everything, Notepad++, PuTTY, WinSCP, VLC, WinDirStat, .NET ve Visual C++ bileşenlerini seçer">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="&#xE90F;" FontFamily="Segoe MDL2 Assets" FontSize="13" Foreground="#38BDF8" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="BT Teknik Destek Paketi" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
+                <!-- Sağ: Dinamik Hazır Paketler Barı + Yeni Paket Oluştur Butonu -->
+                <WrapPanel x:Name="PackagesTopBarPanel" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             </Grid>
         </Border>
 
         <!-- ANA DASHBOARD GÖVDESİ -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="268"/>
+                <ColumnDefinition Width="265"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
@@ -547,12 +628,12 @@ $AllApps = $AllApps | Sort-Object CategoryIndex, Name
                             </Grid>
                         </Border>
 
-                        <!-- Kart 3: Kurulumu Tamamlanan -->
+                        <!-- Kart 3: Bilgisayarda Yüklü & Kurulan Program -->
                         <Border Background="#111827" BorderBrush="#064E3B" BorderThickness="1" CornerRadius="8" Padding="14,9" Margin="5,0,5,0">
                             <Grid>
                                 <StackPanel>
-                                    <TextBlock Text="KURULAN PROGRAM" FontSize="10" FontWeight="Bold" Foreground="#34D399"/>
-                                    <TextBlock x:Name="MetricInstalledText" Text="0 Tamamlandı" FontSize="17" FontWeight="Bold" Foreground="#10B981" Margin="0,2,0,0"/>
+                                    <TextBlock Text="SİSTEMDE YÜKLÜ" FontSize="10" FontWeight="Bold" Foreground="#34D399"/>
+                                    <TextBlock x:Name="MetricInstalledText" Text="0 Yüklü" FontSize="17" FontWeight="Bold" Foreground="#10B981" Margin="0,2,0,0"/>
                                 </StackPanel>
                                 <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="22" Foreground="#059669" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             </Grid>
@@ -571,7 +652,7 @@ $AllApps = $AllApps | Sort-Object CategoryIndex, Name
                     </UniformGrid>
                 </Border>
 
-                <!-- 2. Satır: Aktif Kategori Başlığı ve Hızlı Seçim Kontrolleri -->
+                <!-- 2. Satır: Aktif Kategori Başlığı ve Hızlı Seçim + Yenile/Tara Kontrolleri -->
                 <Border Grid.Row="1" Background="#090D16" Padding="22,12,22,6">
                     <Grid>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -582,6 +663,13 @@ $AllApps = $AllApps | Sort-Object CategoryIndex, Name
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <Button x:Name="BtnRescanInstalled" Style="{StaticResource ActionButtonStyle}" Margin="0,0,8,0" Padding="12,6" FontSize="12"
+                                    ToolTip="Windows Kayıt Defteri üzerinden bilgisayarda yüklü olan programları yeniden tarar">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="11.5" Foreground="#34D399" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Yenile / Tara" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
                             <Button x:Name="BtnShowSelectedOnly" Style="{StaticResource ActionButtonStyle}" Content="Seçilenleri Göster (0)" Margin="0,0,8,0" Padding="12,6" FontSize="12"/>
                             <Button x:Name="BtnSelectCategory" Style="{StaticResource ActionButtonStyle}" Content="Bu Kategoridekileri Seç" Margin="0,0,8,0" Padding="12,6" FontSize="12"/>
                             <Button x:Name="BtnClearAll" Style="{StaticResource ActionButtonStyle}" Content="Seçimleri Temizle" Padding="12,6" FontSize="12"/>
@@ -594,7 +682,7 @@ $AllApps = $AllApps | Sort-Object CategoryIndex, Name
                     <WrapPanel x:Name="AppsWrapPanel" Orientation="Horizontal"/>
                 </ScrollViewer>
 
-                <!-- 4. Satır: ALT ADIM ADIM SÜREÇ TAKİP PANELİ (SOL: PROGRAM DURUM LİSTESİ | SAĞ: CANLI İŞLEM GÜNLÜĞÜ) -->
+                <!-- 4. Satır: ALT ADIM ADIM SÜREÇ TAKİP PANELİ -->
                 <Border Grid.Row="3" Background="#070A12" BorderBrush="#1E293B" BorderThickness="0,1,0,0" Padding="16,10">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -603,7 +691,7 @@ $AllApps = $AllApps | Sort-Object CategoryIndex, Name
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Sol Sütun: Seçilen Programların Adım Adım Durum Tablosu (Sırada / İndiriliyor / Kuruluyor / Kuruldu) -->
+                        <!-- Sol Sütun: Seçilen Programların Adım Adım Durum Tablosu -->
                         <Border Grid.Column="0" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="12,8">
                             <DockPanel>
                                 <Grid DockPanel.Dock="Top" Margin="0,0,0,6">
@@ -616,7 +704,7 @@ $AllApps = $AllApps | Sort-Object CategoryIndex, Name
                             </DockPanel>
                         </Border>
 
-                        <!-- Sağ Sütun: Detaylı Canlı Kurulum Günlüğü (Ne Olduysa Adım Adım Gösteren Konsol) -->
+                        <!-- Sağ Sütun: Detaylı Canlı Kurulum Günlüğü -->
                         <Border Grid.Column="2" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="12,8">
                             <DockPanel>
                                 <Grid DockPanel.Dock="Top" Margin="0,0,0,6">
@@ -672,7 +760,7 @@ $AllApps = $AllApps | Sort-Object CategoryIndex, Name
 </Window>
 "@
 
-# 4. XAML Okuma ve Kontrolleri Bağlama
+# 5. XAML Okuma ve Kontrolleri Bağlama
 $Reader = New-Object System.Xml.XmlNodeReader $Xaml
 $Window = [Windows.Markup.XamlReader]::Load($Reader)
 
@@ -681,13 +769,13 @@ $AdminBadgeText       = $Window.FindName("AdminBadgeText")
 $SearchBox            = $Window.FindName("SearchBox")
 $SearchPlaceholder    = $Window.FindName("SearchPlaceholder")
 $BtnClearSearch       = $Window.FindName("BtnClearSearch")
-$BtnPresetHemenTeslim = $Window.FindName("BtnPresetHemenTeslim")
-$BtnPresetBasic       = $Window.FindName("BtnPresetBasic")
+$PackagesTopBarPanel  = $Window.FindName("PackagesTopBarPanel")
 $CategoryListPanel    = $Window.FindName("CategoryListPanel")
 $MetricTotalText      = $Window.FindName("MetricTotalText")
 $MetricSelectedText   = $Window.FindName("MetricSelectedText")
 $MetricInstalledText  = $Window.FindName("MetricInstalledText")
 $MetricStateText      = $Window.FindName("MetricStateText")
+$BtnRescanInstalled   = $Window.FindName("BtnRescanInstalled")
 $BtnShowSelectedOnly  = $Window.FindName("BtnShowSelectedOnly")
 $BtnSelectCategory    = $Window.FindName("BtnSelectCategory")
 $BtnClearAll          = $Window.FindName("BtnClearAll")
@@ -719,17 +807,13 @@ function Write-GuiLog {
     $LogTextBox.ScrollToEnd()
 }
 
-Write-GuiLog "Hızlı Kurulum Merkezi hazır (Geliştirici: Serkan Altın). Toplam $($AllApps.Count) katılımsız paket yüklendi."
+# 6. Durum Değişkenleri ve Görsel Yardımcı Fonksiyonlar
+$script:ActiveCategory   = "Tümü"
+$script:ShowSelectedOnly = $false
+$script:IsInstalling     = $false
+$BrushConverter          = New-Object Windows.Media.BrushConverter
+$script:StepRowMap       = @{}
 
-# 5. Durum Değişkenleri ve Yardımcı Fonksiyonlar
-$script:ActiveCategory     = "Tümü"
-$script:ShowSelectedOnly   = $false
-$script:IsInstalling       = $false
-$script:TotalInstalledSess = 0
-$BrushConverter            = New-Object Windows.Media.BrushConverter
-$script:StepRowMap         = @{}
-
-# İkon dosyasını WPF Image nesnesine güvenli yükleme fonksiyonu
 function Set-AppCardLogoFromFile {
     param($AppItem, [string]$FilePath)
     if (-not (Test-Path -LiteralPath $FilePath)) { return $false }
@@ -754,6 +838,83 @@ function Set-AppCardLogoFromFile {
     }
 }
 
+function Set-CardVisualState {
+    param($AppItem)
+    if (-not $AppItem.CardRef) { return }
+    if ($AppItem.IsSelected) {
+        $AppItem.CardRef.Background  = $BrushConverter.ConvertFrom("#172554")
+        $AppItem.CardRef.BorderBrush = $BrushConverter.ConvertFrom("#3B82F6")
+    } elseif ($AppItem.IsInstalled) {
+        $AppItem.CardRef.Background  = $BrushConverter.ConvertFrom("#0D1F1C")
+        $AppItem.CardRef.BorderBrush = $BrushConverter.ConvertFrom("#065F46")
+    } else {
+        $AppItem.CardRef.Background  = $BrushConverter.ConvertFrom("#111827")
+        $AppItem.CardRef.BorderBrush = $BrushConverter.ConvertFrom("#1E293B")
+    }
+
+    if (-not $script:IsInstalling -and $AppItem.StatusBadgeBorder) {
+        if ($AppItem.IsInstalled) {
+            $AppItem.StatusBadgeBorder.Visibility = [Windows.Visibility]::Visible
+            $AppItem.StatusBadgeBorder.Background = $BrushConverter.ConvertFrom("#065F46")
+            $AppItem.StatusBadgeText.Foreground   = $BrushConverter.ConvertFrom("#A7F3D0")
+            $AppItem.StatusBadgeText.Text         = "YÜKLÜ"
+        } else {
+            $AppItem.StatusBadgeBorder.Visibility = [Windows.Visibility]::Collapsed
+        }
+    }
+}
+
+# 7. Windows Kayıt Defteri Üzerinden Yüklü Programları Otomatik Algılama Motoru
+function Scan-InstalledApplications {
+    param([switch]$SilentLog)
+
+    $regPaths = @(
+        "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
+        "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*",
+        "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*"
+    )
+
+    $installedNames = New-Object System.Collections.Generic.List[string]
+    foreach ($rp in $regPaths) {
+        try {
+            $items = Get-ItemProperty -Path $rp -Name DisplayName, ReleaseTypeIds -ErrorAction SilentlyContinue
+            foreach ($it in $items) {
+                if ($it.DisplayName) {
+                    $installedNames.Add([string]$it.DisplayName)
+                }
+                if ($it.ReleaseTypeIds) {
+                    $installedNames.Add([string]$it.ReleaseTypeIds)
+                }
+            }
+        } catch {}
+    }
+
+    $detectedCount = 0
+    foreach ($app in $AllApps) {
+        $found = $false
+        if ($app.DetectPattern) {
+            foreach ($dispName in $installedNames) {
+                if ($dispName -match $app.DetectPattern) {
+                    $found = $true
+                    break
+                }
+            }
+        }
+        $app.IsInstalled = $found
+        if ($found) {
+            $detectedCount++
+        }
+        if ($app.CardRef) {
+            Set-CardVisualState -AppItem $app
+        }
+    }
+
+    $MetricInstalledText.Text = "$detectedCount Yüklü"
+    if (-not $SilentLog) {
+        Write-GuiLog "Sistem taraması tamamlandı: Katalogdaki $($AllApps.Count) programdan $detectedCount tanesi bu bilgisayarda zaten YÜKLÜ olarak algılandı."
+    }
+}
+
 # Kart Üzerindeki ve Alt Süreç Listesindeki Durum Rozetini Güncelleme
 function Set-AppInstallState {
     param(
@@ -767,7 +928,7 @@ function Set-AppInstallState {
         if ($app.StatusBadgeBorder -and $app.StatusBadgeText) {
             switch ($State) {
                 "Idle" {
-                    $app.StatusBadgeBorder.Visibility = [Windows.Visibility]::Collapsed
+                    Set-CardVisualState -AppItem $app
                 }
                 "Pending" {
                     $app.StatusBadgeBorder.Visibility = [Windows.Visibility]::Visible
@@ -796,6 +957,7 @@ function Set-AppInstallState {
                     $app.StatusBadgeText.Text         = "WINGET İLE..."
                 }
                 "Success" {
+                    $app.IsInstalled                  = $true
                     $app.StatusBadgeBorder.Visibility = [Windows.Visibility]::Visible
                     $app.StatusBadgeBorder.Background = $BrushConverter.ConvertFrom("#065F46")
                     $app.StatusBadgeText.Foreground   = $BrushConverter.ConvertFrom("#A7F3D0")
@@ -815,7 +977,6 @@ function Set-AppInstallState {
         }
     }
 
-    # Alt Sol "Adım Adım Kurulum Süreci" Tablosundaki Satırı Güncelle
     if ($script:StepRowMap.ContainsKey($AppId)) {
         $rowInfo = $script:StepRowMap[$AppId]
         $rowInfo.DetailBlock.Text = $DetailText
@@ -963,7 +1124,7 @@ function Update-SelectionCounter {
 
     if (-not $script:IsInstalling) {
         if ($count -eq 0) {
-            $SelectedSummaryText.Text = "Henüz program seçilmedi. Kartlara tıklayarak veya üstteki 'Hemen Teslim Et Paketi (8)' butonundan seçim yapabilirsiniz."
+            $SelectedSummaryText.Text = "Henüz program seçilmedi. Kartlara tıklayarak veya üstteki hazır paket butonlarından seçim yapabilirsiniz."
             $SelectedSummaryText.Foreground = $BrushConverter.ConvertFrom("#94A3B8")
             $ProgressStepText.Text = "Kurulum için program seçin"
             $MetricStateText.Text = "Seçim Bekleniyor"
@@ -978,22 +1139,7 @@ function Update-SelectionCounter {
     }
 }
 
-function Set-CardVisualState {
-    param($AppItem)
-    if (-not $AppItem.CardRef) { return }
-    if ($AppItem.IsSelected) {
-        $AppItem.CardRef.Background  = $BrushConverter.ConvertFrom("#172554")
-        $AppItem.CardRef.BorderBrush = $BrushConverter.ConvertFrom("#3B82F6")
-    } else {
-        $AppItem.CardRef.Background  = $BrushConverter.ConvertFrom("#111827")
-        $AppItem.CardRef.BorderBrush = $BrushConverter.ConvertFrom("#1E293B")
-    }
-    if (-not $script:IsInstalling -and $AppItem.StatusBadgeBorder) {
-        $AppItem.StatusBadgeBorder.Visibility = [Windows.Visibility]::Collapsed
-    }
-}
-
-# 6. Logolu Uygulama Kartlarını Oluşturma
+# 8. Logolu Uygulama Kartlarını Oluşturma
 foreach ($app in $AllApps) {
     $card = New-Object Windows.Controls.Border
     $card.Width = 308
@@ -1006,7 +1152,6 @@ foreach ($app in $AllApps) {
     $card.BorderThickness = New-Object Windows.Thickness(1.5)
     $card.Cursor = [Windows.Input.Cursors]::Hand
 
-    # 3 Sütunlu Kart Düzeni: [Uygulama Logosu (44x44)] | [Başlık, Kategori, Açıklama] | [Checkbox]
     $grid = New-Object Windows.Controls.Grid
     $col0 = New-Object Windows.Controls.ColumnDefinition
     $col0.Width = New-Object Windows.GridLength(52)
@@ -1018,7 +1163,6 @@ foreach ($app in $AllApps) {
     $grid.ColumnDefinitions.Add($col1)
     $grid.ColumnDefinitions.Add($col2)
 
-    # Sol: Uygulama Logo Kutusu (Gerçek Logo + Marka Renkli Yedek Rozet)
     $logoContainer = New-Object Windows.Controls.Grid
     $logoContainer.Width = 42
     $logoContainer.Height = 42
@@ -1053,7 +1197,6 @@ foreach ($app in $AllApps) {
     $logoContainer.Children.Add($fallbackBorder) | Out-Null
     $logoContainer.Children.Add($imgBorder) | Out-Null
 
-    # Orta: Başlık, Kategori + Durum Rozeti, Açıklama
     $stack = New-Object Windows.Controls.StackPanel
     $stack.Margin = New-Object Windows.Thickness(2, 0, 4, 0)
     [Windows.Controls.Grid]::SetColumn($stack, 1)
@@ -1112,12 +1255,11 @@ foreach ($app in $AllApps) {
     $stack.Children.Add($metaGrid) | Out-Null
     $stack.Children.Add($descBlock) | Out-Null
 
-    # Sağ: Seçim Kutusu (CheckBox)
     $cb = New-Object Windows.Controls.CheckBox
     $cb.VerticalAlignment = [Windows.VerticalAlignment]::Top
     $cb.HorizontalAlignment = [Windows.HorizontalAlignment]::Right
     $cb.Margin = New-Object Windows.Thickness(0, 3, 0, 0)
-    $cb.IsChecked = $app.IsSelected
+    $cb.IsChecked = $false
     [Windows.Controls.Grid]::SetColumn($cb, 2)
 
     $grid.Children.Add($logoContainer) | Out-Null
@@ -1132,7 +1274,6 @@ foreach ($app in $AllApps) {
     $app.StatusBadgeBorder = $statusBadgeBorder
     $app.StatusBadgeText   = $statusBadgeText
 
-    # Önbellekte (.icons klasöründe) uygulama logosu varsa hemen yükle
     if (Test-Path -LiteralPath $app.IconCachePath) {
         if (Set-AppCardLogoFromFile -AppItem $app -FilePath $app.IconCachePath) {
             $imgBorder.Visibility = [Windows.Visibility]::Visible
@@ -1168,7 +1309,386 @@ foreach ($app in $AllApps) {
     $AppsWrapPanel.Children.Add($card) | Out-Null
 }
 
-# 7. Arka Planda Gerçek Uygulama Logolarını İndirip Önbelleğe (.icons) Kaydeden Motor
+# Form açılışında sistemde yüklü programları tara ve yeşil "YÜKLÜ" rozetlerini göster
+Write-GuiLog "Hızlı Kurulum Merkezi hazır (Geliştirici: Serkan Altın). Toplam $($AllApps.Count) katılımsız paket yüklendi."
+Scan-InstalledApplications
+
+$BtnRescanInstalled.Add_Click({
+    if ($script:IsInstalling) { return }
+    Scan-InstalledApplications
+})
+
+# 9. Özel Paket Oluşturma / Düzenleme / Ad Değiştirme / Silme Penceresi ve Üst Paket Barı
+function Show-PackageEditorDialog {
+    param(
+        [PSCustomObject]$ExistingPackage = $null,
+        [switch]$CreateFromCurrentSelection
+    )
+
+    [xml]$dlgXaml = @"
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Paket Oluştur / Düzenle"
+        Width="560" Height="640"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#0F172A" Foreground="#F8FAFC"
+        FontFamily="Segoe UI">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,14">
+            <TextBlock x:Name="DlgHeaderTitle" Text="Yeni Kurulum Paketi Oluştur" FontSize="18" FontWeight="Bold" Foreground="#F8FAFC"/>
+            <TextBlock Text="Paket adını belirleyin ve bu pakete dahil edilecek programları işaretleyin (ozel_paketler.json dosyasına kaydedilir)." FontSize="11.5" Foreground="#94A3B8" Margin="0,3,0,0" TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <!-- Paket Adı Girişi -->
+        <StackPanel Grid.Row="1" Margin="0,0,0,12">
+            <TextBlock Text="PAKET ADI (Örn: İK Paketi, Muhasebe Paketi, Hemen Teslim Et)" FontSize="11" FontWeight="Bold" Foreground="#38BDF8" Margin="0,0,0,5"/>
+            <Border Background="#090D16" BorderBrush="#334155" BorderThickness="1" CornerRadius="7" Padding="10,6">
+                <TextBox x:Name="TxtPackageName" Background="Transparent" Foreground="#F8FAFC" BorderThickness="0" FontSize="14" CaretBrush="#38BDF8"/>
+            </Border>
+        </StackPanel>
+
+        <!-- Program Arama ve Sayaç -->
+        <Grid Grid.Row="2" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0" Background="#090D16" BorderBrush="#334155" BorderThickness="1" CornerRadius="7" Padding="8,5">
+                <TextBox x:Name="TxtDlgSearch" Background="Transparent" Foreground="#F8FAFC" BorderThickness="0" FontSize="12.5" CaretBrush="#38BDF8" Tag="Program ara..."/>
+            </Border>
+            <TextBlock x:Name="TxtDlgSelectedCount" Grid.Column="1" Text="0 program seçili" FontSize="12" FontWeight="Bold" Foreground="#34D399" VerticalAlignment="Center" Margin="12,0,0,0"/>
+        </Grid>
+
+        <!-- Program Seçim Listesi -->
+        <Border Grid.Row="3" Background="#090D16" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="10">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel x:Name="DlgAppsStackPanel"/>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Alt Butonlar: Sil, İptal, Kaydet -->
+        <Grid Grid.Row="4" Margin="0,16,0,0">
+            <Button x:Name="BtnDlgDelete" Content="Paketi Sil" HorizontalAlignment="Left" Visibility="Collapsed"
+                    Background="#7F1D1D" Foreground="#FECACA" BorderBrush="#EF4444" BorderThickness="1" Padding="14,8" FontWeight="Bold" Cursor="Hand"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="BtnDlgCancel" Content="İptal" Background="#1E293B" Foreground="#CBD5E1" BorderBrush="#334155" BorderThickness="1" Padding="16,8" Margin="0,0,10,0" FontWeight="SemiBold" Cursor="Hand"/>
+                <Button x:Name="BtnDlgSave" Content="Paketi Kaydet" Background="#059669" Foreground="#FFFFFF" BorderBrush="#10B981" BorderThickness="1" Padding="20,8" FontWeight="Bold" Cursor="Hand"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
+"@
+
+    $dlgReader = New-Object System.Xml.XmlNodeReader $dlgXaml
+    $dlgWin = [Windows.Markup.XamlReader]::Load($dlgReader)
+    $dlgWin.Owner = $Window
+
+    $DlgHeaderTitle      = $dlgWin.FindName("DlgHeaderTitle")
+    $TxtPackageName      = $dlgWin.FindName("TxtPackageName")
+    $TxtDlgSearch        = $dlgWin.FindName("TxtDlgSearch")
+    $TxtDlgSelectedCount = $dlgWin.FindName("TxtDlgSelectedCount")
+    $DlgAppsStackPanel   = $dlgWin.FindName("DlgAppsStackPanel")
+    $BtnDlgDelete        = $dlgWin.FindName("BtnDlgDelete")
+    $BtnDlgCancel        = $dlgWin.FindName("BtnDlgCancel")
+    $BtnDlgSave          = $dlgWin.FindName("BtnDlgSave")
+
+    $initialAppIds = @()
+    if ($ExistingPackage) {
+        $DlgHeaderTitle.Text = "Paketi Düzenle: $($ExistingPackage.Name)"
+        $TxtPackageName.Text = $ExistingPackage.Name
+        $initialAppIds       = @($ExistingPackage.AppIds)
+        $BtnDlgDelete.Visibility = [Windows.Visibility]::Visible
+    } elseif ($CreateFromCurrentSelection) {
+        $initialAppIds = @($AllApps | Where-Object { $_.IsSelected } | Select-Object -ExpandProperty Id)
+    }
+
+    $dlgCheckBoxes = New-Object System.Collections.Generic.List[Windows.Controls.CheckBox]
+
+    $updateDlgCount = {
+        $c = @($dlgCheckBoxes | Where-Object { $_.IsChecked }).Count
+        $TxtDlgSelectedCount.Text = "$c program seçili"
+    }
+
+    foreach ($app in $AllApps) {
+        $cb = New-Object Windows.Controls.CheckBox
+        $cb.Margin = New-Object Windows.Thickness(4, 5, 4, 5)
+        $cb.Foreground = $BrushConverter.ConvertFrom("#F8FAFC")
+        $cb.FontSize = 12.5
+        $cb.IsChecked = ($initialAppIds -contains $app.Id)
+        $cb.Tag = $app
+
+        $statusSuffix = if ($app.IsInstalled) { "  [Sistemde Yüklü]" } else { "" }
+        $cb.Content = "$($app.Name)  ($($app.Category))$statusSuffix"
+
+        $cb.Add_Checked($updateDlgCount)
+        $cb.Add_Unchecked($updateDlgCount)
+
+        $dlgCheckBoxes.Add($cb)
+        $DlgAppsStackPanel.Children.Add($cb) | Out-Null
+    }
+
+    & $updateDlgCount
+
+    $TxtDlgSearch.Add_TextChanged({
+        $q = $TxtDlgSearch.Text.Trim().ToLower()
+        foreach ($cb in $dlgCheckBoxes) {
+            $a = $cb.Tag
+            $vis = [string]::IsNullOrEmpty($q) -or $a.Name.ToLower().Contains($q) -or $a.Category.ToLower().Contains($q)
+            $cb.Visibility = if ($vis) { [Windows.Visibility]::Visible } else { [Windows.Visibility]::Collapsed }
+        }
+    })
+
+    $BtnDlgCancel.Add_Click({
+        $dlgWin.Close()
+    })
+
+    $BtnDlgDelete.Add_Click({
+        if (-not $ExistingPackage) { return }
+        $confirm = [System.Windows.MessageBox]::Show(
+            "'$($ExistingPackage.Name)' paketini kalıcı olarak silmek istediğinize emin misiniz?",
+            "Paketi Sil",
+            [System.Windows.MessageBoxButton]::YesNo,
+            [System.Windows.MessageBoxImage]::Warning
+        )
+        if ($confirm -eq [System.Windows.MessageBoxResult]::Yes) {
+            [void]$script:SavedPackages.Remove($ExistingPackage)
+            Save-PackagesToJson
+            Rebuild-PackageButtonsBar
+            Write-GuiLog "'$($ExistingPackage.Name)' paketi silindi."
+            $dlgWin.Close()
+        }
+    })
+
+    $BtnDlgSave.Add_Click({
+        $newName = $TxtPackageName.Text.Trim()
+        if ([string]::IsNullOrWhiteSpace($newName)) {
+            [System.Windows.MessageBox]::Show("Lütfen paket için bir isim girin (Örn: İK Paketi, Muhasebe Paketi).", "Paket Adı Gerekli", [System.Windows.MessageBoxButton]::OK, [System.Windows.MessageBoxImage]::Information) | Out-Null
+            return
+        }
+
+        $chosenIds = @($dlgCheckBoxes | Where-Object { $_.IsChecked } | ForEach-Object { $_.Tag.Id })
+        if ($chosenIds.Count -eq 0) {
+            [System.Windows.MessageBox]::Show("Lütfen pakete dahil edilecek en az 1 program seçin.", "Program Seçilmedi", [System.Windows.MessageBoxButton]::OK, [System.Windows.MessageBoxImage]::Information) | Out-Null
+            return
+        }
+
+        if ($ExistingPackage) {
+            $ExistingPackage.Name   = $newName
+            $ExistingPackage.AppIds = $chosenIds
+            Write-GuiLog "'$newName' paketi güncellendi ($($chosenIds.Count) program)."
+        } else {
+            # Aynı isimde paket varsa üzerine yaz, yoksa yeni ekle
+            $sameNamePkg = $script:SavedPackages | Where-Object { $_.Name.ToLower() -eq $newName.ToLower() } | Select-Object -First 1
+            if ($sameNamePkg) {
+                $sameNamePkg.Name   = $newName
+                $sameNamePkg.AppIds = $chosenIds
+                Write-GuiLog "'$newName' paketi güncellendi ($($chosenIds.Count) program)."
+            } else {
+                $script:SavedPackages.Add([PSCustomObject]@{
+                    Name   = $newName
+                    Style  = "Custom"
+                    AppIds = $chosenIds
+                })
+                Write-GuiLog "Yeni paket oluşturuldu ve ozel_paketler.json dosyasına kaydedildi: '$newName' ($($chosenIds.Count) program)."
+            }
+        }
+
+        Save-PackagesToJson
+        Rebuild-PackageButtonsBar
+        $dlgWin.Close()
+    })
+
+    $TxtPackageName.Focus()
+    $dlgWin.ShowDialog() | Out-Null
+}
+
+function Apply-SavedPackage {
+    param([PSCustomObject]$PackageObj)
+    if ($script:IsInstalling) { return }
+
+    # Önce sistemde yüklü olanları güncel olarak kontrol et
+    Scan-InstalledApplications -SilentLog
+
+    $skippedInstalled = New-Object System.Collections.Generic.List[string]
+    $selectedForInstall = 0
+
+    foreach ($app in $AllApps) {
+        if ($PackageObj.AppIds -contains $app.Id) {
+            if ($app.IsInstalled) {
+                # Sistemde zaten YÜKLÜ olan programları otomatik atla
+                $app.CheckBoxRef.IsChecked = $false
+                $skippedInstalled.Add($app.Name)
+            } else {
+                $app.CheckBoxRef.IsChecked = $true
+                $selectedForInstall++
+            }
+        } else {
+            $app.CheckBoxRef.IsChecked = $false
+        }
+        Set-CardVisualState -AppItem $app
+    }
+
+    $SearchBox.Text = ""
+    # Eğer kurulu olmayan program seçildiyse Seçilenleri Göster görünümüne geç; hepsi zaten yüklüyse tümünü göster
+    $script:ShowSelectedOnly = ($selectedForInstall -gt 0)
+    Update-SelectionCounter
+    Update-AppFilter
+
+    if ($skippedInstalled.Count -gt 0) {
+        Write-GuiLog "'$($PackageObj.Name)' seçildi: $selectedForInstall program kuruluma hazır. Sistemde zaten YÜKLÜ olduğu için atlanan ($($skippedInstalled.Count)): $($skippedInstalled -join ', ')"
+    } else {
+        Write-GuiLog "'$($PackageObj.Name)' seçildi ($selectedForInstall program kuruluma hazır)."
+    }
+}
+
+function Rebuild-PackageButtonsBar {
+    $PackagesTopBarPanel.Children.Clear()
+
+    foreach ($pkg in $script:SavedPackages) {
+        $pkgCount = @($pkg.AppIds).Count
+
+        # Paket Kapsayıcı (Sol: Paket Seçim Butonu | Sağ: Düzenle/Sil Mini Butonu + Sağ Tık Menüsü)
+        $btn = New-Object Windows.Controls.Button
+        $btn.Style = if ($pkg.Style -eq "Green") { $Window.FindResource("HemenTeslimButtonStyle") } else { $Window.FindResource("ActionButtonStyle") }
+        $btn.Margin = New-Object Windows.Thickness(0, 2, 8, 2)
+        $btn.Tag = $pkg
+
+        $appNamesPreview = ($AllApps | Where-Object { $pkg.AppIds -contains $_.Id } | Select-Object -ExpandProperty Name) -join ", "
+        $btn.ToolTip = "$($pkg.Name) ($pkgCount Program): $appNamesPreview`r`n`r`n• Sol Tık: Paketi Seç (Yüklü olanları otomatik atlar)`r`n• Sağ Tık veya ⚙ İkonu: Paketi Düzenle / Program Ekle-Çıkar / Ad Değiştir / Sil"
+
+        $sp = New-Object Windows.Controls.StackPanel
+        $sp.Orientation = [Windows.Controls.Orientation]::Horizontal
+        $sp.VerticalAlignment = [Windows.VerticalAlignment]::Center
+
+        $iconGlyph = if ($pkg.Style -eq "Green") { [string][char]0xE73E } elseif ($pkg.Style -eq "Default") { [string][char]0xE90F } else { [string][char]0xE7B8 }
+        $ic = New-Object Windows.Controls.TextBlock
+        $ic.Text = $iconGlyph
+        $ic.FontFamily = New-Object Windows.Media.FontFamily("Segoe MDL2 Assets")
+        $ic.FontSize = 12.5
+        $ic.Margin = New-Object Windows.Thickness(0, 0, 7, 0)
+        $ic.VerticalAlignment = [Windows.VerticalAlignment]::Center
+        if ($pkg.Style -ne "Green") {
+            $ic.Foreground = $BrushConverter.ConvertFrom("#38BDF8")
+        }
+
+        $txt = New-Object Windows.Controls.TextBlock
+        $txt.Text = "$($pkg.Name) ($pkgCount)"
+        $txt.VerticalAlignment = [Windows.VerticalAlignment]::Center
+
+        # Yanındaki küçük düzenle/yönet butonu (⚙)
+        $editGear = New-Object Windows.Controls.TextBlock
+        $editGear.Text = [string][char]0xE713
+        $editGear.FontFamily = New-Object Windows.Media.FontFamily("Segoe MDL2 Assets")
+        $editGear.FontSize = 11.5
+        $editGear.Opacity = 0.8
+        $editGear.Margin = New-Object Windows.Thickness(8, 0, 0, 0)
+        $editGear.VerticalAlignment = [Windows.VerticalAlignment]::Center
+        $editGear.ToolTip = "Paketi Düzenle / Ad Değiştir / Sil"
+        $editGear.Tag = $pkg
+
+        $editGear.Add_MouseLeftButtonDown({
+            param($sender, $e)
+            $e.Handled = $true
+            if ($script:IsInstalling) { return }
+            Show-PackageEditorDialog -ExistingPackage $sender.Tag
+        })
+
+        $sp.Children.Add($ic) | Out-Null
+        $sp.Children.Add($txt) | Out-Null
+        $sp.Children.Add($editGear) | Out-Null
+        $btn.Content = $sp
+
+        # Sağ Tık Menüsü (ContextMenu): Paketi Düzenle, Seçili Programlarla Güncelle, Paketi Sil
+        $ctxMenu = New-Object Windows.Controls.ContextMenu
+
+        $miEdit = New-Object Windows.Controls.MenuItem
+        $miEdit.Header = "Paketi Düzenle (Program Ekle/Çıkar veya Ad Değiştir)..."
+        $miEdit.Tag = $pkg
+        $miEdit.Add_Click({
+            param($sender, $e)
+            if ($script:IsInstalling) { return }
+            Show-PackageEditorDialog -ExistingPackage $sender.Tag
+        })
+
+        $miUpdateFromSel = New-Object Windows.Controls.MenuItem
+        $miUpdateFromSel.Header = "Ekranda Seçili Olan Programları Bu Pakete Kaydet"
+        $miUpdateFromSel.Tag = $pkg
+        $miUpdateFromSel.Add_Click({
+            param($sender, $e)
+            if ($script:IsInstalling) { return }
+            $targetPkg = $sender.Tag
+            $curSel = @($AllApps | Where-Object { $_.IsSelected } | Select-Object -ExpandProperty Id)
+            if ($curSel.Count -eq 0) {
+                [System.Windows.MessageBox]::Show("Önce ekrandan pakete kaydetmek istediğiniz programları işaretleyin.", "Seçili Program Yok", [System.Windows.MessageBoxButton]::OK, [System.Windows.MessageBoxImage]::Information) | Out-Null
+                return
+            }
+            $targetPkg.AppIds = $curSel
+            Save-PackagesToJson
+            Rebuild-PackageButtonsBar
+            Write-GuiLog "'$($targetPkg.Name)' paketi ekranda seçili olan $($curSel.Count) programla güncellendi."
+        })
+
+        $miDelete = New-Object Windows.Controls.MenuItem
+        $miDelete.Header = "Paketi Sil"
+        $miDelete.Tag = $pkg
+        $miDelete.Add_Click({
+            param($sender, $e)
+            if ($script:IsInstalling) { return }
+            $targetPkg = $sender.Tag
+            $confirm = [System.Windows.MessageBox]::Show(
+                "'$($targetPkg.Name)' paketini silmek istediğinize emin misiniz?",
+                "Paketi Sil",
+                [System.Windows.MessageBoxButton]::YesNo,
+                [System.Windows.MessageBoxImage]::Warning
+            )
+            if ($confirm -eq [System.Windows.MessageBoxResult]::Yes) {
+                [void]$script:SavedPackages.Remove($targetPkg)
+                Save-PackagesToJson
+                Rebuild-PackageButtonsBar
+                Write-GuiLog "'$($targetPkg.Name)' paketi silindi."
+            }
+        })
+
+        $ctxMenu.Items.Add($miEdit) | Out-Null
+        $ctxMenu.Items.Add($miUpdateFromSel) | Out-Null
+        $ctxMenu.Items.Add((New-Object Windows.Controls.Separator)) | Out-Null
+        $ctxMenu.Items.Add($miDelete) | Out-Null
+        $btn.ContextMenu = $ctxMenu
+
+        $btn.Add_Click({
+            param($sender, $e)
+            Apply-SavedPackage -PackageObj $sender.Tag
+        })
+
+        $PackagesTopBarPanel.Children.Add($btn) | Out-Null
+    }
+
+    # "+ Yeni Paket Oluştur" Butonu
+    $btnNewPkg = New-Object Windows.Controls.Button
+    $btnNewPkg.Style = $Window.FindResource("NewPackageButtonStyle")
+    $btnNewPkg.Margin = New-Object Windows.Thickness(0, 2, 0, 2)
+    $btnNewPkg.Content = "+ Yeni Paket Oluştur"
+    $btnNewPkg.ToolTip = "Seçtiğiniz programlardan yeni bir kurulum paketi (Örn: İK Paketi, Muhasebe Paketi) oluşturur ve ozel_paketler.json dosyasına kaydeder"
+    $btnNewPkg.Add_Click({
+        if ($script:IsInstalling) { return }
+        Show-PackageEditorDialog -CreateFromCurrentSelection
+    })
+
+    $PackagesTopBarPanel.Children.Add($btnNewPkg) | Out-Null
+}
+
+Rebuild-PackageButtonsBar
+
+# 10. Arka Planda Gerçek Uygulama Logolarını İndirip Önbelleğe (.icons) Kaydeden Motor
 $missingIconApps = @($AllApps | Where-Object { $_.Domain -and -not (Test-Path -LiteralPath $_.IconCachePath) })
 if ($missingIconApps.Count -gt 0) {
     $iconSync = [hashtable]::Synchronized(@{
@@ -1202,9 +1722,7 @@ if ($missingIconApps.Count -gt 0) {
                     [System.IO.File]::WriteAllBytes($item.CachePath, $bytes)
                     $iconSync.CompletedQueue.Enqueue($item.Id)
                 }
-            } catch {
-                # İnternet yoksa veya erişilemezse marka renkli rozet kalır
-            }
+            } catch {}
         }
         $wc.Dispose()
         $iconSync.IsDone = $true
@@ -1244,7 +1762,7 @@ if ($missingIconApps.Count -gt 0) {
     $iconTimer.Start()
 }
 
-# 8. Sol Kategori Menüsünü İkonlu Olarak Oluşturma ve Filtreleme
+# 11. Sol Kategori Menüsünü İkonlu Olarak Oluşturma ve Filtreleme
 $DistinctCategories = $AllApps | Select-Object -ExpandProperty Category -Unique
 $OrderedCats = @("Tümü")
 foreach ($c in $CategoryOrder) {
@@ -1378,11 +1896,11 @@ $BtnShowSelectedOnly.Add_Click({
     Update-AppFilter
 })
 
-# 9. Toplu Seçim ve Hazır BT Profil Butonları
+# 12. Toplu Seçim Butonları (Kategori Seçiminde de Zaten Yüklü Olanları Atlar)
 $BtnSelectCategory.Add_Click({
     if ($script:IsInstalling) { return }
     foreach ($app in $AllApps) {
-        if ($app.CardRef.Visibility -eq [Windows.Visibility]::Visible) {
+        if ($app.CardRef.Visibility -eq [Windows.Visibility]::Visible -and -not $app.IsInstalled) {
             $app.CheckBoxRef.IsChecked = $true
         }
     }
@@ -1400,29 +1918,11 @@ $BtnClearAll.Add_Click({
     Write-GuiLog "Tüm seçimler temizlendi."
 })
 
-function Select-PresetProfile {
-    param([string]$PresetKey, [string]$ProfileTitle)
-    if ($script:IsInstalling) { return }
-    foreach ($app in $AllApps) {
-        $app.CheckBoxRef.IsChecked = ($app.Presets -contains $PresetKey)
-        Set-CardVisualState -AppItem $app
-    }
-    $SearchBox.Text = ""
-    $script:ShowSelectedOnly = $true
-    Update-SelectionCounter
-    Update-AppFilter
-    $selCount = @($AllApps | Where-Object { $_.IsSelected }).Count
-    Write-GuiLog "'$ProfileTitle' seçildi ($selCount program kuruluma hazır)."
-}
-
-$BtnPresetHemenTeslim.Add_Click({ Select-PresetProfile -PresetKey "HemenTeslim" -ProfileTitle "Hemen Teslim Et Paketi" })
-$BtnPresetBasic.Add_Click({       Select-PresetProfile -PresetKey "Temel"       -ProfileTitle "BT Teknik Destek Paketi" })
-
 # İlk filtre görünümünü yükle
 Update-AppFilter
 Update-SelectionCounter
 
-# 10. Asenkron (Arayüzü Dondurmayan) Adım Adım Katılımsız Kurulum Motoru
+# 13. Asenkron (Arayüzü Dondurmayan) Adım Adım Katılımsız Kurulum Motoru
 $BtnStartInstall.Add_Click({
     if ($script:IsInstalling) { return }
     $selectedApps = @($AllApps | Where-Object { $_.IsSelected })
@@ -1433,11 +1933,11 @@ $BtnStartInstall.Add_Click({
     Rebuild-StepTrackerPreview
 
     $script:IsInstalling = $true
-    $BtnStartInstall.IsEnabled      = $false
-    $BtnSelectCategory.IsEnabled    = $false
-    $BtnClearAll.IsEnabled          = $false
-    $BtnPresetHemenTeslim.IsEnabled = $false
-    $BtnPresetBasic.IsEnabled       = $false
+    $BtnStartInstall.IsEnabled     = $false
+    $BtnSelectCategory.IsEnabled   = $false
+    $BtnClearAll.IsEnabled         = $false
+    $BtnRescanInstalled.IsEnabled  = $false
+    $PackagesTopBarPanel.IsEnabled = $false
 
     $InstallProgressBar.Maximum = $selectedApps.Count
     $InstallProgressBar.Value   = 0
@@ -1626,7 +2126,6 @@ $BtnStartInstall.Add_Click({
         $SelectedSummaryText.Text = $sh.SummaryLine
         $InstallProgressBar.Value = $sh.Completed
         $StepCounterBadge.Text    = "$($sh.Completed) / $($sh.Total) Tamamlandı"
-        $MetricInstalledText.Text = "$($sh.SuccessCount) Tamamlandı"
 
         if ($sh.IsFinished) {
             $sender.Stop()
@@ -1637,13 +2136,14 @@ $BtnStartInstall.Add_Click({
                 $ctx.Runspace.Dispose()
             } catch {}
 
-            $script:IsInstalling            = $false
-            $MetricStateText.Text           = "Kurulum Tamamlandı"
-            $BtnStartInstall.IsEnabled      = $true
-            $BtnSelectCategory.IsEnabled    = $true
-            $BtnClearAll.IsEnabled          = $true
-            $BtnPresetHemenTeslim.IsEnabled = $true
-            $BtnPresetBasic.IsEnabled       = $true
+            $script:IsInstalling           = $false
+            $MetricStateText.Text          = "Kurulum Tamamlandı"
+            $BtnStartInstall.IsEnabled     = $true
+            $BtnSelectCategory.IsEnabled   = $true
+            $BtnClearAll.IsEnabled         = $true
+            $BtnRescanInstalled.IsEnabled  = $true
+            $PackagesTopBarPanel.IsEnabled = $true
+            Scan-InstalledApplications -SilentLog
         }
     })
 

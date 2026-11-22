@@ -1,0 +1,33 @@
+﻿[
+    {
+        "Name":  "Hemen Teslim Et Paketi",
+        "Style":  "Green",
+        "AppIds":  [
+                       "Install_DtxgateSigner.ps1",
+                       "Install_Java_JRE_8.ps1",
+                       "Install_SafeNet_SAC.ps1",
+                       "Install_Adobe_Acrobat_Pro.ps1",
+                       "Install_Office365_HomePrem.ps1",
+                       "Install_Google_Chrome.ps1",
+                       "Install_WinRAR.ps1",
+                       "Install_AnyDesk.ps1"
+                   ]
+    },
+    {
+        "Name":  "BT Teknik Destek Paketi",
+        "Style":  "Default",
+        "AppIds":  [
+                       "Install_7-Zip.ps1",
+                       "Install_AnyDesk.ps1",
+                       "Install_Everything.ps1",
+                       "Install_WinDirStat.ps1",
+                       "Install_VLC_Media_Player.ps1",
+                       "Install_Notepad-Plus-Plus.ps1",
+                       "Install_PuTTY.ps1",
+                       "Install_WinSCP.ps1",
+                       "Install_.NET_6_Desktop_Runtime.ps1",
+                       "Install_.NET_8_Desktop_Runtime.ps1",
+                       "Install_VCRedist_2015-2022-x64.ps1"
+                   ]
+    }
+]
