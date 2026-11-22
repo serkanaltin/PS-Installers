@@ -577,23 +577,47 @@ Load-PackagesFromJson
                 <DockPanel>
                     <TextBlock x:Name="SidebarHeaderTitle" DockPanel.Dock="Top" Text="KATEGORİLER" FontSize="11" FontWeight="Bold" Foreground="#64748B" Margin="10,0,0,8"/>
 
-                    <!-- Sol Alt: Tıklanabilir Geliştirici İmza ve Hakkında Kartı -->
-                    <Border x:Name="DeveloperCardBorder" DockPanel.Dock="Bottom" Background="#090D16" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="9" Padding="14,11" Margin="2,12,2,0" Cursor="Hand"
-                            ToolTip="Geliştirici &amp; Hakkında (GitHub ve LinkedIn Bağlantıları için tıklayın)">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Grid.Column="0" Width="32" Height="32" CornerRadius="8" Background="#1E3A8A" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                <TextBlock Text="SA" FontSize="12" FontWeight="Bold" Foreground="#93C5FD" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <StackPanel x:Name="DeveloperCardTextStack" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
-                                <TextBlock Text="Serkan Altın" FontSize="13" FontWeight="Bold" Foreground="#F8FAFC"/>
-                                <TextBlock Text="Sistem &amp; Bilgi İşlem Otomasyonu" FontSize="11" Foreground="#38BDF8"/>
-                                <TextBlock Text="Altyapı: tylerlurie/PS-Installers" FontSize="9.5" Foreground="#64748B" Margin="0,2,0,0"/>
-                            </StackPanel>
-                        </Grid>
+                    <!-- Sol Alt: Doğrudan GitHub ve LinkedIn Butonlu Geliştirici Kartı (Ekstra Pencere Açmaz) -->
+                    <Border x:Name="DeveloperCardBorder" DockPanel.Dock="Bottom" Background="#090D16" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="9" Padding="12,10" Margin="2,10,2,0">
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Width="32" Height="32" CornerRadius="8" Background="#1E3A8A" BorderBrush="#3B82F6" BorderThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <TextBlock Text="SA" FontSize="12" FontWeight="Bold" Foreground="#93C5FD" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel x:Name="DeveloperCardTextStack" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
+                                    <TextBlock Text="Serkan Altın" FontSize="13" FontWeight="Bold" Foreground="#F8FAFC"/>
+                                    <TextBlock Text="Sistem &amp; Bilgi İşlem Otomasyonu" FontSize="10.8" Foreground="#38BDF8"/>
+                                    <TextBlock Text="Altyapı: tylerlurie/PS-Installers" FontSize="9.5" Foreground="#64748B" Margin="0,1,0,0"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Doğrudan Altında Yer Alan GitHub ve LinkedIn Butonları -->
+                            <Grid x:Name="DeveloperLinksGrid" Margin="0,9,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="6"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button x:Name="BtnDevGitHub" Grid.Column="0" Style="{StaticResource ActionButtonStyle}" Padding="6,5" FontSize="11"
+                                        ToolTip="GitHub Profilini Aç (https://github.com/serkanaltin)">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <TextBlock Text="&#xE774;" FontFamily="Segoe MDL2 Assets" FontSize="11.5" Foreground="#38BDF8" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="GitHub" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button x:Name="BtnDevLinkedIn" Grid.Column="2" Style="{StaticResource NewPackageButtonStyle}" Padding="6,5" FontSize="11"
+                                        ToolTip="LinkedIn Profilini Aç (https://www.linkedin.com/in/serkanaltin/)">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <TextBlock Text="&#xE71B;" FontFamily="Segoe MDL2 Assets" FontSize="11.5" Foreground="#93C5FD" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="LinkedIn" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                        </StackPanel>
                     </Border>
 
                     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -694,7 +718,7 @@ Load-PackagesFromJson
                 </ScrollViewer>
 
                 <!-- 4. Satır: ALT ADIM ADIM SÜREÇ TAKİP VE KATLANABİLİR CANLI GÜNLÜK PANELİ -->
-                <Border Grid.Row="3" Background="#070A12" BorderBrush="#1E293B" BorderThickness="0,1,0,0" Padding="16,8">
+                <Border x:Name="BottomPanelOuterBorder" Grid.Row="3" Background="#070A12" BorderBrush="#1E293B" BorderThickness="0,1,0,0" Padding="16,8">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="440"/>
@@ -703,7 +727,7 @@ Load-PackagesFromJson
                         </Grid.ColumnDefinitions>
 
                         <!-- Sol Sütun: Seçilen Programların Adım Adım Durum Tablosu -->
-                        <Border Grid.Column="0" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="12,7">
+                        <Border x:Name="StepTrackerInnerBorder" Grid.Column="0" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="12,7">
                             <DockPanel>
                                 <Grid DockPanel.Dock="Top" Margin="0,0,0,4">
                                     <TextBlock Text="ADIM ADIM KURULUM SÜRECİ" FontSize="11" FontWeight="Bold" Foreground="#38BDF8" VerticalAlignment="Center"/>
@@ -716,7 +740,7 @@ Load-PackagesFromJson
                         </Border>
 
                         <!-- Sağ Sütun: Katlanabilir ve Temizlenebilir Detaylı Canlı Kurulum Günlüğü -->
-                        <Border Grid.Column="2" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="12,7">
+                        <Border x:Name="LogPanelInnerBorder" Grid.Column="2" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="12,7">
                             <DockPanel>
                                 <Grid DockPanel.Dock="Top" Margin="0,0,0,4">
                                     <Grid.ColumnDefinitions>
@@ -727,8 +751,8 @@ Load-PackagesFromJson
                                     <TextBlock Grid.Column="0" Text="CANLI İŞLEM GÜNLÜĞÜ" FontSize="11" FontWeight="Bold" Foreground="#64748B" VerticalAlignment="Center"/>
                                     <TextBlock x:Name="ProgressStepText" Grid.Column="1" Text="Kurulum için program seçin" FontSize="11.5" FontWeight="Bold" Foreground="#38BDF8" HorizontalAlignment="Right" Margin="10,0,10,0" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
                                     <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                                        <Button x:Name="BtnClearLog" Style="{StaticResource ActionButtonStyle}" Content="Logu Temizle" Padding="8,2" FontSize="10.5" Margin="0,0,6,0" ToolTip="Günlük kayıtlarını temizler"/>
-                                        <Button x:Name="BtnToggleLogPanel" Style="{StaticResource ActionButtonStyle}" Content="Gizle ▼" Padding="8,2" FontSize="10.5" ToolTip="Alt günlük panelini daraltır veya genişletir"/>
+                                        <Button x:Name="BtnClearLog" Style="{StaticResource ActionButtonStyle}" Content="Logu Temizle" Padding="9,3" FontSize="11" Margin="0,0,6,0" ToolTip="Günlük kayıtlarını temizler"/>
+                                        <Button x:Name="BtnToggleLogPanel" Style="{StaticResource ActionButtonStyle}" Content="Gizle ▼" Padding="9,3" FontSize="11" ToolTip="Alt günlük panelini daraltır veya genişletir"/>
                                     </StackPanel>
                                 </Grid>
                                 <TextBox x:Name="LogTextBox" Background="Transparent" Foreground="#A7F3D0" BorderThickness="0"
@@ -792,6 +816,9 @@ $SidebarBorder            = $Window.FindName("SidebarBorder")
 $SidebarHeaderTitle       = $Window.FindName("SidebarHeaderTitle")
 $DeveloperCardBorder      = $Window.FindName("DeveloperCardBorder")
 $DeveloperCardTextStack   = $Window.FindName("DeveloperCardTextStack")
+$DeveloperLinksGrid       = $Window.FindName("DeveloperLinksGrid")
+$BtnDevGitHub             = $Window.FindName("BtnDevGitHub")
+$BtnDevLinkedIn           = $Window.FindName("BtnDevLinkedIn")
 $CategoryListPanel        = $Window.FindName("CategoryListPanel")
 $CardMetricTotal          = $Window.FindName("CardMetricTotal")
 $CardMetricSelected       = $Window.FindName("CardMetricSelected")
@@ -808,6 +835,9 @@ $CurrentCategoryTitle     = $Window.FindName("CurrentCategoryTitle")
 $CurrentCategoryCount     = $Window.FindName("CurrentCategoryCount")
 $AppsWrapPanel            = $Window.FindName("AppsWrapPanel")
 $BottomPanelRow           = $Window.FindName("BottomPanelRow")
+$BottomPanelOuterBorder   = $Window.FindName("BottomPanelOuterBorder")
+$StepTrackerInnerBorder   = $Window.FindName("StepTrackerInnerBorder")
+$LogPanelInnerBorder      = $Window.FindName("LogPanelInnerBorder")
 $StepProgressScrollViewer = $Window.FindName("StepProgressScrollViewer")
 $StepProgressPanel        = $Window.FindName("StepProgressPanel")
 $StepCounterBadge         = $Window.FindName("StepCounterBadge")
@@ -1352,104 +1382,13 @@ $BtnRescanInstalled.Add_Click({
     if ($script:ShowInstalledOnly) { Update-AppFilter }
 })
 
-# Geliştirici Kartı Hover ve Tıklama (Geliştirici & Hakkında Modal Penceresi)
-$DeveloperCardBorder.Add_MouseEnter({
-    $DeveloperCardBorder.Background  = $BrushConverter.ConvertFrom("#111C33")
-    $DeveloperCardBorder.BorderBrush = $BrushConverter.ConvertFrom("#3B82F6")
-})
-$DeveloperCardBorder.Add_MouseLeave({
-    $DeveloperCardBorder.Background  = $BrushConverter.ConvertFrom("#090D16")
-    $DeveloperCardBorder.BorderBrush = $BrushConverter.ConvertFrom("#1E293B")
+# Sol Alt Geliştirici Kartındaki Doğrudan GitHub ve LinkedIn Butonları
+$BtnDevGitHub.Add_Click({
+    Start-Process "https://github.com/serkanaltin"
 })
 
-function Show-DeveloperAboutDialog {
-    [xml]$aboutXaml = @"
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Geliştirici &amp; Hakkında"
-        Width="460" Height="360"
-        WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize"
-        Background="#0F172A" Foreground="#F8FAFC"
-        FontFamily="Segoe UI">
-    <Grid Margin="24">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-
-        <!-- Üst Profil Başlığı -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,16">
-            <Border Width="54" Height="54" CornerRadius="14" Background="#1E3A8A" BorderBrush="#3B82F6" BorderThickness="1.5">
-                <TextBlock Text="SA" FontSize="20" FontWeight="Bold" Foreground="#93C5FD" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <StackPanel VerticalAlignment="Center" Margin="14,0,0,0">
-                <TextBlock Text="Serkan Altın" FontSize="20" FontWeight="Bold" Foreground="#F8FAFC"/>
-                <TextBlock Text="Sistem &amp; Bilgi İşlem Otomasyonu" FontSize="13" FontWeight="SemiBold" Foreground="#38BDF8" Margin="0,2,0,0"/>
-            </StackPanel>
-        </StackPanel>
-
-        <!-- Orta Açıklama ve Sosyal Medya Bağlantı Butonları -->
-        <StackPanel Grid.Row="1">
-            <TextBlock Text="Hızlı Kurulum Merkezi; Bilgi İşlem (BT) operasyonlarını hızlandırmak, kurumsal bilgisayar hazırlama süreçlerini tek tıkla katılımsız hale getirmek amacıyla geliştirilmiştir."
-                       FontSize="12.5" Foreground="#94A3B8" TextWrapping="Wrap" Margin="0,0,0,18"/>
-
-            <TextBlock Text="GELİŞTİRİCİ BAĞLANTILARI" FontSize="10.5" FontWeight="Bold" Foreground="#64748B" Margin="0,0,0,8"/>
-
-            <Grid Margin="0,0,0,10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="12"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- GitHub Butonu -->
-                <Button x:Name="BtnOpenGitHub" Grid.Column="0" Background="#1E293B" Foreground="#F8FAFC" BorderBrush="#334155" BorderThickness="1"
-                        Padding="12,10" FontWeight="Bold" FontSize="13" Cursor="Hand" ToolTip="https://github.com/serkanaltin">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <TextBlock Text="&#xE774;" FontFamily="Segoe MDL2 Assets" FontSize="14" Foreground="#38BDF8" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="GitHub Profili" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
-
-                <!-- LinkedIn Butonu -->
-                <Button x:Name="BtnOpenLinkedIn" Grid.Column="2" Background="#1E3A8A" Foreground="#FFFFFF" BorderBrush="#3B82F6" BorderThickness="1"
-                        Padding="12,10" FontWeight="Bold" FontSize="13" Cursor="Hand" ToolTip="https://www.linkedin.com/in/serkanaltin/">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <TextBlock Text="&#xE71B;" FontFamily="Segoe MDL2 Assets" FontSize="14" Foreground="#93C5FD" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="LinkedIn Profili" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
-            </Grid>
-
-            <TextBlock Text="Açık Kaynak Altyapı Atfı: tylerlurie/PS-Installers (MIT License)" FontSize="11" Foreground="#64748B" Margin="0,4,0,0"/>
-        </StackPanel>
-
-        <!-- Alt Kapat Butonu -->
-        <Button x:Name="BtnCloseAbout" Grid.Row="2" Content="Kapat" HorizontalAlignment="Right"
-                Background="#1E293B" Foreground="#CBD5E1" BorderBrush="#334155" BorderThickness="1" Padding="20,7" FontWeight="SemiBold" Cursor="Hand"/>
-    </Grid>
-</Window>
-"@
-
-    $abReader = New-Object System.Xml.XmlNodeReader $aboutXaml
-    $abWin = [Windows.Markup.XamlReader]::Load($abReader)
-    $abWin.Owner = $Window
-
-    $btnGH = $abWin.FindName("BtnOpenGitHub")
-    $btnLI = $abWin.FindName("BtnOpenLinkedIn")
-    $btnCl = $abWin.FindName("BtnCloseAbout")
-
-    $btnGH.Add_Click({ Start-Process "https://github.com/serkanaltin" })
-    $btnLI.Add_Click({ Start-Process "https://www.linkedin.com/in/serkanaltin/" })
-    $btnCl.Add_Click({ $abWin.Close() })
-
-    $abWin.ShowDialog() | Out-Null
-}
-
-$DeveloperCardBorder.Add_MouseLeftButtonUp({
-    Show-DeveloperAboutDialog
+$BtnDevLinkedIn.Add_Click({
+    Start-Process "https://www.linkedin.com/in/serkanaltin/"
 })
 
 # Katlanabilir ve Temizlenebilir Canlı İşlem Günlüğü Kontrolleri
@@ -1458,12 +1397,18 @@ function Set-LogPanelExpanded {
     if ($Expanded) {
         $script:IsLogCollapsed = $false
         $BottomPanelRow.Height = New-Object Windows.GridLength(215)
+        $BottomPanelOuterBorder.Padding = New-Object Windows.Thickness(16, 8, 16, 8)
+        $StepTrackerInnerBorder.Padding = New-Object Windows.Thickness(12, 7, 12, 7)
+        $LogPanelInnerBorder.Padding    = New-Object Windows.Thickness(12, 7, 12, 7)
         $LogTextBox.Visibility = [Windows.Visibility]::Visible
         $StepProgressScrollViewer.Visibility = [Windows.Visibility]::Visible
         $BtnToggleLogPanel.Content = "Gizle ▼"
     } else {
         $script:IsLogCollapsed = $true
-        $BottomPanelRow.Height = New-Object Windows.GridLength(44)
+        $BottomPanelRow.Height = [Windows.GridLength]::Auto
+        $BottomPanelOuterBorder.Padding = New-Object Windows.Thickness(16, 5, 16, 5)
+        $StepTrackerInnerBorder.Padding = New-Object Windows.Thickness(12, 5, 12, 5)
+        $LogPanelInnerBorder.Padding    = New-Object Windows.Thickness(12, 5, 12, 5)
         $LogTextBox.Visibility = [Windows.Visibility]::Collapsed
         $StepProgressScrollViewer.Visibility = [Windows.Visibility]::Collapsed
         $BtnToggleLogPanel.Content = "Göster ▲"
@@ -1483,23 +1428,25 @@ $BtnToggleLogPanel.Add_Click({
 $BtnToggleSidebar.Add_Click({
     $script:IsSidebarCollapsed = -not $script:IsSidebarCollapsed
     if ($script:IsSidebarCollapsed) {
-        $SidebarColumn.Width = New-Object Windows.GridLength(58)
+        $SidebarColumn.Width = New-Object Windows.GridLength(64)
         $SidebarBorder.Padding = New-Object Windows.Thickness(4, 14, 4, 14)
         $SidebarHeaderTitle.Visibility = [Windows.Visibility]::Collapsed
         $DeveloperCardTextStack.Visibility = [Windows.Visibility]::Collapsed
+        $DeveloperLinksGrid.Visibility = [Windows.Visibility]::Collapsed
         $DeveloperCardBorder.Padding = New-Object Windows.Thickness(6, 8, 6, 8)
         foreach ($tb in $script:CategoryTextBlocks) {
             $tb.Visibility = [Windows.Visibility]::Collapsed
         }
         foreach ($btn in $CategoryButtons.Values) {
-            $btn.Padding = New-Object Windows.Thickness(4, 9, 4, 9)
+            $btn.Padding = New-Object Windows.Thickness(6, 9, 6, 9)
         }
     } else {
         $SidebarColumn.Width = New-Object Windows.GridLength(265)
         $SidebarBorder.Padding = New-Object Windows.Thickness(12, 14, 12, 14)
         $SidebarHeaderTitle.Visibility = [Windows.Visibility]::Visible
         $DeveloperCardTextStack.Visibility = [Windows.Visibility]::Visible
-        $DeveloperCardBorder.Padding = New-Object Windows.Thickness(14, 11, 14, 11)
+        $DeveloperLinksGrid.Visibility = [Windows.Visibility]::Visible
+        $DeveloperCardBorder.Padding = New-Object Windows.Thickness(12, 10, 12, 10)
         foreach ($tb in $script:CategoryTextBlocks) {
             $tb.Visibility = [Windows.Visibility]::Visible
         }
@@ -1520,7 +1467,7 @@ $CardMetricTotal.Add_MouseLeftButtonUp({
 
 $CardMetricSelected.Add_MouseLeftButtonUp({
     $script:ShowInstalledOnly = $false
-    $script:ShowSelectedOnly  = $true
+    $script:ShowSelectedOnly  = -not $script:ShowSelectedOnly
     Update-SelectionCounter
     Update-AppFilter
 })
@@ -1570,16 +1517,22 @@ function Show-PackageEditorDialog {
             </Border>
         </StackPanel>
 
-        <!-- Program Arama ve Sayaç -->
+        <!-- Program Arama ve Hızlı Seçim / Sayaç -->
         <Grid Grid.Row="2" Margin="0,0,0,8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Border Grid.Column="0" Background="#090D16" BorderBrush="#334155" BorderThickness="1" CornerRadius="7" Padding="8,5">
-                <TextBox x:Name="TxtDlgSearch" Background="Transparent" Foreground="#F8FAFC" BorderThickness="0" FontSize="12.5" CaretBrush="#38BDF8" Tag="Program ara..."/>
-            </Border>
-            <TextBlock x:Name="TxtDlgSelectedCount" Grid.Column="1" Text="0 program seçili" FontSize="12" FontWeight="Bold" Foreground="#34D399" VerticalAlignment="Center" Margin="12,0,0,0"/>
+            <Grid Grid.Column="0">
+                <Border Background="#090D16" BorderBrush="#334155" BorderThickness="1" CornerRadius="7" Padding="8,5">
+                    <TextBox x:Name="TxtDlgSearch" Background="Transparent" Foreground="#F8FAFC" BorderThickness="0" FontSize="12.5" CaretBrush="#38BDF8"/>
+                </Border>
+                <TextBlock x:Name="TxtDlgSearchPlaceholder" Text="Program veya kategori ara..." Foreground="#64748B" FontSize="12" VerticalAlignment="Center" Margin="10,0,0,0" IsHitTestVisible="False"/>
+            </Grid>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
+                <Button x:Name="BtnDlgClearSelection" Content="Seçimi Temizle" Background="#1E293B" Foreground="#CBD5E1" BorderBrush="#334155" BorderThickness="1" Padding="8,4" FontSize="11" Margin="0,0,8,0" Cursor="Hand"/>
+                <TextBlock x:Name="TxtDlgSelectedCount" Text="0 program seçili" FontSize="12" FontWeight="Bold" Foreground="#34D399" VerticalAlignment="Center"/>
+            </StackPanel>
         </Grid>
 
         <!-- Program Seçim Listesi -->
@@ -1606,14 +1559,16 @@ function Show-PackageEditorDialog {
     $dlgWin = [Windows.Markup.XamlReader]::Load($dlgReader)
     $dlgWin.Owner = $Window
 
-    $DlgHeaderTitle      = $dlgWin.FindName("DlgHeaderTitle")
-    $TxtPackageName      = $dlgWin.FindName("TxtPackageName")
-    $TxtDlgSearch        = $dlgWin.FindName("TxtDlgSearch")
-    $TxtDlgSelectedCount = $dlgWin.FindName("TxtDlgSelectedCount")
-    $DlgAppsStackPanel   = $dlgWin.FindName("DlgAppsStackPanel")
-    $BtnDlgDelete        = $dlgWin.FindName("BtnDlgDelete")
-    $BtnDlgCancel        = $dlgWin.FindName("BtnDlgCancel")
-    $BtnDlgSave          = $dlgWin.FindName("BtnDlgSave")
+    $DlgHeaderTitle          = $dlgWin.FindName("DlgHeaderTitle")
+    $TxtPackageName          = $dlgWin.FindName("TxtPackageName")
+    $TxtDlgSearch            = $dlgWin.FindName("TxtDlgSearch")
+    $TxtDlgSearchPlaceholder = $dlgWin.FindName("TxtDlgSearchPlaceholder")
+    $BtnDlgClearSelection    = $dlgWin.FindName("BtnDlgClearSelection")
+    $TxtDlgSelectedCount     = $dlgWin.FindName("TxtDlgSelectedCount")
+    $DlgAppsStackPanel       = $dlgWin.FindName("DlgAppsStackPanel")
+    $BtnDlgDelete            = $dlgWin.FindName("BtnDlgDelete")
+    $BtnDlgCancel            = $dlgWin.FindName("BtnDlgCancel")
+    $BtnDlgSave              = $dlgWin.FindName("BtnDlgSave")
 
     $initialAppIds = @()
     if ($ExistingPackage) {
@@ -1654,10 +1609,17 @@ function Show-PackageEditorDialog {
 
     $TxtDlgSearch.Add_TextChanged({
         $q = $TxtDlgSearch.Text.Trim().ToLower()
+        $TxtDlgSearchPlaceholder.Visibility = if ([string]::IsNullOrEmpty($q)) { [Windows.Visibility]::Visible } else { [Windows.Visibility]::Collapsed }
         foreach ($cb in $dlgCheckBoxes) {
             $a = $cb.Tag
             $vis = [string]::IsNullOrEmpty($q) -or $a.Name.ToLower().Contains($q) -or $a.Category.ToLower().Contains($q)
             $cb.Visibility = if ($vis) { [Windows.Visibility]::Visible } else { [Windows.Visibility]::Collapsed }
+        }
+    })
+
+    $BtnDlgClearSelection.Add_Click({
+        foreach ($cb in $dlgCheckBoxes) {
+            $cb.IsChecked = $false
         }
     })
 
@@ -1770,28 +1732,51 @@ function Rebuild-PackageButtonsBar {
 
     foreach ($pkg in $script:SavedPackages) {
         $pkgCount = @($pkg.AppIds).Count
+        $isGreen  = ($pkg.Style -eq "Green")
 
-        # Paket Kapsayıcı (Sol: Paket Seçim Butonu | Sağ: Düzenle/Sil Mini Butonu + Sağ Tık Menüsü)
+        # Paket Kapsayıcı Çerçeve (Sol: Paket Seçim Butonu | Sağ: Bağımsız ⚙ Düzenle Butonu)
+        $pillBorder = New-Object Windows.Controls.Border
+        $pillBorder.CornerRadius = New-Object Windows.CornerRadius(8)
+        $pillBorder.BorderThickness = New-Object Windows.Thickness(1)
+        $pillBorder.Margin = New-Object Windows.Thickness(0, 2, 8, 2)
+        $pillBorder.Background  = if ($isGreen) { $BrushConverter.ConvertFrom("#059669") } else { $BrushConverter.ConvertFrom("#1E293B") }
+        $pillBorder.BorderBrush = if ($isGreen) { $BrushConverter.ConvertFrom("#10B981") } else { $BrushConverter.ConvertFrom("#334155") }
+
+        $pillGrid = New-Object Windows.Controls.Grid
+        $pc0 = New-Object Windows.Controls.ColumnDefinition
+        $pc0.Width = [Windows.GridLength]::Auto
+        $pc1 = New-Object Windows.Controls.ColumnDefinition
+        $pc1.Width = [Windows.GridLength]::Auto
+        $pillGrid.ColumnDefinitions.Add($pc0)
+        $pillGrid.ColumnDefinitions.Add($pc1)
+
+        # Sol: Paket Seçim Butonu
         $btn = New-Object Windows.Controls.Button
-        $btn.Style = if ($pkg.Style -eq "Green") { $Window.FindResource("HemenTeslimButtonStyle") } else { $Window.FindResource("ActionButtonStyle") }
-        $btn.Margin = New-Object Windows.Thickness(0, 2, 8, 2)
+        $btn.Background = [Windows.Media.Brushes]::Transparent
+        $btn.BorderThickness = New-Object Windows.Thickness(0)
+        $btn.Foreground = $BrushConverter.ConvertFrom("#FFFFFF")
+        $btn.Padding = New-Object Windows.Thickness(12, 7, 8, 7)
+        $btn.FontSize = 12.5
+        $btn.FontWeight = if ($isGreen) { [Windows.FontWeights]::Bold } else { [Windows.FontWeights]::SemiBold }
+        $btn.Cursor = [Windows.Input.Cursors]::Hand
         $btn.Tag = $pkg
+        [Windows.Controls.Grid]::SetColumn($btn, 0)
 
         $appNamesPreview = ($AllApps | Where-Object { $pkg.AppIds -contains $_.Id } | Select-Object -ExpandProperty Name) -join ", "
-        $btn.ToolTip = "$($pkg.Name) ($pkgCount Program): $appNamesPreview`r`n`r`n• Sol Tık: Paketi Seç (Yüklü olanları otomatik atlar)`r`n• Sağ Tık veya ⚙ İkonu: Paketi Düzenle / Program Ekle-Çıkar / Ad Değiştir / Sil"
+        $btn.ToolTip = "$($pkg.Name) ($pkgCount Program): $appNamesPreview`r`n`r`n• Sol Tık: Paketi Seç (Yüklü olanları otomatik atlar)`r`n• Sağ Tık veya ⚙ Butonu: Paketi Düzenle / Program Ekle-Çıkar / Ad Değiştir / Sil"
 
         $sp = New-Object Windows.Controls.StackPanel
         $sp.Orientation = [Windows.Controls.Orientation]::Horizontal
         $sp.VerticalAlignment = [Windows.VerticalAlignment]::Center
 
-        $iconGlyph = if ($pkg.Style -eq "Green") { [string][char]0xE73E } elseif ($pkg.Style -eq "Default") { [string][char]0xE90F } else { [string][char]0xE7B8 }
+        $iconGlyph = if ($isGreen) { [string][char]0xE73E } elseif ($pkg.Style -eq "Default") { [string][char]0xE90F } else { [string][char]0xE7B8 }
         $ic = New-Object Windows.Controls.TextBlock
         $ic.Text = $iconGlyph
         $ic.FontFamily = New-Object Windows.Media.FontFamily("Segoe MDL2 Assets")
         $ic.FontSize = 12.5
         $ic.Margin = New-Object Windows.Thickness(0, 0, 7, 0)
         $ic.VerticalAlignment = [Windows.VerticalAlignment]::Center
-        if ($pkg.Style -ne "Green") {
+        if (-not $isGreen) {
             $ic.Foreground = $BrushConverter.ConvertFrom("#38BDF8")
         }
 
@@ -1799,28 +1784,34 @@ function Rebuild-PackageButtonsBar {
         $txt.Text = "$($pkg.Name) ($pkgCount)"
         $txt.VerticalAlignment = [Windows.VerticalAlignment]::Center
 
-        # Yanındaki küçük düzenle/yönet butonu (⚙)
-        $editGear = New-Object Windows.Controls.TextBlock
-        $editGear.Text = [string][char]0xE713
-        $editGear.FontFamily = New-Object Windows.Media.FontFamily("Segoe MDL2 Assets")
-        $editGear.FontSize = 11.5
-        $editGear.Opacity = 0.8
-        $editGear.Margin = New-Object Windows.Thickness(8, 0, 0, 0)
-        $editGear.VerticalAlignment = [Windows.VerticalAlignment]::Center
-        $editGear.ToolTip = "Paketi Düzenle / Ad Değiştir / Sil"
-        $editGear.Tag = $pkg
+        $sp.Children.Add($ic) | Out-Null
+        $sp.Children.Add($txt) | Out-Null
+        $btn.Content = $sp
 
-        $editGear.Add_MouseLeftButtonDown({
+        # Sağ: Bağımsız ⚙ Düzenle / Yönet Butonu (Click çakışmasını %100 önler)
+        $btnGear = New-Object Windows.Controls.Button
+        $btnGear.Background = [Windows.Media.Brushes]::Transparent
+        $btnGear.BorderThickness = New-Object Windows.Thickness(1, 0, 0, 0)
+        $btnGear.BorderBrush = if ($isGreen) { $BrushConverter.ConvertFrom("#047857") } else { $BrushConverter.ConvertFrom("#334155") }
+        $btnGear.Foreground = $BrushConverter.ConvertFrom("#E2E8F0")
+        $btnGear.Padding = New-Object Windows.Thickness(8, 7, 9, 7)
+        $btnGear.Cursor = [Windows.Input.Cursors]::Hand
+        $btnGear.ToolTip = "'$($pkg.Name)' Paketini Düzenle / Program Ekle-Çıkar / Ad Değiştir / Sil"
+        $btnGear.Tag = $pkg
+        [Windows.Controls.Grid]::SetColumn($btnGear, 1)
+
+        $gearIcon = New-Object Windows.Controls.TextBlock
+        $gearIcon.Text = [string][char]0xE713
+        $gearIcon.FontFamily = New-Object Windows.Media.FontFamily("Segoe MDL2 Assets")
+        $gearIcon.FontSize = 12
+        $gearIcon.VerticalAlignment = [Windows.VerticalAlignment]::Center
+        $btnGear.Content = $gearIcon
+
+        $btnGear.Add_Click({
             param($sender, $e)
-            $e.Handled = $true
             if ($script:IsInstalling) { return }
             Show-PackageEditorDialog -ExistingPackage $sender.Tag
         })
-
-        $sp.Children.Add($ic) | Out-Null
-        $sp.Children.Add($txt) | Out-Null
-        $sp.Children.Add($editGear) | Out-Null
-        $btn.Content = $sp
 
         # Sağ Tık Menüsü (ContextMenu): Paketi Düzenle, Seçili Programlarla Güncelle, Paketi Sil
         $ctxMenu = New-Object Windows.Controls.ContextMenu
@@ -1877,14 +1868,18 @@ function Rebuild-PackageButtonsBar {
         $ctxMenu.Items.Add($miUpdateFromSel) | Out-Null
         $ctxMenu.Items.Add((New-Object Windows.Controls.Separator)) | Out-Null
         $ctxMenu.Items.Add($miDelete) | Out-Null
-        $btn.ContextMenu = $ctxMenu
+        $pillBorder.ContextMenu = $ctxMenu
 
         $btn.Add_Click({
             param($sender, $e)
             Apply-SavedPackage -PackageObj $sender.Tag
         })
 
-        $PackagesTopBarPanel.Children.Add($btn) | Out-Null
+        $pillGrid.Children.Add($btn) | Out-Null
+        $pillGrid.Children.Add($btnGear) | Out-Null
+        $pillBorder.Child = $pillGrid
+
+        $PackagesTopBarPanel.Children.Add($pillBorder) | Out-Null
     }
 
     # "+ Yeni Paket Oluştur" Butonu
@@ -2380,6 +2375,14 @@ $BtnStartInstall.Add_Click({
     })
 
     $timer.Start()
+})
+
+# Pencere kapatılırken arka plandaki zamanlayıcıları ve Runspace'leri güvenli şekilde sonlandır
+$Window.Add_Closed({
+    try {
+        if ($iconTimer -and $iconTimer.IsEnabled) { $iconTimer.Stop() }
+        if ($iconRunspace) { $iconRunspace.Close(); $iconRunspace.Dispose() }
+    } catch {}
 })
 
 # Pencereyi Göster

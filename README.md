@@ -15,19 +15,21 @@
 ## Öne Çıkan Özellikler
 
 * **Modern Koyu Tema (Dark Slate) Dashboard Arayüzü:**
-  * Toplam katalog sayısını, seçilen programları, kurulumu tamamlanan paketleri ve otomasyon durumunu canlı gösteren **4'lü üst istatistik kartı**.
-  * Her uygulama kartında uygulamanın **resmi logosu** (arka planda otomatik indirilir ve `.icons/` klasöründe önbelleklenir; çevrimdışı ortamlar için kurumsal marka renkli rozet desteği bulunur).
-  * Windows `Segoe MDL2 Assets` vektörel ikonlarıyla zenginleştirilmiş, anlaşılır Türkçe kategori menüsü.
+  * **Açılır-Kapanır (Daraltılabilir) Sol Kategori Menüsü (`☰`):** Tek tıkla sol menüyü ikon moduna (`64px`) daraltarak uygulama kataloğuna maksimum alan açar.
+  * **Etkileşimli 4'lü Üst İstatistik Kartı:** Toplam katalog sayısını (`91 Program`), seçilen programları (`X Seçili`), bilgisayarda yüklü olanları (`XX Yüklü`) ve otomasyon durumunu canlı gösterir. Kartlara tıklandığında ilgili programları (örneğin yalnızca sistemde yüklü olanları) anında filtreler.
+  * **Yüklü Programları Otomatik Algılama ve `YÜKLÜ` Rozeti:** Uygulama açılışında Windows Kayıt Defteri'ni (`HKLM` / `WOW6432Node` / `HKCU`) tarayarak bilgisayarda zaten kurulu olan yazılımları yeşil **`YÜKLÜ`** etiketiyle işaretler ve toplu paket seçimlerinde zaman kaybetmemek için otomatik atlar. **`Yenile / Tara`** butonuyla her an yeniden taranabilir.
+  * **Özel Paket Oluşturma, Düzenleme ve Kaydetme (`ozel_paketler.json`):** Üst bardaki **`+ Yeni Paket Oluştur`** butonuyla istediğiniz departman için (*İK Paketi*, *Muhasebe Paketi* vb.) özel paketler oluşturabilir, mevcut paketlerin yanındaki **`⚙`** butonuyla paket içeriğini veya adını güncelleyebilir, silebilir ve `ozel_paketler.json` sayesinde USB/ağ üzerinde taşınabilir olarak saklayabilirsiniz.
+  * **Canlı Uygulama Logoları:** Her uygulama kartında uygulamanın resmi logosu arka planda otomatik indirilir ve `.icons/` klasöründe önbelleklenir (çevrimdışı ortamlar için kurumsal marka renkli rozet desteği bulunur).
+  * **Katlanabilir ve Temizlenebilir Canlı İşlem Günlüğü:** Alt günlük paneli **`Gizle ▼ / Göster ▲`** ve **`Logu Temizle`** butonlarıyla kontrol edilebilir; yeni kurulum başladığında otomatik açılır.
 * **Sıfır Onay / Tamamen Katılımsız (Silent) Kurulum:**
   * Başlangıçta tek seferde Yönetici (Administrator) yetkisi alır. Seçilen onlarca program kurulurken tekrar UAC penceresi veya *"İleri > İleri"* kurulum sihirbazı açılmaz.
 * **Adım Adım Canlı Kurulum Süreci Takibi:**
   * Hem program kartlarının sağ üst köşesinde hem de alt sol kısımdaki **"Adım Adım Kurulum Süreci"** tablosunda her programın hangi aşamada olduğu (**`SIRADA BEKLİYOR`** -> **`İNDİRİLİYOR...`** -> **`SESSİZ KURULUYOR...`** -> **`KURULDU`**) renkli rozetlerle ve kurulum süresiyle (sn) canlı gösterilir.
-  * Alt sağdaki **"Canlı İşlem Günlüğü"** konsolunda arka planda gerçekleşen tüm indirme ve kurulum adımları saat damgalı olarak listelenir.
 * **Çift Kademeli Kurulum Motoru (Yerel Betik + Winget Yedeği):**
   * Öncelikle ilgili yazılımın `Install_*.ps1` betiğini çalıştırarak resmi sunucusundan en güncel 64-bit MSI/EXE paketini indirip kurar. Herhangi bir indirme veya bağlantı hatası yaşanması durumunda otomatik olarak Windows Paket Yöneticisi (`winget`) üzerinden sessiz kuruluma geçer.
 * **Tek Tıkla Hazır Teslimat Paketleri:**
-  * **Hemen Teslim Et Paketi (8 Program):** Kullanıcıya teslim edilecek bilgisayarlar için *Microsoft 365 (Bireysel / Ev), WinRAR, AnyDesk, Google Chrome (Kurumsal), Adobe Acrobat Pro* ve *3 E-İmza bileşenini (Dtxgate Signer, SafeNet Authentication Client 10.4, Java JRE 8u513)* tek tıkla seçer.
-  * **BT Teknik Destek Paketi (10 Program):** *7-Zip, AnyDesk, Everything, Notepad++, PuTTY, WinSCP, VLC Media Player, WinDirStat, .NET 6/8 Desktop Runtime* ve *Visual C++ 2015-2022* paketlerini tek tıkla seçer.
+  * **Hemen Teslim Et Paketi (8 Program):** Kullanıcıya teslim edilecek bilgisayarlar için *Microsoft Office 2021 Pro Plus (64-Bit Türkçe), WinRAR, AnyDesk, Google Chrome (Kurumsal), Adobe Acrobat Pro* ve *3 E-İmza bileşenini (Dtxgate Signer, SafeNet Authentication Client 10.4, Java JRE 8u513)* tek tıkla seçer.
+  * **BT Teknik Destek Paketi (11 Program):** *7-Zip, AnyDesk, Everything, Notepad++, PuTTY, WinSCP, VLC Media Player, WinDirStat, .NET 6/8 Desktop Runtime* ve *Visual C++ 2015-2022* paketlerini tek tıkla seçer.
 
 ---
 
