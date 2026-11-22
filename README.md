@@ -3,33 +3,47 @@
 ![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B%20%7C%207.x-2563EB?style=for-the-badge&logo=powershell&logoColor=white)
 ![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-059669?style=for-the-badge&logo=windows&logoColor=white)
 ![Arayüz](https://img.shields.io/badge/Aray%C3%BCz-Modern%20WPF%20Dashboard-38BDF8?style=for-the-badge)
+![Paket](https://img.shields.io/badge/Katalog-91%20Kat%C4%B1l%C4%B1ms%C4%B1z%20Paket-10B981?style=for-the-badge)
 ![Lisans](https://img.shields.io/badge/Lisans-MIT-F59E0B?style=for-the-badge)
 
 **Hızlı Kurulum Merkezi**, Bilgi İşlem (BT / IT) ekiplerinin ve sistem yöneticilerinin yeni kurulan veya formatlanan Windows bilgisayarlara ihtiyaç duyulan yazılımları **kullanıcı onayı beklemeden (`/qn`, `/S`, `--silent`)**, tek bir modern **WPF Dashboard** arayüzü üzerinden topluca indirip kurmasını sağlayan açık kaynaklı bir otomasyon aracıdır.
 
-> **Geliştirici:** **Serkan Altın**  
-> **Açık Kaynak Altyapı ve Atıf:** Bu proje, [Tyler Lurie](https://github.com/tylerlurie) tarafından geliştirilen açık kaynaklı [**tylerlurie/PS-Installers**](https://github.com/tylerlurie/PS-Installers) betik koleksiyonu temel alınarak geliştirilmiş; üzerine modern Türkçe WPF Dashboard arayüzü, canlı uygulama logoları, adım adım süreç takip motoru, `winget` yedekleme mekanizması ve kurumsal E-İmza / Hazır Teslimat profilleri eklenerek modernize edilmiştir.
+> **Geliştirici:** [**Serkan Altın**](https://github.com/serkanaltin) • [LinkedIn](https://www.linkedin.com/in/serkanaltin/)  
+> **Açık Kaynak Altyapı ve Atıf:** Bu proje, [Tyler Lurie](https://github.com/tylerlurie) tarafından geliştirilen açık kaynaklı [**tylerlurie/PS-Installers**](https://github.com/tylerlurie/PS-Installers) betik koleksiyonu temel alınarak geliştirilmiş; üzerine modern Türkçe WPF Dashboard arayüzü, yüklü programları otomatik algılama (`YÜKLÜ` rozeti), özel departman paketleri oluşturma/düzenleme (`ozel_paketler.json`), canlı uygulama logoları, adım adım süreç takip motoru, `winget` yedekleme mekanizması ve kurumsal E-İmza / Office 2021 / Santral (Yeastar Linkus) entegrasyonları eklenerek modernize edilmiştir.
 
 ---
 
 ## Öne Çıkan Özellikler
 
-* **Modern Koyu Tema (Dark Slate) Dashboard Arayüzü:**
-  * **Açılır-Kapanır (Daraltılabilir) Sol Kategori Menüsü (`☰`):** Tek tıkla sol menüyü ikon moduna (`64px`) daraltarak uygulama kataloğuna maksimum alan açar.
-  * **Etkileşimli 4'lü Üst İstatistik Kartı:** Toplam katalog sayısını (`91 Program`), seçilen programları (`X Seçili`), bilgisayarda yüklü olanları (`XX Yüklü`) ve otomasyon durumunu canlı gösterir. Kartlara tıklandığında ilgili programları (örneğin yalnızca sistemde yüklü olanları) anında filtreler.
-  * **Yüklü Programları Otomatik Algılama ve `YÜKLÜ` Rozeti:** Uygulama açılışında Windows Kayıt Defteri'ni (`HKLM` / `WOW6432Node` / `HKCU`) tarayarak bilgisayarda zaten kurulu olan yazılımları yeşil **`YÜKLÜ`** etiketiyle işaretler ve toplu paket seçimlerinde zaman kaybetmemek için otomatik atlar. **`Yenile / Tara`** butonuyla her an yeniden taranabilir.
-  * **Özel Paket Oluşturma, Düzenleme ve Kaydetme (`ozel_paketler.json`):** Üst bardaki **`+ Yeni Paket Oluştur`** butonuyla istediğiniz departman için (*İK Paketi*, *Muhasebe Paketi* vb.) özel paketler oluşturabilir, mevcut paketlerin yanındaki **`⚙`** butonuyla paket içeriğini veya adını güncelleyebilir, silebilir ve `ozel_paketler.json` sayesinde USB/ağ üzerinde taşınabilir olarak saklayabilirsiniz.
-  * **Canlı Uygulama Logoları:** Her uygulama kartında uygulamanın resmi logosu arka planda otomatik indirilir ve `.icons/` klasöründe önbelleklenir (çevrimdışı ortamlar için kurumsal marka renkli rozet desteği bulunur).
-  * **Katlanabilir ve Temizlenebilir Canlı İşlem Günlüğü:** Alt günlük paneli **`Gizle ▼ / Göster ▲`** ve **`Logu Temizle`** butonlarıyla kontrol edilebilir; yeni kurulum başladığında otomatik açılır.
-* **Sıfır Onay / Tamamen Katılımsız (Silent) Kurulum:**
-  * Başlangıçta tek seferde Yönetici (Administrator) yetkisi alır. Seçilen onlarca program kurulurken tekrar UAC penceresi veya *"İleri > İleri"* kurulum sihirbazı açılmaz.
-* **Adım Adım Canlı Kurulum Süreci Takibi:**
-  * Hem program kartlarının sağ üst köşesinde hem de alt sol kısımdaki **"Adım Adım Kurulum Süreci"** tablosunda her programın hangi aşamada olduğu (**`SIRADA BEKLİYOR`** -> **`İNDİRİLİYOR...`** -> **`SESSİZ KURULUYOR...`** -> **`KURULDU`**) renkli rozetlerle ve kurulum süresiyle (sn) canlı gösterilir.
-* **Çift Kademeli Kurulum Motoru (Yerel Betik + Winget Yedeği):**
-  * Öncelikle ilgili yazılımın `Install_*.ps1` betiğini çalıştırarak resmi sunucusundan en güncel 64-bit MSI/EXE paketini indirip kurar. Herhangi bir indirme veya bağlantı hatası yaşanması durumunda otomatik olarak Windows Paket Yöneticisi (`winget`) üzerinden sessiz kuruluma geçer.
-* **Tek Tıkla Hazır Teslimat Paketleri:**
-  * **Hemen Teslim Et Paketi (8 Program):** Kullanıcıya teslim edilecek bilgisayarlar için *Microsoft Office 2021 Pro Plus (64-Bit Türkçe), WinRAR, AnyDesk, Google Chrome (Kurumsal), Adobe Acrobat Pro* ve *3 E-İmza bileşenini (Dtxgate Signer, SafeNet Authentication Client 10.4, Java JRE 8u513)* tek tıkla seçer.
-  * **BT Teknik Destek Paketi (11 Program):** *7-Zip, AnyDesk, Everything, Notepad++, PuTTY, WinSCP, VLC Media Player, WinDirStat, .NET 6/8 Desktop Runtime* ve *Visual C++ 2015-2022* paketlerini tek tıkla seçer.
+### 1. Modern Koyu Tema (Dark Slate) Dashboard Arayüzü
+* **Açılır-Kapanır (Daraltılabilir) Sol Kategori Menüsü (`☰`):** Sol üstteki `☰` butonuyla kategori menüsünü tek tıkla ikon moduna (`64px`) daraltarak orta katalog alanına maksimum genişlik kazandırır.
+* **Etkileşimli 4'lü Üst İstatistik Kartı:**
+  * **TOPLAM KATALOG (`91 Program`):** Tıklandığında tüm filtreleri sıfırlar ve tüm kataloğu listeler.
+  * **KURULACAK SEÇİM (`X Seçili`):** Tıklandığında yalnızca kurulmak üzere işaretlenen programları filtreler.
+  * **SİSTEMDE YÜKLÜ (`XX Yüklü`):** Tıklandığında yalnızca bu bilgisayarda halihazırda kurulu olan programları filtreler.
+  * **OTOMASYON DURUMU:** Seçim ve kurulum durumunu canlı olarak gösterir.
+* **Canlı Uygulama Logoları ve Marka Rozetleri:** Her uygulama kartında uygulamanın resmi logosu arka planda otomatik indirilir ve `.icons/` klasöründe önbelleklenir (çevrimdışı ortamlar için kurumsal marka renkli rozet desteği bulunur).
+* **Katlanabilir ve Temizlenebilir Canlı İşlem Günlüğü:** Alt günlük paneli **`Gizle ▼ / Göster ▲`** ve **`Logu Temizle`** butonlarıyla kontrol edilebilir; yeni bir kurulum başlatıldığında otomatik olarak tekrar açılır.
+
+### 2. Yüklü Programları Otomatik Algılama ve `YÜKLÜ` Rozeti
+* Uygulama açıldığında Windows Kayıt Defteri'ndeki (`HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*`, `WOW6432Node` ve `HKCU`) kurulu yazılımları otomatik tarar.
+* Bilgisayarda zaten kurulu olan programların kartında belirgin yeşil **`YÜKLÜ`** rozeti gösterir.
+* Hazır paketlere (*Hemen Teslim Et Paketi*, *BT Teknik Destek Paketi* vb.) veya *Bu Kategoridekileri Seç* butonuna basıldığında **sistemde zaten `YÜKLÜ` olan programları otomatik olarak atlar**; böylece yeniden kurulumla vakit kaybedilmez.
+* Üst şeritteki **`Yenile / Tara`** butonuyla her an kayıt defteri taraması yenilenebilir.
+
+### 3. Özel Paket Oluşturma, Düzenleme, Ad Değiştirme ve Silme (`ozel_paketler.json`)
+* Sağ üstteki **`+ Yeni Paket Oluştur`** butonuyla departmanlara özel paketler (*İK Paketi*, *Muhasebe Paketi*, *Çağrı Merkezi Paketi* vb.) oluşturabilirsiniz.
+* Oluşturulan tüm paketler proje klasöründeki **[`ozel_paketler.json`](ozel_paketler.json)** dosyasına kaydedilir; USB bellekte veya ortak ağ paylaşımında taşındığında diğer bilgisayarlarda da otomatik görünür.
+* Mevcut ve yeni oluşturulan her paket butonunun sağındaki **`⚙` (Düzenle)** butonuna veya **Sağ Tık Menüsüne** basarak:
+  * Pakete yeni program ekleyebilir veya mevcut programları çıkarabilirsiniz,
+  * Paketin adını değiştirebilirsiniz,
+  * Ana ekranda seçili olan programları tek tıkla o paketin üzerine kaydedebilirsiniz,
+  * Paketi tamamen silebilirsiniz.
+
+### 4. Sıfır Onay (Katılımsız) Kurulum ve Adım Adım Canlı Süreç Takibi
+* Başlangıçta tek seferde Yönetici (Administrator) yetkisi alır. Seçilen onlarca program kurulurken tekrar UAC penceresi veya *"İleri > İleri"* kurulum sihirbazı açılmaz.
+* Hem program kartlarının sağ üst köşesinde hem de alt sol kısımdaki **"Adım Adım Kurulum Süreci"** tablosunda her programın hangi aşamada olduğu (**`SIRADA BEKLİYOR`** -> **`İNDİRİLİYOR...`** -> **`SESSİZ KURULUYOR...`** -> **`KURULDU`**) renkli rozetlerle ve kurulum süresiyle (`sn`) canlı gösterilir.
+* **Çift Kademeli Kurulum Motoru:** Önce yerel `Install_*.ps1` betiğini çalıştırır, herhangi bir sunucu/indirme hatası olursa otomatik olarak Windows Paket Yöneticisi (`winget`) yedeğini devreye sokar.
 
 ---
 
@@ -52,14 +66,29 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Baslat-KurulumMerkezi.
 
 ---
 
-## Kategori Yapısı ve Desteklenen Yazılımlar (90 Paket)
+## Varsayılan Hazır Teslimat Paketleri
 
-Arayüz içerisinde tüm yazılımlar aşağıdaki Türkçe kategoriler altında gruplanmıştır:
+1. **Hemen Teslim Et Paketi (8 Program):**
+   * **Microsoft Office 2021 Pro Plus (64-Bit Türkçe)** (`office_setup.exe` + `configuration.xml` ile Word, Excel, PowerPoint, Outlook)
+   * **Google Chrome (Kurumsal 64-Bit MSI)**
+   * **WinRAR (64-Bit)**
+   * **Adobe Acrobat Pro (64-Bit)**
+   * **AnyDesk**
+   * **Dtxgate Signer (E-İmza İstemcisi)** (`DtxgateSigner-1.0.23.msi`)
+   * **SafeNet Authentication Client 10.4** (`SAC-x64-10.4.msi`)
+   * **Java JRE 8u513 (E-İmza Uyumlu)** (`jre-8u513-windows-i586-iftw.exe`)
+
+2. **BT Teknik Destek Paketi (11 Program):**
+   * *7-Zip, AnyDesk, Everything (Anında Dosya Arama), Notepad++, PuTTY, WinSCP, VLC Media Player, WinDirStat, .NET 6 Desktop Runtime, .NET 8 Desktop Runtime, Visual C++ 2015-2022 (64-Bit).*
+
+---
+
+## Kategori Yapısı ve Desteklenen Yazılımlar (91 Paket)
 
 | Kategori | İçerdiği Başlıca Yazılımlar |
 | :--- | :--- |
 | **E-İmza ve Akıllı Kart (3)** | Dtxgate Signer, SafeNet Authentication Client (SAC 10.4), Java JRE 8u513 |
-| **Ofis ve PDF Araçları (10)** | Microsoft 365 (Bireysel / İş / Kurumsal), Adobe Acrobat Pro, Adobe Acrobat Reader DC, LibreOffice, FreeOffice, OpenOffice, Foxit PDF Reader, Sumatra PDF |
+| **Ofis ve PDF Araçları (10)** | Microsoft Office 2021 Pro Plus (Türkçe / İş / Kurumsal), Adobe Acrobat Pro, Adobe Acrobat Reader DC, LibreOffice, FreeOffice, OpenOffice, Foxit PDF Reader, Sumatra PDF |
 | **İnternet Tarayıcıları (6)** | Google Chrome (Enterprise MSI), Mozilla Firefox, Microsoft Edge, Brave, Opera, Vivaldi |
 | **Arşiv ve Dosya Sıkıştırma (3)** | WinRAR (64-Bit), 7-Zip, PeaZip |
 | **Uzak Masaüstü ve Sistem (8)** | AnyDesk, TeamViewer, OpenVPN Connect, Everything Search, Revo Uninstaller, WinDirStat, ImgBurn, NVDA Ekran Okuyucu |
@@ -76,21 +105,20 @@ Arayüz içerisinde tüm yazılımlar aşağıdaki Türkçe kategoriler altında
 
 ---
 
-## E-İmza Klasörü (`E İMZA/`) Hakkında Not
+## Proje Dosya Yapısı
 
-`E İMZA` klasörü içerisinde yerel MSI/EXE kurulum paketlerini sessiz parametrelerle (`/qn /norestart` ve `/s`) kuran üç betik yer alır:
-* `Install_DtxgateSigner.ps1` -> `DtxgateSigner-1.0.23.msi`
-* `Install_SafeNet_SAC.ps1` -> `SAC-x64-10.4.msi`
-* `Install_Java_JRE_8.ps1` -> `jre-8u513-windows-i586-iftw.exe`
-
-*(İlgili kurulum dosyaları aynı klasörde bulunduğunda internetten indirme yapmadan doğrudan yerel disk üzerinden saniyeler içinde sessiz kurulum gerçekleştirir.)*
+* **`Baslat-KurulumMerkezi.ps1`**: Modern WPF Dashboard arayüzünü, kayıt defteri tarayıcısını, özel paket yöneticisini ve çoklu iş parçacıklı (`Runspace`) kurulum motorunu barındıran ana uygulama.
+* **`Baslat.bat`**: PowerShell ExecutionPolicy kısıtlamasına takılmadan çift tıklamayla arayüzü başlatan kısayol.
+* **`ozel_paketler.json`**: Hazır ve kullanıcı tarafından oluşturulan özel kurulum paketlerinin tutulduğu taşınabilir JSON yapılandırma dosyası.
+* **`office_setup.exe` & `configuration.xml`**: Microsoft Office 2021 Pro Plus (`ProPlus2021Volume`, 64-Bit, Türkçe `tr-tr`) katılımsız kurulum motoru ve yapılandırması.
+* **`E İMZA/`**: Yerel E-İmza kurulum paketleri (`DtxgateSigner-1.0.23.msi`, `SAC-x64-10.4.msi`, `jre-8u513-windows-i586-iftw.exe`) ve sessiz kurulum betikleri.
 
 ---
 
 ## Açık Kaynak Atıf ve Teşekkür (Credits & Attribution)
 
 * **Orijinal Betik Koleksiyonu:** Bu projedeki temel uygulama indirme ve sessiz kurulum betikleri, **[Tyler Lurie](https://github.com/tylerlurie)** tarafından geliştirilen [**PS-Installers**](https://github.com/tylerlurie/PS-Installers) projesinden alınmıştır. Açık kaynak topluluğuna sağladığı bu değerli temel için kendisine teşekkür ederiz.
-* **Modernizasyon ve WPF Dashboard Geliştirmesi:** **[Serkan Altın](https://github.com/serkanaltin)** tarafından Bilgi İşlem operasyonlarını hızlandırmak amacıyla WPF grafik arayüzü, canlı süreç izleme mimarisi, Türkçe yerelleştirme, otomatik ikon önbellekleme, Winget yedekleme motoru ve E-İmza/Hazır Teslimat paketleriyle yeniden tasarlanmış ve geliştirilmiştir.
+* **Modernizasyon ve WPF Dashboard Geliştirmesi:** **[Serkan Altın](https://github.com/serkanaltin)** ([LinkedIn](https://www.linkedin.com/in/serkanaltin/)) tarafından Bilgi İşlem operasyonlarını hızlandırmak amacıyla WPF grafik arayüzü, yüklü uygulama algılama motoru, dinamik özel paket yönetimi (`ozel_paketler.json`), canlı süreç izleme mimarisi, Türkçe yerelleştirme, otomatik ikon önbellekleme, Winget yedekleme motoru ve E-İmza / Office 2021 / Yeastar Linkus entegrasyonlarıyla yeniden tasarlanmış ve geliştirilmiştir.
 
 ---
 
