@@ -521,18 +521,24 @@ Load-PackagesFromJson
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Sol: Sade ve Güçlü Başlık -->
-                <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="Hızlı Kurulum Merkezi" FontSize="20" FontWeight="Bold" Foreground="#F8FAFC" VerticalAlignment="Center"/>
-                        <Border x:Name="AdminBadge" Background="#064E3B" BorderBrush="#059669" BorderThickness="1" CornerRadius="6" Padding="8,2" Margin="10,0,0,0" VerticalAlignment="Center">
-                            <TextBlock x:Name="AdminBadgeText" Text="YÖNETİCİ YETKİLİ" FontSize="10" FontWeight="Bold" Foreground="#A7F3D0"/>
-                        </Border>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="Geliştirici: " FontSize="11.5" Foreground="#94A3B8"/>
-                        <TextBlock Text="Serkan Altın" FontSize="11.5" FontWeight="Bold" Foreground="#38BDF8"/>
-                        <TextBlock Text="  •  Katılımsız Kurulum Paneli" FontSize="11.5" Foreground="#64748B"/>
+                <!-- Sol: Hamburger Menü (☰) + Sade ve Güçlü Başlık -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="BtnToggleSidebar" Style="{StaticResource ActionButtonStyle}" Width="38" Height="38" Padding="0" Margin="0,0,12,0"
+                            ToolTip="Sol Kategori Menüsünü Daralt / Genişlet (☰)">
+                        <TextBlock Text="&#xE700;" FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="#F8FAFC" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                    <StackPanel VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="Hızlı Kurulum Merkezi" FontSize="20" FontWeight="Bold" Foreground="#F8FAFC" VerticalAlignment="Center"/>
+                            <Border x:Name="AdminBadge" Background="#064E3B" BorderBrush="#059669" BorderThickness="1" CornerRadius="6" Padding="8,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                                <TextBlock x:Name="AdminBadgeText" Text="YÖNETİCİ YETKİLİ" FontSize="10" FontWeight="Bold" Foreground="#A7F3D0"/>
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,3,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="Geliştirici: " FontSize="11.5" Foreground="#94A3B8"/>
+                            <TextBlock Text="Serkan Altın" FontSize="11.5" FontWeight="Bold" Foreground="#38BDF8"/>
+                            <TextBlock Text="  •  Katılımsız Kurulum Paneli" FontSize="11.5" Foreground="#64748B"/>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
 
@@ -562,26 +568,27 @@ Load-PackagesFromJson
         <!-- ANA DASHBOARD GÖVDESİ -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="265"/>
+                <ColumnDefinition x:Name="SidebarColumn" Width="265"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Sol Menü: İkonlu Kategoriler + Geliştirici Kartı -->
-            <Border Grid.Column="0" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="0,0,1,0" Padding="12,14">
+            <!-- Sol Menü: İkonlu Kategoriler + Tıklanabilir Geliştirici Kartı -->
+            <Border x:Name="SidebarBorder" Grid.Column="0" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="0,0,1,0" Padding="12,14">
                 <DockPanel>
-                    <TextBlock DockPanel.Dock="Top" Text="KATEGORİLER" FontSize="11" FontWeight="Bold" Foreground="#64748B" Margin="10,0,0,8"/>
+                    <TextBlock x:Name="SidebarHeaderTitle" DockPanel.Dock="Top" Text="KATEGORİLER" FontSize="11" FontWeight="Bold" Foreground="#64748B" Margin="10,0,0,8"/>
 
-                    <!-- Sol Alt: Geliştirici İmza ve Açık Kaynak Atıf Kartı -->
-                    <Border DockPanel.Dock="Bottom" Background="#090D16" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="9" Padding="14,11" Margin="2,12,2,0">
+                    <!-- Sol Alt: Tıklanabilir Geliştirici İmza ve Hakkında Kartı -->
+                    <Border x:Name="DeveloperCardBorder" DockPanel.Dock="Bottom" Background="#090D16" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="9" Padding="14,11" Margin="2,12,2,0" Cursor="Hand"
+                            ToolTip="Geliştirici &amp; Hakkında (GitHub ve LinkedIn Bağlantıları için tıklayın)">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="36"/>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Border Grid.Column="0" Width="32" Height="32" CornerRadius="8" Background="#1E3A8A" VerticalAlignment="Center" HorizontalAlignment="Left">
+                            <Border Grid.Column="0" Width="32" Height="32" CornerRadius="8" Background="#1E3A8A" VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <TextBlock Text="SA" FontSize="12" FontWeight="Bold" Foreground="#93C5FD" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="6,0,0,0">
+                            <StackPanel x:Name="DeveloperCardTextStack" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
                                 <TextBlock Text="Serkan Altın" FontSize="13" FontWeight="Bold" Foreground="#F8FAFC"/>
                                 <TextBlock Text="Sistem &amp; Bilgi İşlem Otomasyonu" FontSize="11" Foreground="#38BDF8"/>
                                 <TextBlock Text="Altyapı: tylerlurie/PS-Installers" FontSize="9.5" Foreground="#64748B" Margin="0,2,0,0"/>
@@ -589,7 +596,7 @@ Load-PackagesFromJson
                         </Grid>
                     </Border>
 
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel x:Name="CategoryListPanel"/>
                     </ScrollViewer>
                 </DockPanel>
@@ -601,25 +608,27 @@ Load-PackagesFromJson
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="215"/>
+                    <RowDefinition x:Name="BottomPanelRow" Height="215"/>
                 </Grid.RowDefinitions>
 
-                <!-- 1. Satır: Dashboard Özet Metrik Kartları (4'lü Bilgi Kartı) -->
+                <!-- 1. Satır: Dashboard Özet Metrik Kartları (4'lü Etkileşimli Bilgi Kartı) -->
                 <Border Grid.Row="0" Background="#0B1120" BorderBrush="#1E293B" BorderThickness="0,0,0,1" Padding="20,12">
                     <UniformGrid Columns="4">
-                        <!-- Kart 1: Katalogdaki Toplam Program -->
-                        <Border Background="#111827" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="14,9" Margin="0,0,10,0">
+                        <!-- Kart 1: Katalogdaki Toplam Program (Tıklandığında Tüm Listeyi Gösterir) -->
+                        <Border x:Name="CardMetricTotal" Background="#111827" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="14,9" Margin="0,0,10,0" Cursor="Hand"
+                                ToolTip="Tüm program kataloğunu göstermek için tıklayın">
                             <Grid>
                                 <StackPanel>
                                     <TextBlock Text="TOPLAM KATALOG" FontSize="10" FontWeight="Bold" Foreground="#64748B"/>
-                                    <TextBlock x:Name="MetricTotalText" Text="90 Program" FontSize="17" FontWeight="Bold" Foreground="#F8FAFC" Margin="0,2,0,0"/>
+                                    <TextBlock x:Name="MetricTotalText" Text="91 Program" FontSize="17" FontWeight="Bold" Foreground="#F8FAFC" Margin="0,2,0,0"/>
                                 </StackPanel>
                                 <TextBlock Text="&#xE71D;" FontFamily="Segoe MDL2 Assets" FontSize="22" Foreground="#334155" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             </Grid>
                         </Border>
 
-                        <!-- Kart 2: Seçilen / Kurulacak Program -->
-                        <Border Background="#111827" BorderBrush="#1E3A8A" BorderThickness="1" CornerRadius="8" Padding="14,9" Margin="5,0,5,0">
+                        <!-- Kart 2: Seçilen / Kurulacak Program (Tıklandığında Seçilenleri Filtreler) -->
+                        <Border x:Name="CardMetricSelected" Background="#111827" BorderBrush="#1E3A8A" BorderThickness="1" CornerRadius="8" Padding="14,9" Margin="5,0,5,0" Cursor="Hand"
+                                ToolTip="Yalnızca kurulmak üzere seçilen programları filtrelemek için tıklayın">
                             <Grid>
                                 <StackPanel>
                                     <TextBlock Text="KURULACAK SEÇİM" FontSize="10" FontWeight="Bold" Foreground="#60A5FA"/>
@@ -629,8 +638,9 @@ Load-PackagesFromJson
                             </Grid>
                         </Border>
 
-                        <!-- Kart 3: Bilgisayarda Yüklü & Kurulan Program -->
-                        <Border Background="#111827" BorderBrush="#064E3B" BorderThickness="1" CornerRadius="8" Padding="14,9" Margin="5,0,5,0">
+                        <!-- Kart 3: Bilgisayarda Yüklü & Kurulan Program (Tıklandığında Sadece Yüklü Olanları Filtreler) -->
+                        <Border x:Name="CardMetricInstalled" Background="#111827" BorderBrush="#064E3B" BorderThickness="1" CornerRadius="8" Padding="14,9" Margin="5,0,5,0" Cursor="Hand"
+                                ToolTip="Yalnızca bu bilgisayarda yüklü olan programları filtrelemek için tıklayın">
                             <Grid>
                                 <StackPanel>
                                     <TextBlock Text="SİSTEMDE YÜKLÜ" FontSize="10" FontWeight="Bold" Foreground="#34D399"/>
@@ -683,8 +693,8 @@ Load-PackagesFromJson
                     <WrapPanel x:Name="AppsWrapPanel" Orientation="Horizontal"/>
                 </ScrollViewer>
 
-                <!-- 4. Satır: ALT ADIM ADIM SÜREÇ TAKİP PANELİ -->
-                <Border Grid.Row="3" Background="#070A12" BorderBrush="#1E293B" BorderThickness="0,1,0,0" Padding="16,10">
+                <!-- 4. Satır: ALT ADIM ADIM SÜREÇ TAKİP VE KATLANABİLİR CANLI GÜNLÜK PANELİ -->
+                <Border Grid.Row="3" Background="#070A12" BorderBrush="#1E293B" BorderThickness="0,1,0,0" Padding="16,8">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="440"/>
@@ -693,28 +703,33 @@ Load-PackagesFromJson
                         </Grid.ColumnDefinitions>
 
                         <!-- Sol Sütun: Seçilen Programların Adım Adım Durum Tablosu -->
-                        <Border Grid.Column="0" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="12,8">
+                        <Border Grid.Column="0" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="12,7">
                             <DockPanel>
-                                <Grid DockPanel.Dock="Top" Margin="0,0,0,6">
-                                    <TextBlock Text="ADIM ADIM KURULUM SÜRECİ" FontSize="11" FontWeight="Bold" Foreground="#38BDF8"/>
-                                    <TextBlock x:Name="StepCounterBadge" Text="0 / 0 Tamamlandı" FontSize="11" FontWeight="SemiBold" Foreground="#94A3B8" HorizontalAlignment="Right"/>
+                                <Grid DockPanel.Dock="Top" Margin="0,0,0,4">
+                                    <TextBlock Text="ADIM ADIM KURULUM SÜRECİ" FontSize="11" FontWeight="Bold" Foreground="#38BDF8" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="StepCounterBadge" Text="0 / 0 Tamamlandı" FontSize="11" FontWeight="SemiBold" Foreground="#94A3B8" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                 </Grid>
-                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ScrollViewer x:Name="StepProgressScrollViewer" VerticalScrollBarVisibility="Auto">
                                     <StackPanel x:Name="StepProgressPanel"/>
                                 </ScrollViewer>
                             </DockPanel>
                         </Border>
 
-                        <!-- Sağ Sütun: Detaylı Canlı Kurulum Günlüğü -->
-                        <Border Grid.Column="2" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="12,8">
+                        <!-- Sağ Sütun: Katlanabilir ve Temizlenebilir Detaylı Canlı Kurulum Günlüğü -->
+                        <Border Grid.Column="2" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="12,7">
                             <DockPanel>
-                                <Grid DockPanel.Dock="Top" Margin="0,0,0,6">
+                                <Grid DockPanel.Dock="Top" Margin="0,0,0,4">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Text="CANLI İŞLEM GÜNLÜĞÜ" FontSize="11" FontWeight="Bold" Foreground="#64748B" VerticalAlignment="Center"/>
-                                    <TextBlock x:Name="ProgressStepText" Grid.Column="1" Text="Kurulum için program seçin" FontSize="11.5" FontWeight="Bold" Foreground="#38BDF8" HorizontalAlignment="Right" Margin="12,0,0,0" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="ProgressStepText" Grid.Column="1" Text="Kurulum için program seçin" FontSize="11.5" FontWeight="Bold" Foreground="#38BDF8" HorizontalAlignment="Right" Margin="10,0,10,0" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Button x:Name="BtnClearLog" Style="{StaticResource ActionButtonStyle}" Content="Logu Temizle" Padding="8,2" FontSize="10.5" Margin="0,0,6,0" ToolTip="Günlük kayıtlarını temizler"/>
+                                        <Button x:Name="BtnToggleLogPanel" Style="{StaticResource ActionButtonStyle}" Content="Gizle ▼" Padding="8,2" FontSize="10.5" ToolTip="Alt günlük panelini daraltır veya genişletir"/>
+                                    </StackPanel>
                                 </Grid>
                                 <TextBox x:Name="LogTextBox" Background="Transparent" Foreground="#A7F3D0" BorderThickness="0"
                                          FontFamily="Consolas" FontSize="12" IsReadOnly="True" TextWrapping="Wrap"
@@ -765,32 +780,45 @@ Load-PackagesFromJson
 $Reader = New-Object System.Xml.XmlNodeReader $Xaml
 $Window = [Windows.Markup.XamlReader]::Load($Reader)
 
-$AdminBadge           = $Window.FindName("AdminBadge")
-$AdminBadgeText       = $Window.FindName("AdminBadgeText")
-$SearchBox            = $Window.FindName("SearchBox")
-$SearchPlaceholder    = $Window.FindName("SearchPlaceholder")
-$BtnClearSearch       = $Window.FindName("BtnClearSearch")
-$PackagesTopBarPanel  = $Window.FindName("PackagesTopBarPanel")
-$CategoryListPanel    = $Window.FindName("CategoryListPanel")
-$MetricTotalText      = $Window.FindName("MetricTotalText")
-$MetricSelectedText   = $Window.FindName("MetricSelectedText")
-$MetricInstalledText  = $Window.FindName("MetricInstalledText")
-$MetricStateText      = $Window.FindName("MetricStateText")
-$BtnRescanInstalled   = $Window.FindName("BtnRescanInstalled")
-$BtnShowSelectedOnly  = $Window.FindName("BtnShowSelectedOnly")
-$BtnSelectCategory    = $Window.FindName("BtnSelectCategory")
-$BtnClearAll          = $Window.FindName("BtnClearAll")
-$CurrentCategoryTitle = $Window.FindName("CurrentCategoryTitle")
-$CurrentCategoryCount = $Window.FindName("CurrentCategoryCount")
-$AppsWrapPanel        = $Window.FindName("AppsWrapPanel")
-$StepProgressPanel    = $Window.FindName("StepProgressPanel")
-$StepCounterBadge     = $Window.FindName("StepCounterBadge")
-$LogTextBox           = $Window.FindName("LogTextBox")
-$ProgressStepText     = $Window.FindName("ProgressStepText")
-$SelectedCountText    = $Window.FindName("SelectedCountText")
-$SelectedSummaryText  = $Window.FindName("SelectedSummaryText")
-$InstallProgressBar   = $Window.FindName("InstallProgressBar")
-$BtnStartInstall      = $Window.FindName("BtnStartInstall")
+$BtnToggleSidebar         = $Window.FindName("BtnToggleSidebar")
+$AdminBadge               = $Window.FindName("AdminBadge")
+$AdminBadgeText           = $Window.FindName("AdminBadgeText")
+$SearchBox                = $Window.FindName("SearchBox")
+$SearchPlaceholder        = $Window.FindName("SearchPlaceholder")
+$BtnClearSearch           = $Window.FindName("BtnClearSearch")
+$PackagesTopBarPanel      = $Window.FindName("PackagesTopBarPanel")
+$SidebarColumn            = $Window.FindName("SidebarColumn")
+$SidebarBorder            = $Window.FindName("SidebarBorder")
+$SidebarHeaderTitle       = $Window.FindName("SidebarHeaderTitle")
+$DeveloperCardBorder      = $Window.FindName("DeveloperCardBorder")
+$DeveloperCardTextStack   = $Window.FindName("DeveloperCardTextStack")
+$CategoryListPanel        = $Window.FindName("CategoryListPanel")
+$CardMetricTotal          = $Window.FindName("CardMetricTotal")
+$CardMetricSelected       = $Window.FindName("CardMetricSelected")
+$CardMetricInstalled      = $Window.FindName("CardMetricInstalled")
+$MetricTotalText          = $Window.FindName("MetricTotalText")
+$MetricSelectedText       = $Window.FindName("MetricSelectedText")
+$MetricInstalledText      = $Window.FindName("MetricInstalledText")
+$MetricStateText          = $Window.FindName("MetricStateText")
+$BtnRescanInstalled       = $Window.FindName("BtnRescanInstalled")
+$BtnShowSelectedOnly      = $Window.FindName("BtnShowSelectedOnly")
+$BtnSelectCategory        = $Window.FindName("BtnSelectCategory")
+$BtnClearAll              = $Window.FindName("BtnClearAll")
+$CurrentCategoryTitle     = $Window.FindName("CurrentCategoryTitle")
+$CurrentCategoryCount     = $Window.FindName("CurrentCategoryCount")
+$AppsWrapPanel            = $Window.FindName("AppsWrapPanel")
+$BottomPanelRow           = $Window.FindName("BottomPanelRow")
+$StepProgressScrollViewer = $Window.FindName("StepProgressScrollViewer")
+$StepProgressPanel        = $Window.FindName("StepProgressPanel")
+$StepCounterBadge         = $Window.FindName("StepCounterBadge")
+$BtnClearLog              = $Window.FindName("BtnClearLog")
+$BtnToggleLogPanel        = $Window.FindName("BtnToggleLogPanel")
+$LogTextBox               = $Window.FindName("LogTextBox")
+$ProgressStepText         = $Window.FindName("ProgressStepText")
+$SelectedCountText        = $Window.FindName("SelectedCountText")
+$SelectedSummaryText      = $Window.FindName("SelectedSummaryText")
+$InstallProgressBar       = $Window.FindName("InstallProgressBar")
+$BtnStartInstall          = $Window.FindName("BtnStartInstall")
 
 $MetricTotalText.Text = "$($AllApps.Count) Program"
 
@@ -809,11 +837,15 @@ function Write-GuiLog {
 }
 
 # 6. Durum Değişkenleri ve Görsel Yardımcı Fonksiyonlar
-$script:ActiveCategory   = "Tümü"
-$script:ShowSelectedOnly = $false
-$script:IsInstalling     = $false
-$BrushConverter          = New-Object Windows.Media.BrushConverter
-$script:StepRowMap       = @{}
+$script:ActiveCategory    = "Tümü"
+$script:ShowSelectedOnly  = $false
+$script:ShowInstalledOnly = $false
+$script:IsSidebarCollapsed = $false
+$script:IsLogCollapsed    = $false
+$script:IsInstalling      = $false
+$BrushConverter           = New-Object Windows.Media.BrushConverter
+$script:StepRowMap        = @{}
+$script:CategoryTextBlocks = New-Object System.Collections.Generic.List[Windows.Controls.TextBlock]
 
 function Set-AppCardLogoFromFile {
     param($AppItem, [string]$FilePath)
@@ -1317,6 +1349,187 @@ Scan-InstalledApplications
 $BtnRescanInstalled.Add_Click({
     if ($script:IsInstalling) { return }
     Scan-InstalledApplications
+    if ($script:ShowInstalledOnly) { Update-AppFilter }
+})
+
+# Geliştirici Kartı Hover ve Tıklama (Geliştirici & Hakkında Modal Penceresi)
+$DeveloperCardBorder.Add_MouseEnter({
+    $DeveloperCardBorder.Background  = $BrushConverter.ConvertFrom("#111C33")
+    $DeveloperCardBorder.BorderBrush = $BrushConverter.ConvertFrom("#3B82F6")
+})
+$DeveloperCardBorder.Add_MouseLeave({
+    $DeveloperCardBorder.Background  = $BrushConverter.ConvertFrom("#090D16")
+    $DeveloperCardBorder.BorderBrush = $BrushConverter.ConvertFrom("#1E293B")
+})
+
+function Show-DeveloperAboutDialog {
+    [xml]$aboutXaml = @"
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Geliştirici &amp; Hakkında"
+        Width="460" Height="360"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#0F172A" Foreground="#F8FAFC"
+        FontFamily="Segoe UI">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Üst Profil Başlığı -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,16">
+            <Border Width="54" Height="54" CornerRadius="14" Background="#1E3A8A" BorderBrush="#3B82F6" BorderThickness="1.5">
+                <TextBlock Text="SA" FontSize="20" FontWeight="Bold" Foreground="#93C5FD" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <StackPanel VerticalAlignment="Center" Margin="14,0,0,0">
+                <TextBlock Text="Serkan Altın" FontSize="20" FontWeight="Bold" Foreground="#F8FAFC"/>
+                <TextBlock Text="Sistem &amp; Bilgi İşlem Otomasyonu" FontSize="13" FontWeight="SemiBold" Foreground="#38BDF8" Margin="0,2,0,0"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Orta Açıklama ve Sosyal Medya Bağlantı Butonları -->
+        <StackPanel Grid.Row="1">
+            <TextBlock Text="Hızlı Kurulum Merkezi; Bilgi İşlem (BT) operasyonlarını hızlandırmak, kurumsal bilgisayar hazırlama süreçlerini tek tıkla katılımsız hale getirmek amacıyla geliştirilmiştir."
+                       FontSize="12.5" Foreground="#94A3B8" TextWrapping="Wrap" Margin="0,0,0,18"/>
+
+            <TextBlock Text="GELİŞTİRİCİ BAĞLANTILARI" FontSize="10.5" FontWeight="Bold" Foreground="#64748B" Margin="0,0,0,8"/>
+
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- GitHub Butonu -->
+                <Button x:Name="BtnOpenGitHub" Grid.Column="0" Background="#1E293B" Foreground="#F8FAFC" BorderBrush="#334155" BorderThickness="1"
+                        Padding="12,10" FontWeight="Bold" FontSize="13" Cursor="Hand" ToolTip="https://github.com/serkanaltin">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="&#xE774;" FontFamily="Segoe MDL2 Assets" FontSize="14" Foreground="#38BDF8" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="GitHub Profili" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- LinkedIn Butonu -->
+                <Button x:Name="BtnOpenLinkedIn" Grid.Column="2" Background="#1E3A8A" Foreground="#FFFFFF" BorderBrush="#3B82F6" BorderThickness="1"
+                        Padding="12,10" FontWeight="Bold" FontSize="13" Cursor="Hand" ToolTip="https://www.linkedin.com/in/serkanaltin/">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="&#xE71B;" FontFamily="Segoe MDL2 Assets" FontSize="14" Foreground="#93C5FD" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="LinkedIn Profili" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <TextBlock Text="Açık Kaynak Altyapı Atfı: tylerlurie/PS-Installers (MIT License)" FontSize="11" Foreground="#64748B" Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <!-- Alt Kapat Butonu -->
+        <Button x:Name="BtnCloseAbout" Grid.Row="2" Content="Kapat" HorizontalAlignment="Right"
+                Background="#1E293B" Foreground="#CBD5E1" BorderBrush="#334155" BorderThickness="1" Padding="20,7" FontWeight="SemiBold" Cursor="Hand"/>
+    </Grid>
+</Window>
+"@
+
+    $abReader = New-Object System.Xml.XmlNodeReader $aboutXaml
+    $abWin = [Windows.Markup.XamlReader]::Load($abReader)
+    $abWin.Owner = $Window
+
+    $btnGH = $abWin.FindName("BtnOpenGitHub")
+    $btnLI = $abWin.FindName("BtnOpenLinkedIn")
+    $btnCl = $abWin.FindName("BtnCloseAbout")
+
+    $btnGH.Add_Click({ Start-Process "https://github.com/serkanaltin" })
+    $btnLI.Add_Click({ Start-Process "https://www.linkedin.com/in/serkanaltin/" })
+    $btnCl.Add_Click({ $abWin.Close() })
+
+    $abWin.ShowDialog() | Out-Null
+}
+
+$DeveloperCardBorder.Add_MouseLeftButtonUp({
+    Show-DeveloperAboutDialog
+})
+
+# Katlanabilir ve Temizlenebilir Canlı İşlem Günlüğü Kontrolleri
+function Set-LogPanelExpanded {
+    param([bool]$Expanded)
+    if ($Expanded) {
+        $script:IsLogCollapsed = $false
+        $BottomPanelRow.Height = New-Object Windows.GridLength(215)
+        $LogTextBox.Visibility = [Windows.Visibility]::Visible
+        $StepProgressScrollViewer.Visibility = [Windows.Visibility]::Visible
+        $BtnToggleLogPanel.Content = "Gizle ▼"
+    } else {
+        $script:IsLogCollapsed = $true
+        $BottomPanelRow.Height = New-Object Windows.GridLength(44)
+        $LogTextBox.Visibility = [Windows.Visibility]::Collapsed
+        $StepProgressScrollViewer.Visibility = [Windows.Visibility]::Collapsed
+        $BtnToggleLogPanel.Content = "Göster ▲"
+    }
+}
+
+$BtnClearLog.Add_Click({
+    $LogTextBox.Clear()
+    Write-GuiLog "Günlük ekranı temizlendi."
+})
+
+$BtnToggleLogPanel.Add_Click({
+    Set-LogPanelExpanded -Expanded $script:IsLogCollapsed
+})
+
+# Açılır-Kapanır (Daraltılabilir) Sol Kategori Menüsü (☰)
+$BtnToggleSidebar.Add_Click({
+    $script:IsSidebarCollapsed = -not $script:IsSidebarCollapsed
+    if ($script:IsSidebarCollapsed) {
+        $SidebarColumn.Width = New-Object Windows.GridLength(58)
+        $SidebarBorder.Padding = New-Object Windows.Thickness(4, 14, 4, 14)
+        $SidebarHeaderTitle.Visibility = [Windows.Visibility]::Collapsed
+        $DeveloperCardTextStack.Visibility = [Windows.Visibility]::Collapsed
+        $DeveloperCardBorder.Padding = New-Object Windows.Thickness(6, 8, 6, 8)
+        foreach ($tb in $script:CategoryTextBlocks) {
+            $tb.Visibility = [Windows.Visibility]::Collapsed
+        }
+        foreach ($btn in $CategoryButtons.Values) {
+            $btn.Padding = New-Object Windows.Thickness(4, 9, 4, 9)
+        }
+    } else {
+        $SidebarColumn.Width = New-Object Windows.GridLength(265)
+        $SidebarBorder.Padding = New-Object Windows.Thickness(12, 14, 12, 14)
+        $SidebarHeaderTitle.Visibility = [Windows.Visibility]::Visible
+        $DeveloperCardTextStack.Visibility = [Windows.Visibility]::Visible
+        $DeveloperCardBorder.Padding = New-Object Windows.Thickness(14, 11, 14, 11)
+        foreach ($tb in $script:CategoryTextBlocks) {
+            $tb.Visibility = [Windows.Visibility]::Visible
+        }
+        foreach ($btn in $CategoryButtons.Values) {
+            $btn.Padding = New-Object Windows.Thickness(12, 9, 12, 9)
+        }
+    }
+})
+
+# Etkileşimli Üst Özet Kartları (Toplam Katalog / Kurulacak Seçim / Sistemde Yüklü)
+$CardMetricTotal.Add_MouseLeftButtonUp({
+    $script:ShowSelectedOnly  = $false
+    $script:ShowInstalledOnly = $false
+    $script:ActiveCategory    = "Tümü"
+    Update-SelectionCounter
+    Update-AppFilter
+})
+
+$CardMetricSelected.Add_MouseLeftButtonUp({
+    $script:ShowInstalledOnly = $false
+    $script:ShowSelectedOnly  = $true
+    Update-SelectionCounter
+    Update-AppFilter
+})
+
+$CardMetricInstalled.Add_MouseLeftButtonUp({
+    $script:ShowSelectedOnly  = $false
+    $script:ShowInstalledOnly = -not $script:ShowInstalledOnly
+    Update-SelectionCounter
+    Update-AppFilter
 })
 
 # 9. Özel Paket Oluşturma / Düzenleme / Ad Değiştirme / Silme Penceresi ve Üst Paket Barı
@@ -1539,6 +1752,7 @@ function Apply-SavedPackage {
     }
 
     $SearchBox.Text = ""
+    $script:ShowInstalledOnly = $false
     # Eğer kurulu olmayan program seçildiyse Seçilenleri Göster görünümüne geç; hepsi zaten yüklüyse tümünü göster
     $script:ShowSelectedOnly = ($selectedForInstall -gt 0)
     Update-SelectionCounter
@@ -1782,19 +1996,17 @@ function Update-AppFilter {
 
     $visibleCount = 0
     foreach ($app in $AllApps) {
+        $searchMatch = [string]::IsNullOrEmpty($query) -or
+                       ($app.Name.ToLower().Contains($query)) -or
+                       ($app.Description.ToLower().Contains($query)) -or
+                       ($app.Category.ToLower().Contains($query))
+
         if ($script:ShowSelectedOnly) {
-            $match = $app.IsSelected -and (
-                [string]::IsNullOrEmpty($query) -or
-                $app.Name.ToLower().Contains($query) -or
-                $app.Description.ToLower().Contains($query) -or
-                $app.Category.ToLower().Contains($query)
-            )
+            $match = $app.IsSelected -and $searchMatch
+        } elseif ($script:ShowInstalledOnly) {
+            $match = $app.IsInstalled -and $searchMatch
         } else {
             $catMatch = ($script:ActiveCategory -eq "Tümü") -or ($app.Category -eq $script:ActiveCategory)
-            $searchMatch = [string]::IsNullOrEmpty($query) -or
-                           ($app.Name.ToLower().Contains($query)) -or
-                           ($app.Description.ToLower().Contains($query)) -or
-                           ($app.Category.ToLower().Contains($query))
             $match = $catMatch -and $searchMatch
         }
 
@@ -1808,14 +2020,21 @@ function Update-AppFilter {
 
     if ($script:ShowSelectedOnly) {
         $CurrentCategoryTitle.Text = "Seçilen Programlar"
+    } elseif ($script:ShowInstalledOnly) {
+        $CurrentCategoryTitle.Text = "Sistemde Yüklü Programlar"
     } else {
         $CurrentCategoryTitle.Text = if ($script:ActiveCategory -eq "Tümü") { "Tüm Programlar" } else { $script:ActiveCategory }
     }
     $CurrentCategoryCount.Text = "$visibleCount program"
 
+    # Üst Özet Kartlarının Vurgu Çerçevelerini Güncelle
+    $CardMetricTotal.BorderBrush     = if (-not $script:ShowSelectedOnly -and -not $script:ShowInstalledOnly -and $script:ActiveCategory -eq "Tümü") { $BrushConverter.ConvertFrom("#38BDF8") } else { $BrushConverter.ConvertFrom("#1E293B") }
+    $CardMetricSelected.BorderBrush  = if ($script:ShowSelectedOnly) { $BrushConverter.ConvertFrom("#38BDF8") } else { $BrushConverter.ConvertFrom("#1E3A8A") }
+    $CardMetricInstalled.BorderBrush = if ($script:ShowInstalledOnly) { $BrushConverter.ConvertFrom("#10B981") } else { $BrushConverter.ConvertFrom("#064E3B") }
+
     foreach ($catName in $CategoryButtons.Keys) {
         $btn = $CategoryButtons[$catName]
-        if (-not $script:ShowSelectedOnly -and $catName -eq $script:ActiveCategory) {
+        if (-not $script:ShowSelectedOnly -and -not $script:ShowInstalledOnly -and $catName -eq $script:ActiveCategory) {
             $btn.Background = $BrushConverter.ConvertFrom("#2563EB")
             $btn.Foreground = $BrushConverter.ConvertFrom("#FFFFFF")
             $btn.FontWeight = [Windows.FontWeights]::Bold
@@ -1835,10 +2054,11 @@ foreach ($cat in $OrderedCats) {
     $btn = New-Object Windows.Controls.Button
     $btn.Style = $Window.FindResource("CategoryButtonStyle")
     $btn.Tag = $cat
+    $btn.ToolTip = "$label ($count program)"
 
     $rowGrid = New-Object Windows.Controls.Grid
     $rc0 = New-Object Windows.Controls.ColumnDefinition
-    $rc0.Width = New-Object Windows.GridLength(24)
+    $rc0.Width = New-Object Windows.GridLength(22)
     $rc1 = New-Object Windows.Controls.ColumnDefinition
     $rc1.Width = New-Object Windows.GridLength(1, [Windows.GridUnitType]::Star)
     $rc2 = New-Object Windows.Controls.ColumnDefinition
@@ -1858,13 +2078,15 @@ foreach ($cat in $OrderedCats) {
     $lblBlock.Text = $label
     $lblBlock.VerticalAlignment = [Windows.VerticalAlignment]::Center
     $lblBlock.TextTrimming = [Windows.TextTrimming]::CharacterEllipsis
+    $lblBlock.Margin = New-Object Windows.Thickness(2, 0, 4, 0)
     [Windows.Controls.Grid]::SetColumn($lblBlock, 1)
+    $script:CategoryTextBlocks.Add($lblBlock) | Out-Null
 
     $cntBlock = New-Object Windows.Controls.TextBlock
     $cntBlock.Text = "$count"
     $cntBlock.FontSize = 11.5
-    $cntBlock.Opacity = 0.75
-    $cntBlock.Margin = New-Object Windows.Thickness(6, 0, 0, 0)
+    $cntBlock.Opacity = 0.8
+    $cntBlock.Margin = New-Object Windows.Thickness(2, 0, 0, 0)
     $cntBlock.VerticalAlignment = [Windows.VerticalAlignment]::Center
     [Windows.Controls.Grid]::SetColumn($cntBlock, 2)
 
@@ -1875,8 +2097,9 @@ foreach ($cat in $OrderedCats) {
 
     $btn.Add_Click({
         param($sender, $e)
-        $script:ShowSelectedOnly = $false
-        $script:ActiveCategory = $sender.Tag
+        $script:ShowSelectedOnly  = $false
+        $script:ShowInstalledOnly = $false
+        $script:ActiveCategory    = $sender.Tag
         Update-SelectionCounter
         Update-AppFilter
     })
@@ -1892,7 +2115,8 @@ $BtnClearSearch.Add_Click({
 })
 
 $BtnShowSelectedOnly.Add_Click({
-    $script:ShowSelectedOnly = -not $script:ShowSelectedOnly
+    $script:ShowInstalledOnly = $false
+    $script:ShowSelectedOnly  = -not $script:ShowSelectedOnly
     Update-SelectionCounter
     Update-AppFilter
 })
@@ -1909,7 +2133,8 @@ $BtnSelectCategory.Add_Click({
 
 $BtnClearAll.Add_Click({
     if ($script:IsInstalling) { return }
-    $script:ShowSelectedOnly = $false
+    $script:ShowSelectedOnly  = $false
+    $script:ShowInstalledOnly = $false
     foreach ($app in $AllApps) {
         $app.CheckBoxRef.IsChecked = $false
         Set-CardVisualState -AppItem $app
@@ -1929,7 +2154,13 @@ $BtnStartInstall.Add_Click({
     $selectedApps = @($AllApps | Where-Object { $_.IsSelected })
     if ($selectedApps.Count -eq 0) { return }
 
-    $script:ShowSelectedOnly = $true
+    # Alt log paneli gizlenmişse kurulum başlarken otomatik olarak tekrar aç
+    if ($script:IsLogCollapsed) {
+        Set-LogPanelExpanded -Expanded $true
+    }
+
+    $script:ShowInstalledOnly = $false
+    $script:ShowSelectedOnly  = $true
     Update-AppFilter
     Rebuild-StepTrackerPreview
 
