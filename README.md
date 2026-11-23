@@ -31,15 +31,16 @@
 
 ## Öne Çıkan Özellikler
 
-### 1. Modern Koyu Tema (Dark Slate) Dashboard Arayüzü
-* **Açılır-Kapanır (Daraltılabilir) Sol Kategori Menüsü (`☰`):** Sol üstteki `☰` butonuyla kategori menüsünü tek tıkla ikon moduna (`64px`) daraltarak orta katalog alanına maksimum genişlik kazandırır.
+### 1. Modern ve Duyarlı (Responsive) Koyu Tema (Dark Slate) Dashboard Arayüzü
+* **Tam Duyarlı (Responsive) Yerleşim:** Ekran çözünürlüğüne ve DPI ölçeğine otomatik sığar; pencere büyütülüp küçültüldüğünde uygulama kartları (`1`–`5` sütun), üst arama çubuğu, metrik kartları (`4`'lü / `2×2`) ve sol kategori menüsü akıllı kırılımlarla kendini yeniden düzenler.
+* **Açılır-Kapanır (Daraltılabilir) Sol Kategori Menüsü (`☰`):** Sol üstteki `☰` butonuyla kategori menüsünü tek tıkla kompakt ikon moduna daraltarak orta katalog alanına maksimum genişlik kazandırır.
 * **Etkileşimli 4'lü Üst İstatistik Kartı:**
   * **TOPLAM KATALOG (`91 Program`):** Tıklandığında tüm filtreleri sıfırlar ve tüm kataloğu listeler.
   * **KURULACAK SEÇİM (`X Seçili`):** Tıklandığında yalnızca kurulmak üzere işaretlenen programları filtreler.
   * **SİSTEMDE YÜKLÜ (`XX Yüklü`):** Tıklandığında yalnızca bu bilgisayarda halihazırda kurulu olan programları filtreler.
   * **OTOMASYON DURUMU:** Seçim ve kurulum durumunu canlı olarak gösterir.
 * **Canlı Uygulama Logoları ve Marka Rozetleri:** Her uygulama kartında uygulamanın resmi logosu arka planda otomatik indirilir ve `.icons/` klasöründe önbelleklenir (çevrimdışı ortamlar için kurumsal marka renkli rozet desteği bulunur).
-* **Katlanabilir ve Temizlenebilir Canlı İşlem Günlüğü:** Alt günlük paneli **`Gizle ▼ / Göster ▲`** ve **`Logu Temizle`** butonlarıyla kontrol edilebilir; yeni bir kurulum başlatıldığında otomatik olarak tekrar açılır.
+* **Sürüklenebilir ve Katlanabilir Canlı İşlem Günlüğü:** Alt süreç/günlük paneli sürüklenebilir yatay/dikey ayırıcılarla (`GridSplitter`) büyütülüp küçültülebilir, **`Gizle ▼ / Göster ▲`** ve **`Temizle`** butonlarıyla kontrol edilebilir; yeni kurulum başlatıldığında otomatik olarak açılır.
 
 ### 2. Yüklü Programları Otomatik Algılama ve `YÜKLÜ` Rozeti
 * Uygulama açıldığında Windows Kayıt Defteri'ndeki (`HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*`, `WOW6432Node` ve `HKCU`) kurulu yazılımları otomatik tarar.
@@ -56,10 +57,12 @@
   * Ana ekranda seçili olan programları tek tıkla o paketin üzerine kaydedebilirsiniz,
   * Paketi tamamen silebilirsiniz.
 
-### 4. Sıfır Onay (Katılımsız) Kurulum ve Adım Adım Canlı Süreç Takibi
+### 4. Sıfır Onay (Katılımsız) Kurulum, Adım Adım Yüzdelik İndirme ve Otomatik Masaüstü Kısayolu
 * Başlangıçta tek seferde Yönetici (Administrator) yetkisi alır. Seçilen onlarca program kurulurken tekrar UAC penceresi veya *"İleri > İleri"* kurulum sihirbazı açılmaz.
-* Hem program kartlarının sağ üst köşesinde hem de alt sol kısımdaki **"Adım Adım Kurulum Süreci"** tablosunda her programın hangi aşamada olduğu (**`SIRADA BEKLİYOR`** -> **`İNDİRİLİYOR...`** -> **`SESSİZ KURULUYOR...`** -> **`KURULDU`**) renkli rozetlerle ve kurulum süresiyle (`sn`) canlı gösterilir.
-* **Çift Kademeli Kurulum Motoru:** Önce yerel `Install_*.ps1` betiğini çalıştırır, herhangi bir sunucu/indirme hatası olursa otomatik olarak Windows Paket Yöneticisi (`winget`) yedeğini devreye sokar.
+* **Canlı Yüzdelik İndirme ve Süreç Takibi:** Hem program kartlarında hem de alt sol **"Adım Adım Kurulum Süreci"** tablosunda her program için satır içi ilerleme çubuğu, indirilen/toplam MB, indirme hızı (`MB/sn`) ve aşama rozetleri (**`SIRADA`** -> **`İNDİRİLİYOR %XX`** -> **`ARŞİV AÇILIYOR`** -> **`KURULUYOR`** -> **`KURULDU`**) canlı olarak gösterilir; Canlı İşlem Günlüğü `%1` ve ardından her `%5` adımda ilerlemeyi satır satır yazar.
+* **Detaylı Canlı Günlük & Gerçek Kurulum Doğrulaması:** Kurulum öncesi ve sonrası Kayıt Defteri / dosya sistemi karşılaştırmasıyla programın gerçekten kurulduğu doğrulanır; canlı işlem günlüğüne **indirme adresi**, **geçici dosya yolu**, **çıkış kodu**, **kurulum klasörü (`[KURULUM KLASÖRÜ]`)**, **ana çalıştırılabilir (`[ANA UYGULAMA]`)** ve **sürüm (`[SÜRÜM]`)** bilgileri yazılır.
+* **Otomatik Masaüstü Kısayolu:** Kurulan her masaüstü uygulaması için (Microsoft Office 2021'de Word, Excel, PowerPoint ve Outlook dahil) kurulum sırasında kısayol oluşmadıysa Ortak Masaüstü (`C:\Users\Public\Desktop`) üzerinde otomatik `.lnk` kısayolu oluşturulur ve günlüğe işlenir.
+* **Yüksek Hızlı Adobe Acrobat Pro & Çift Kademeli Kurulum Motoru:** Adobe Acrobat Pro, yerleşik `curl.exe` + ZIP bütünlük kontrolü + `tar.exe` arşiv açma + hızlı kurumsal MSI parametreleri (`setup.exe` + doğrudan `AcroPro.msi` yedeği) ile güvenilir ve hızlı şekilde kurulur. Herhangi bir betik tamamlanamazsa Windows Paket Yöneticisi (`winget`) yedeği otomatik devreye girer.
 
 ---
 

@@ -348,12 +348,12 @@ function Load-PackagesFromJson {
 
 Load-PackagesFromJson
 
-# 4. Modern Dashboard WPF XAML Arayüzü
+# 4. Modern ve Duyarlı (Responsive) Dashboard WPF XAML Arayüzü
 [xml]$Xaml = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Hızlı Kurulum Merkezi | Geliştirici: Serkan Altın"
-        Width="1300" Height="850" MinWidth="1060" MinHeight="700"
+        Width="1280" Height="820" MinWidth="760" MinHeight="560"
         WindowStartupLocation="CenterScreen"
         Background="#090D16" Foreground="#F8FAFC"
         FontFamily="Segoe UI">
@@ -509,6 +509,32 @@ Load-PackagesFromJson
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Hazır Paket İç Buton Stili (Devre dışı bırakıldığında asla beyaza dönmez) -->
+        <Style x:Key="PillInnerButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#26FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="#CBD5E1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -518,73 +544,85 @@ Load-PackagesFromJson
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- ÜST DASHBOARD BAR: BAŞLIK, HIZLI ARAMA VE DİNAMİK PAKETLER -->
-        <Border Grid.Row="0" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="0,0,0,1" Padding="22,14">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="340"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+        <!-- ÜST DASHBOARD BAR: DUYARLI (RESPONSIVE) BAŞLIK, ARAMA VE DİNAMİK PAKETLER ŞERİDİ -->
+        <Border Grid.Row="0" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="0,0,0,1" Padding="18,11,18,10">
+            <StackPanel>
+                <!-- 1. Satır: Sol Başlık + Sağ Duyarlı Arama Kutusu (Dar ekranda otomatik 2. satıra iner) -->
+                <Grid x:Name="HeaderTopGrid">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                <!-- Sol: Hamburger Menü (☰) + Sade ve Güçlü Başlık -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button x:Name="BtnToggleSidebar" Style="{StaticResource ActionButtonStyle}" Width="38" Height="38" Padding="0" Margin="0,0,12,0"
-                            ToolTip="Sol Kategori Menüsünü Daralt / Genişlet (☰)">
-                        <TextBlock Text="&#xE700;" FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="#F8FAFC" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Button>
-                    <StackPanel VerticalAlignment="Center">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="Hızlı Kurulum Merkezi" FontSize="20" FontWeight="Bold" Foreground="#F8FAFC" VerticalAlignment="Center"/>
-                            <Border x:Name="AdminBadge" Background="#064E3B" BorderBrush="#059669" BorderThickness="1" CornerRadius="6" Padding="8,2" Margin="10,0,0,0" VerticalAlignment="Center">
-                                <TextBlock x:Name="AdminBadgeText" Text="YÖNETİCİ YETKİLİ" FontSize="10" FontWeight="Bold" Foreground="#A7F3D0"/>
-                            </Border>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,3,0,0" VerticalAlignment="Center">
-                            <TextBlock Text="Geliştirici: " FontSize="11.5" Foreground="#94A3B8"/>
-                            <TextBlock Text="Serkan Altın" FontSize="11.5" FontWeight="Bold" Foreground="#38BDF8"/>
-                            <TextBlock Text="  •  Katılımsız Kurulum Paneli" FontSize="11.5" Foreground="#64748B"/>
+                    <!-- Sol: Hamburger Menü (☰) + Sade ve Güçlü Başlık -->
+                    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,14,0">
+                        <Button x:Name="BtnToggleSidebar" Style="{StaticResource ActionButtonStyle}" Width="36" Height="36" Padding="0" Margin="0,0,11,0"
+                                ToolTip="Sol Kategori Menüsünü Daralt / Genişlet (☰)">
+                            <TextBlock Text="&#xE700;" FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="#F8FAFC" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Button>
+                        <StackPanel VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock x:Name="AppMainTitle" Text="Hızlı Kurulum Merkezi" FontSize="19" FontWeight="Bold" Foreground="#F8FAFC" VerticalAlignment="Center"/>
+                                <Border x:Name="AdminBadge" Background="#064E3B" BorderBrush="#059669" BorderThickness="1" CornerRadius="6" Padding="7,2" Margin="9,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock x:Name="AdminBadgeText" Text="YÖNETİCİ YETKİLİ" FontSize="9.5" FontWeight="Bold" Foreground="#A7F3D0"/>
+                                </Border>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,2,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="Geliştirici: " FontSize="11" Foreground="#94A3B8"/>
+                                <TextBlock Text="Serkan Altın" FontSize="11" FontWeight="Bold" Foreground="#38BDF8"/>
+                                <TextBlock Text="  •  Katılımsız Kurulum Paneli" FontSize="11" Foreground="#64748B"/>
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
-                </StackPanel>
 
-                <!-- Orta: Modern Arama Kutusu -->
-                <Border Grid.Column="1" Background="#090D16" BorderBrush="#334155" BorderThickness="1" CornerRadius="9" Margin="20,0,16,0" Height="40" VerticalAlignment="Center">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="36"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="&#xE721;" FontFamily="Segoe MDL2 Assets" FontSize="13.5" Foreground="#38BDF8" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <TextBox x:Name="SearchBox" Grid.Column="1" Background="Transparent" Foreground="#F8FAFC" BorderThickness="0"
-                                 VerticalContentAlignment="Center" FontSize="13" CaretBrush="#38BDF8" Padding="2,0,8,0"/>
-                        <TextBlock x:Name="SearchPlaceholder" Grid.Column="1" Text="Program veya kategori ara (Chrome, E-İmza, Office)..."
-                                   Foreground="#64748B" FontSize="12" VerticalAlignment="Center" Margin="2,0,0,0" IsHitTestVisible="False"/>
-                        <Button x:Name="BtnClearSearch" Grid.Column="2" Content="Temizle" Visibility="Collapsed" Background="Transparent" Foreground="#38BDF8"
-                                BorderThickness="0" Padding="10,0" Cursor="Hand" FontSize="11" FontWeight="SemiBold"/>
-                    </Grid>
+                    <!-- Sağ: Duyarlı Modern Arama Kutusu -->
+                    <Border x:Name="SearchBorder" Grid.Row="0" Grid.Column="1" Background="#090D16" BorderBrush="#334155" BorderThickness="1" CornerRadius="9"
+                            Height="38" MinWidth="210" MaxWidth="520" HorizontalAlignment="Right" Width="420" VerticalAlignment="Center">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="34"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="&#xE721;" FontFamily="Segoe MDL2 Assets" FontSize="13.5" Foreground="#38BDF8" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBox x:Name="SearchBox" Grid.Column="1" Background="Transparent" Foreground="#F8FAFC" BorderThickness="0"
+                                     VerticalContentAlignment="Center" FontSize="13" CaretBrush="#38BDF8" Padding="2,0,8,0"/>
+                            <TextBlock x:Name="SearchPlaceholder" Grid.Column="1" Text="Program veya kategori ara (Chrome, Acrobat, Office)..."
+                                       Foreground="#64748B" FontSize="12" VerticalAlignment="Center" Margin="2,0,6,0" TextTrimming="CharacterEllipsis" IsHitTestVisible="False"/>
+                            <Button x:Name="BtnClearSearch" Grid.Column="2" Content="Temizle" Visibility="Collapsed" Background="Transparent" Foreground="#38BDF8"
+                                    BorderThickness="0" Padding="10,0" Cursor="Hand" FontSize="11" FontWeight="SemiBold"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <!-- 2. Satır: Dinamik Hazır Paketler Şeridi (Ekran genişliğine göre taşmadan satır atlar) -->
+                <Border BorderBrush="#1E293B" BorderThickness="0,1,0,0" Margin="0,9,0,0" Padding="0,8,0,0">
+                    <DockPanel LastChildFill="True">
+                        <TextBlock DockPanel.Dock="Left" Text="HAZIR PAKETLER" FontSize="10.5" FontWeight="Bold" Foreground="#64748B" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        <WrapPanel x:Name="PackagesTopBarPanel" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    </DockPanel>
                 </Border>
-
-                <!-- Sağ: Dinamik Hazır Paketler Barı + Yeni Paket Oluştur Butonu -->
-                <WrapPanel x:Name="PackagesTopBarPanel" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            </Grid>
+            </StackPanel>
         </Border>
 
         <!-- ANA DASHBOARD GÖVDESİ -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="SidebarColumn" Width="265"/>
+                <ColumnDefinition x:Name="SidebarColumn" Width="255"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <!-- Sol Menü: İkonlu Kategoriler + Tıklanabilir Geliştirici Kartı -->
-            <Border x:Name="SidebarBorder" Grid.Column="0" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="0,0,1,0" Padding="12,14">
+            <Border x:Name="SidebarBorder" Grid.Column="0" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="0,0,1,0" Padding="10,12">
                 <DockPanel>
                     <TextBlock x:Name="SidebarHeaderTitle" DockPanel.Dock="Top" Text="KATEGORİLER" FontSize="11" FontWeight="Bold" Foreground="#64748B" Margin="10,0,0,8"/>
 
                     <!-- Sol Alt: Doğrudan GitHub ve LinkedIn Butonlu Geliştirici Kartı (Ekstra Pencere Açmaz) -->
-                    <Border x:Name="DeveloperCardBorder" DockPanel.Dock="Bottom" Background="#090D16" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="9" Padding="12,10" Margin="2,10,2,0">
+                    <Border x:Name="DeveloperCardBorder" DockPanel.Dock="Bottom" Background="#090D16" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="9" Padding="10,9" Margin="2,10,2,0">
                         <StackPanel>
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -596,13 +634,13 @@ Load-PackagesFromJson
                                 </Border>
                                 <StackPanel x:Name="DeveloperCardTextStack" Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
                                     <TextBlock Text="Serkan Altın" FontSize="13" FontWeight="Bold" Foreground="#F8FAFC"/>
-                                    <TextBlock Text="Sistem &amp; Bilgi İşlem Otomasyonu" FontSize="10.8" Foreground="#38BDF8"/>
-                                    <TextBlock Text="Altyapı: tylerlurie/PS-Installers" FontSize="9.5" Foreground="#64748B" Margin="0,1,0,0"/>
+                                    <TextBlock Text="Sistem &amp; Bilgi İşlem Otomasyonu" FontSize="10.5" Foreground="#38BDF8" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="Altyapı: tylerlurie/PS-Installers" FontSize="9.5" Foreground="#64748B" Margin="0,1,0,0" TextTrimming="CharacterEllipsis"/>
                                 </StackPanel>
                             </Grid>
 
                             <!-- Doğrudan Altında Yer Alan GitHub ve LinkedIn Butonları -->
-                            <Grid x:Name="DeveloperLinksGrid" Margin="0,9,0,0">
+                            <Grid x:Name="DeveloperLinksGrid" Margin="0,8,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="6"/>
@@ -632,137 +670,153 @@ Load-PackagesFromJson
                 </DockPanel>
             </Border>
 
-            <!-- Sağ Ana Alan: Dashboard Özet Kartları + Uygulama Izgarası + Alt Süreç Takip Paneli -->
+            <!-- Sağ Ana Alan: Duyarlı Özet Kartları + Uygulama Izgarası + Sürüklenebilir Süreç Takip Paneli -->
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition x:Name="BottomPanelRow" Height="215"/>
+                    <RowDefinition Height="*" MinHeight="140"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition x:Name="BottomPanelRow" Height="225" MinHeight="42"/>
                 </Grid.RowDefinitions>
 
-                <!-- 1. Satır: Dashboard Özet Metrik Kartları (4'lü Etkileşimli Bilgi Kartı) -->
-                <Border Grid.Row="0" Background="#0B1120" BorderBrush="#1E293B" BorderThickness="0,0,0,1" Padding="20,12">
-                    <UniformGrid Columns="4">
-                        <!-- Kart 1: Katalogdaki Toplam Program (Tıklandığında Tüm Listeyi Gösterir) -->
-                        <Border x:Name="CardMetricTotal" Background="#111827" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="14,9" Margin="0,0,10,0" Cursor="Hand"
+                <!-- 1. Satır: Duyarlı Dashboard Özet Metrik Kartları (Geniş ekranda 4'lü, dar ekranda 2x2) -->
+                <Border Grid.Row="0" Background="#0B1120" BorderBrush="#1E293B" BorderThickness="0,0,0,1" Padding="14,9">
+                    <UniformGrid x:Name="MetricsUniformGrid" Columns="4">
+                        <!-- Kart 1: Katalogdaki Toplam Program -->
+                        <Border x:Name="CardMetricTotal" Background="#111827" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="12,8" Margin="4" Cursor="Hand"
                                 ToolTip="Tüm program kataloğunu göstermek için tıklayın">
                             <Grid>
-                                <StackPanel>
-                                    <TextBlock Text="TOPLAM KATALOG" FontSize="10" FontWeight="Bold" Foreground="#64748B"/>
-                                    <TextBlock x:Name="MetricTotalText" Text="91 Program" FontSize="17" FontWeight="Bold" Foreground="#F8FAFC" Margin="0,2,0,0"/>
+                                <StackPanel Margin="0,0,26,0">
+                                    <TextBlock Text="TOPLAM KATALOG" FontSize="10" FontWeight="Bold" Foreground="#64748B" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock x:Name="MetricTotalText" Text="91 Program" FontSize="16" FontWeight="Bold" Foreground="#F8FAFC" Margin="0,2,0,0" TextTrimming="CharacterEllipsis"/>
                                 </StackPanel>
-                                <TextBlock Text="&#xE71D;" FontFamily="Segoe MDL2 Assets" FontSize="22" Foreground="#334155" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBlock Text="&#xE71D;" FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="#334155" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             </Grid>
                         </Border>
 
-                        <!-- Kart 2: Seçilen / Kurulacak Program (Tıklandığında Seçilenleri Filtreler) -->
-                        <Border x:Name="CardMetricSelected" Background="#111827" BorderBrush="#1E3A8A" BorderThickness="1" CornerRadius="8" Padding="14,9" Margin="5,0,5,0" Cursor="Hand"
+                        <!-- Kart 2: Seçilen / Kurulacak Program -->
+                        <Border x:Name="CardMetricSelected" Background="#111827" BorderBrush="#1E3A8A" BorderThickness="1" CornerRadius="8" Padding="12,8" Margin="4" Cursor="Hand"
                                 ToolTip="Yalnızca kurulmak üzere seçilen programları filtrelemek için tıklayın">
                             <Grid>
-                                <StackPanel>
-                                    <TextBlock Text="KURULACAK SEÇİM" FontSize="10" FontWeight="Bold" Foreground="#60A5FA"/>
-                                    <TextBlock x:Name="MetricSelectedText" Text="0 Seçili" FontSize="17" FontWeight="Bold" Foreground="#38BDF8" Margin="0,2,0,0"/>
+                                <StackPanel Margin="0,0,26,0">
+                                    <TextBlock Text="KURULACAK SEÇİM" FontSize="10" FontWeight="Bold" Foreground="#60A5FA" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock x:Name="MetricSelectedText" Text="0 Seçili" FontSize="16" FontWeight="Bold" Foreground="#38BDF8" Margin="0,2,0,0" TextTrimming="CharacterEllipsis"/>
                                 </StackPanel>
-                                <TextBlock Text="&#xE762;" FontFamily="Segoe MDL2 Assets" FontSize="22" Foreground="#1D4ED8" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBlock Text="&#xE762;" FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="#1D4ED8" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             </Grid>
                         </Border>
 
-                        <!-- Kart 3: Bilgisayarda Yüklü & Kurulan Program (Tıklandığında Sadece Yüklü Olanları Filtreler) -->
-                        <Border x:Name="CardMetricInstalled" Background="#111827" BorderBrush="#064E3B" BorderThickness="1" CornerRadius="8" Padding="14,9" Margin="5,0,5,0" Cursor="Hand"
+                        <!-- Kart 3: Bilgisayarda Yüklü & Kurulan Program -->
+                        <Border x:Name="CardMetricInstalled" Background="#111827" BorderBrush="#064E3B" BorderThickness="1" CornerRadius="8" Padding="12,8" Margin="4" Cursor="Hand"
                                 ToolTip="Yalnızca bu bilgisayarda yüklü olan programları filtrelemek için tıklayın">
                             <Grid>
-                                <StackPanel>
-                                    <TextBlock Text="SİSTEMDE YÜKLÜ" FontSize="10" FontWeight="Bold" Foreground="#34D399"/>
-                                    <TextBlock x:Name="MetricInstalledText" Text="0 Yüklü" FontSize="17" FontWeight="Bold" Foreground="#10B981" Margin="0,2,0,0"/>
+                                <StackPanel Margin="0,0,26,0">
+                                    <TextBlock Text="SİSTEMDE YÜKLÜ" FontSize="10" FontWeight="Bold" Foreground="#34D399" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock x:Name="MetricInstalledText" Text="0 Yüklü" FontSize="16" FontWeight="Bold" Foreground="#10B981" Margin="0,2,0,0" TextTrimming="CharacterEllipsis"/>
                                 </StackPanel>
-                                <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="22" Foreground="#059669" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="#059669" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             </Grid>
                         </Border>
 
                         <!-- Kart 4: Sistem / Kurulum Durumu -->
-                        <Border Background="#111827" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="14,9" Margin="10,0,0,0">
+                        <Border Background="#111827" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="12,8" Margin="4">
                             <Grid>
-                                <StackPanel>
-                                    <TextBlock Text="OTOMASYON DURUMU" FontSize="10" FontWeight="Bold" Foreground="#94A3B8"/>
-                                    <TextBlock x:Name="MetricStateText" Text="Seçim Bekleniyor" FontSize="15" FontWeight="Bold" Foreground="#E2E8F0" Margin="0,4,0,0" TextTrimming="CharacterEllipsis"/>
+                                <StackPanel Margin="0,0,26,0">
+                                    <TextBlock Text="OTOMASYON DURUMU" FontSize="10" FontWeight="Bold" Foreground="#94A3B8" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock x:Name="MetricStateText" Text="Seçim Bekleniyor" FontSize="14.5" FontWeight="Bold" Foreground="#E2E8F0" Margin="0,3,0,0" TextTrimming="CharacterEllipsis"/>
                                 </StackPanel>
-                                <TextBlock Text="&#xE945;" FontFamily="Segoe MDL2 Assets" FontSize="22" Foreground="#475569" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBlock Text="&#xE945;" FontFamily="Segoe MDL2 Assets" FontSize="20" Foreground="#475569" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             </Grid>
                         </Border>
                     </UniformGrid>
                 </Border>
 
-                <!-- 2. Satır: Aktif Kategori Başlığı ve Hızlı Seçim + Yenile/Tara Kontrolleri -->
-                <Border Grid.Row="1" Background="#090D16" Padding="22,12,22,6">
-                    <Grid>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock x:Name="CurrentCategoryTitle" Text="Tüm Programlar" FontSize="17" FontWeight="Bold" Foreground="#F8FAFC" VerticalAlignment="Center"/>
-                            <Border Background="#1E293B" BorderBrush="#334155" BorderThickness="1" CornerRadius="12" Padding="10,3" Margin="12,0,0,0" VerticalAlignment="Center">
-                                <TextBlock x:Name="CurrentCategoryCount" Text="0 program" FontSize="12" Foreground="#38BDF8" FontWeight="SemiBold"/>
-                            </Border>
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                            <Button x:Name="BtnRescanInstalled" Style="{StaticResource ActionButtonStyle}" Margin="0,0,8,0" Padding="12,6" FontSize="12"
-                                    ToolTip="Windows Kayıt Defteri üzerinden bilgisayarda yüklü olan programları yeniden tarar">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="11.5" Foreground="#34D399" Margin="0,0,6,0" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Yenile / Tara" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Button>
-                            <Button x:Name="BtnShowSelectedOnly" Style="{StaticResource ActionButtonStyle}" Content="Seçilenleri Göster (0)" Margin="0,0,8,0" Padding="12,6" FontSize="12"/>
-                            <Button x:Name="BtnSelectCategory" Style="{StaticResource ActionButtonStyle}" Content="Bu Kategoridekileri Seç" Margin="0,0,8,0" Padding="12,6" FontSize="12"/>
-                            <Button x:Name="BtnClearAll" Style="{StaticResource ActionButtonStyle}" Content="Seçimleri Temizle" Padding="12,6" FontSize="12"/>
-                        </StackPanel>
-                    </Grid>
-                </Border>
-
-                <!-- 3. Satır: Logolu Uygulama Kartları Izgarası -->
-                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Padding="16,4,16,14">
-                    <WrapPanel x:Name="AppsWrapPanel" Orientation="Horizontal"/>
-                </ScrollViewer>
-
-                <!-- 4. Satır: ALT ADIM ADIM SÜREÇ TAKİP VE KATLANABİLİR CANLI GÜNLÜK PANELİ -->
-                <Border x:Name="BottomPanelOuterBorder" Grid.Row="3" Background="#070A12" BorderBrush="#1E293B" BorderThickness="0,1,0,0" Padding="16,8">
+                <!-- 2. Satır: Duyarlı Aktif Kategori Başlığı ve Hızlı Seçim Kontrolleri (Çakışmadan satır atlar) -->
+                <Border Grid.Row="1" Background="#090D16" Padding="18,10,18,6">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="440"/>
-                            <ColumnDefinition Width="14"/>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Sol Sütun: Seçilen Programların Adım Adım Durum Tablosu -->
-                        <Border x:Name="StepTrackerInnerBorder" Grid.Column="0" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="12,7">
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2,12,2">
+                            <TextBlock x:Name="CurrentCategoryTitle" Text="Tüm Programlar" FontSize="16.5" FontWeight="Bold" Foreground="#F8FAFC" VerticalAlignment="Center"/>
+                            <Border Background="#1E293B" BorderBrush="#334155" BorderThickness="1" CornerRadius="12" Padding="9,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                                <TextBlock x:Name="CurrentCategoryCount" Text="0 program" FontSize="11.5" Foreground="#38BDF8" FontWeight="SemiBold"/>
+                            </Border>
+                        </StackPanel>
+
+                        <WrapPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <Button x:Name="BtnRescanInstalled" Style="{StaticResource ActionButtonStyle}" Margin="0,2,6,2" Padding="10,5" FontSize="11.5"
+                                    ToolTip="Windows Kayıt Defteri üzerinden bilgisayarda yüklü olan programları yeniden tarar">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="11" Foreground="#34D399" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Yenile / Tara" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="BtnShowSelectedOnly" Style="{StaticResource ActionButtonStyle}" Content="Seçilenleri Göster (0)" Margin="0,2,6,2" Padding="10,5" FontSize="11.5"/>
+                            <Button x:Name="BtnSelectCategory" Style="{StaticResource ActionButtonStyle}" Content="Bu Kategoridekileri Seç" Margin="0,2,6,2" Padding="10,5" FontSize="11.5"/>
+                            <Button x:Name="BtnClearAll" Style="{StaticResource ActionButtonStyle}" Content="Seçimleri Temizle" Margin="0,2,0,2" Padding="10,5" FontSize="11.5"/>
+                        </WrapPanel>
+                    </Grid>
+                </Border>
+
+                <!-- 3. Satır: Duyarlı Logolu Uygulama Kartları Izgarası -->
+                <ScrollViewer x:Name="AppsScrollViewer" Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="12,4,12,12">
+                    <WrapPanel x:Name="AppsWrapPanel" Orientation="Horizontal"/>
+                </ScrollViewer>
+
+                <!-- 4. Satır: Sürüklenebilir Yatay Ayırıcı (Alt panel yüksekliği ayarlanabilir) -->
+                <GridSplitter x:Name="BottomPanelSplitter" Grid.Row="3" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                              Background="#1E293B" ShowsPreview="False" Cursor="SizeNS"
+                              ToolTip="Sürükleyerek alt günlük panelini büyütüp küçültebilirsiniz"/>
+
+                <!-- 5. Satır: ALT ADIM ADIM SÜREÇ TAKİP VE KATLANABİLİR CANLI GÜNLÜK PANELİ -->
+                <Border x:Name="BottomPanelOuterBorder" Grid.Row="4" Background="#070A12" Padding="14,7">
+                    <Grid x:Name="BottomSplitGrid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition x:Name="StepColDef" Width="0.42*" MinWidth="200"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition x:Name="LogColDef" Width="0.58*" MinWidth="240"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Sol Sütun: Seçilen Programların Adım Adım Yüzdelik Durum Tablosu -->
+                        <Border x:Name="StepTrackerInnerBorder" Grid.Column="0" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="11,7">
                             <DockPanel>
-                                <Grid DockPanel.Dock="Top" Margin="0,0,0,4">
+                                <Grid DockPanel.Dock="Top" Margin="0,0,0,5">
                                     <TextBlock Text="ADIM ADIM KURULUM SÜRECİ" FontSize="11" FontWeight="Bold" Foreground="#38BDF8" VerticalAlignment="Center"/>
                                     <TextBlock x:Name="StepCounterBadge" Text="0 / 0 Tamamlandı" FontSize="11" FontWeight="SemiBold" Foreground="#94A3B8" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                 </Grid>
-                                <ScrollViewer x:Name="StepProgressScrollViewer" VerticalScrollBarVisibility="Auto">
+                                <ScrollViewer x:Name="StepProgressScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                                     <StackPanel x:Name="StepProgressPanel"/>
                                 </ScrollViewer>
                             </DockPanel>
                         </Border>
 
+                        <!-- Dikey Ayırıcı -->
+                        <GridSplitter Grid.Column="1" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch"
+                                      Background="#1E293B" ShowsPreview="False" Cursor="SizeWE"
+                                      ToolTip="Sürükleyerek süreç ve günlük genişliğini ayarlayabilirsiniz"/>
+
                         <!-- Sağ Sütun: Katlanabilir ve Temizlenebilir Detaylı Canlı Kurulum Günlüğü -->
-                        <Border x:Name="LogPanelInnerBorder" Grid.Column="2" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="12,7">
+                        <Border x:Name="LogPanelInnerBorder" Grid.Column="2" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="1" CornerRadius="8" Padding="11,7">
                             <DockPanel>
-                                <Grid DockPanel.Dock="Top" Margin="0,0,0,4">
+                                <Grid DockPanel.Dock="Top" Margin="0,0,0,5">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Text="CANLI İŞLEM GÜNLÜĞÜ" FontSize="11" FontWeight="Bold" Foreground="#64748B" VerticalAlignment="Center"/>
-                                    <TextBlock x:Name="ProgressStepText" Grid.Column="1" Text="Kurulum için program seçin" FontSize="11.5" FontWeight="Bold" Foreground="#38BDF8" HorizontalAlignment="Right" Margin="10,0,10,0" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="ProgressStepText" Grid.Column="1" Text="Kurulum için program seçin" FontSize="11" FontWeight="Bold" Foreground="#38BDF8" HorizontalAlignment="Right" Margin="8,0,8,0" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
                                     <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                                        <Button x:Name="BtnClearLog" Style="{StaticResource ActionButtonStyle}" Content="Logu Temizle" Padding="9,3" FontSize="11" Margin="0,0,6,0" ToolTip="Günlük kayıtlarını temizler"/>
-                                        <Button x:Name="BtnToggleLogPanel" Style="{StaticResource ActionButtonStyle}" Content="Gizle ▼" Padding="9,3" FontSize="11" ToolTip="Alt günlük panelini daraltır veya genişletir"/>
+                                        <Button x:Name="BtnClearLog" Style="{StaticResource ActionButtonStyle}" Content="Temizle" Padding="8,3" FontSize="11" Margin="0,0,5,0" ToolTip="Günlük kayıtlarını temizler"/>
+                                        <Button x:Name="BtnToggleLogPanel" Style="{StaticResource ActionButtonStyle}" Content="Gizle ▼" Padding="8,3" FontSize="11" ToolTip="Alt günlük panelini daraltır veya genişletir"/>
                                     </StackPanel>
                                 </Grid>
                                 <TextBox x:Name="LogTextBox" Background="Transparent" Foreground="#A7F3D0" BorderThickness="0"
-                                         FontFamily="Consolas" FontSize="12" IsReadOnly="True" TextWrapping="Wrap"
+                                         FontFamily="Consolas" FontSize="11.8" IsReadOnly="True" TextWrapping="Wrap"
                                          VerticalScrollBarVisibility="Auto" AcceptsReturn="True"/>
                             </DockPanel>
                         </Border>
@@ -771,8 +825,8 @@ Load-PackagesFromJson
             </Grid>
         </Grid>
 
-        <!-- ALT DURUM, SEÇİLEN ÖZETİ VE KURULUM BAŞLATMA ÇUBUĞU -->
-        <Border Grid.Row="2" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="0,1,0,0" Padding="24,13">
+        <!-- ALT DURUM, SEÇİLEN ÖZETİ, CANLI YÜZDELİK İLERLEME VE KURULUM BAŞLATMA ÇUBUĞU -->
+        <Border Grid.Row="2" Background="#0F172A" BorderBrush="#1E293B" BorderThickness="0,1,0,0" Padding="18,11">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -781,24 +835,31 @@ Load-PackagesFromJson
                 </Grid.ColumnDefinitions>
 
                 <!-- Seçili Uygulama Sayısı -->
-                <Border Grid.Column="0" Background="#090D16" BorderBrush="#334155" BorderThickness="1" CornerRadius="8" Padding="14,9" VerticalAlignment="Center">
+                <Border Grid.Column="0" Background="#090D16" BorderBrush="#334155" BorderThickness="1" CornerRadius="8" Padding="12,8" VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Seçilen Program: " Foreground="#94A3B8" FontSize="13.5" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="SelectedCountText" Text="0" Foreground="#38BDF8" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <TextBlock Text="Seçilen: " Foreground="#94A3B8" FontSize="13" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="SelectedCountText" Text="0" Foreground="#38BDF8" FontSize="14.5" FontWeight="Bold" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Border>
 
-                <!-- Orta: Canlı Aşama Özeti + İlerleme Çubuğu -->
-                <StackPanel Grid.Column="1" Margin="20,0" VerticalAlignment="Center">
-                    <TextBlock x:Name="SelectedSummaryText" Text="Henüz program seçilmedi. Kartlara tıklayarak veya üstteki hazır paketlerden seçim yapabilirsiniz."
-                               Foreground="#94A3B8" FontSize="12" TextTrimming="CharacterEllipsis" Margin="0,0,0,6"/>
+                <!-- Orta: Canlı Aşama Özeti + Yüzdelikli İlerleme Çubuğu -->
+                <StackPanel Grid.Column="1" Margin="16,0" VerticalAlignment="Center">
+                    <Grid Margin="0,0,0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="SelectedSummaryText" Grid.Column="0" Text="Henüz program seçilmedi. Kartlara tıklayarak veya üstteki hazır paketlerden seçim yapabilirsiniz."
+                                   Foreground="#94A3B8" FontSize="12" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="ProgressPercentText" Grid.Column="1" Text="%0" Foreground="#38BDF8" FontSize="12" FontWeight="Bold" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                    </Grid>
                     <ProgressBar x:Name="InstallProgressBar" Height="10" Minimum="0" Maximum="100" Value="0"
                                  Background="#090D16" Foreground="#2563EB" BorderBrush="#334155" BorderThickness="1"/>
                 </StackPanel>
 
                 <!-- Sağ: Kurulumu Başlat Butonu -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button x:Name="BtnStartInstall" Style="{StaticResource PrimaryButtonStyle}" Content="Seçilenleri Onaysız Kur (0)" IsEnabled="False"/>
+                    <Button x:Name="BtnStartInstall" Style="{StaticResource PrimaryButtonStyle}" Padding="20,10" FontSize="13.5" Content="Seçilenleri Onaysız Kur (0)" IsEnabled="False"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -810,9 +871,17 @@ Load-PackagesFromJson
 $Reader = New-Object System.Xml.XmlNodeReader $Xaml
 $Window = [Windows.Markup.XamlReader]::Load($Reader)
 
+# Pencere boyutunu mevcut ekran çalışma alanına (DPI / çözünürlük) göre otomatik sığdır
+$workArea = [System.Windows.SystemParameters]::WorkArea
+if ($workArea.Width -gt 0 -and $workArea.Height -gt 0) {
+    $Window.Width  = [Math]::Max($Window.MinWidth,  [Math]::Min(1340, [Math]::Floor($workArea.Width  * 0.92)))
+    $Window.Height = [Math]::Max($Window.MinHeight, [Math]::Min(860,  [Math]::Floor($workArea.Height * 0.90)))
+}
+
 $BtnToggleSidebar         = $Window.FindName("BtnToggleSidebar")
 $AdminBadge               = $Window.FindName("AdminBadge")
 $AdminBadgeText           = $Window.FindName("AdminBadgeText")
+$SearchBorder             = $Window.FindName("SearchBorder")
 $SearchBox                = $Window.FindName("SearchBox")
 $SearchPlaceholder        = $Window.FindName("SearchPlaceholder")
 $BtnClearSearch           = $Window.FindName("BtnClearSearch")
@@ -826,6 +895,7 @@ $DeveloperLinksGrid       = $Window.FindName("DeveloperLinksGrid")
 $BtnDevGitHub             = $Window.FindName("BtnDevGitHub")
 $BtnDevLinkedIn           = $Window.FindName("BtnDevLinkedIn")
 $CategoryListPanel        = $Window.FindName("CategoryListPanel")
+$MetricsUniformGrid       = $Window.FindName("MetricsUniformGrid")
 $CardMetricTotal          = $Window.FindName("CardMetricTotal")
 $CardMetricSelected       = $Window.FindName("CardMetricSelected")
 $CardMetricInstalled      = $Window.FindName("CardMetricInstalled")
@@ -839,7 +909,9 @@ $BtnSelectCategory        = $Window.FindName("BtnSelectCategory")
 $BtnClearAll              = $Window.FindName("BtnClearAll")
 $CurrentCategoryTitle     = $Window.FindName("CurrentCategoryTitle")
 $CurrentCategoryCount     = $Window.FindName("CurrentCategoryCount")
+$AppsScrollViewer         = $Window.FindName("AppsScrollViewer")
 $AppsWrapPanel            = $Window.FindName("AppsWrapPanel")
+$BottomPanelSplitter      = $Window.FindName("BottomPanelSplitter")
 $BottomPanelRow           = $Window.FindName("BottomPanelRow")
 $BottomPanelOuterBorder   = $Window.FindName("BottomPanelOuterBorder")
 $StepTrackerInnerBorder   = $Window.FindName("StepTrackerInnerBorder")
@@ -853,6 +925,7 @@ $LogTextBox               = $Window.FindName("LogTextBox")
 $ProgressStepText         = $Window.FindName("ProgressStepText")
 $SelectedCountText        = $Window.FindName("SelectedCountText")
 $SelectedSummaryText      = $Window.FindName("SelectedSummaryText")
+$ProgressPercentText      = $Window.FindName("ProgressPercentText")
 $InstallProgressBar       = $Window.FindName("InstallProgressBar")
 $BtnStartInstall          = $Window.FindName("BtnStartInstall")
 
@@ -984,12 +1057,14 @@ function Scan-InstalledApplications {
     }
 }
 
-# Kart Üzerindeki ve Alt Süreç Listesindeki Durum Rozetini Güncelleme
+# Kart Üzerindeki ve Alt Süreç Listesindeki Durum Rozetini + Yüzdelik İlerlemeyi Güncelleme
 function Set-AppInstallState {
     param(
         [string]$AppId,
         [string]$State,
-        [string]$DetailText
+        [string]$DetailText,
+        [string]$BadgeOverride = "",
+        [int]$Percent = -1
     )
     $app = $AllApps | Where-Object { $_.Id -eq $AppId } | Select-Object -First 1
     if ($app) {
@@ -1009,21 +1084,28 @@ function Set-AppInstallState {
                     $app.StatusBadgeBorder.Visibility = [Windows.Visibility]::Visible
                     $app.StatusBadgeBorder.Background = $BrushConverter.ConvertFrom("#78350F")
                     $app.StatusBadgeText.Foreground   = $BrushConverter.ConvertFrom("#FDE68A")
-                    $app.StatusBadgeText.Text         = "İNDİRİLİYOR..."
+                    $app.StatusBadgeText.Text         = if ($BadgeOverride) { $BadgeOverride } else { "İNDİRİLİYOR..." }
                     $app.CardRef.BorderBrush          = $BrushConverter.ConvertFrom("#F59E0B")
+                }
+                "Extracting" {
+                    $app.StatusBadgeBorder.Visibility = [Windows.Visibility]::Visible
+                    $app.StatusBadgeBorder.Background = $BrushConverter.ConvertFrom("#4C1D95")
+                    $app.StatusBadgeText.Foreground   = $BrushConverter.ConvertFrom("#DDD6FE")
+                    $app.StatusBadgeText.Text         = if ($BadgeOverride) { $BadgeOverride } else { "ARŞİV AÇILIYOR..." }
+                    $app.CardRef.BorderBrush          = $BrushConverter.ConvertFrom("#8B5CF6")
                 }
                 "Installing" {
                     $app.StatusBadgeBorder.Visibility = [Windows.Visibility]::Visible
                     $app.StatusBadgeBorder.Background = $BrushConverter.ConvertFrom("#1E3A8A")
                     $app.StatusBadgeText.Foreground   = $BrushConverter.ConvertFrom("#93C5FD")
-                    $app.StatusBadgeText.Text         = "KURULUYOR..."
+                    $app.StatusBadgeText.Text         = if ($BadgeOverride) { $BadgeOverride } else { "KURULUYOR..." }
                     $app.CardRef.BorderBrush          = $BrushConverter.ConvertFrom("#38BDF8")
                 }
                 "Fallback" {
                     $app.StatusBadgeBorder.Visibility = [Windows.Visibility]::Visible
                     $app.StatusBadgeBorder.Background = $BrushConverter.ConvertFrom("#7C2D12")
                     $app.StatusBadgeText.Foreground   = $BrushConverter.ConvertFrom("#FED7AA")
-                    $app.StatusBadgeText.Text         = "WINGET İLE..."
+                    $app.StatusBadgeText.Text         = if ($BadgeOverride) { $BadgeOverride } else { "WINGET İLE..." }
                 }
                 "Success" {
                     $app.IsInstalled                  = $true
@@ -1049,32 +1131,70 @@ function Set-AppInstallState {
     if ($script:StepRowMap.ContainsKey($AppId)) {
         $rowInfo = $script:StepRowMap[$AppId]
         $rowInfo.DetailBlock.Text = $DetailText
+        if ($rowInfo.ProgressBar) {
+            if ($Percent -ge 0) {
+                $rowInfo.ProgressBar.Visibility = [Windows.Visibility]::Visible
+                $rowInfo.ProgressBar.IsIndeterminate = $false
+                $rowInfo.ProgressBar.Value = [Math]::Min(100, [Math]::Max(0, $Percent))
+            }
+        }
         switch ($State) {
             "Pending" {
                 $rowInfo.BadgeBorder.Background = $BrushConverter.ConvertFrom("#1E293B")
                 $rowInfo.BadgeText.Foreground   = $BrushConverter.ConvertFrom("#94A3B8")
                 $rowInfo.BadgeText.Text         = "SIRADA BEKLİYOR"
                 $rowInfo.RowBorder.BorderBrush  = $BrushConverter.ConvertFrom("#1E293B")
+                if ($rowInfo.ProgressBar) {
+                    $rowInfo.ProgressBar.Visibility = [Windows.Visibility]::Collapsed
+                    $rowInfo.ProgressBar.Value = 0
+                }
             }
             "Downloading" {
                 $rowInfo.BadgeBorder.Background = $BrushConverter.ConvertFrom("#78350F")
                 $rowInfo.BadgeText.Foreground   = $BrushConverter.ConvertFrom("#FDE68A")
-                $rowInfo.BadgeText.Text         = "İNDİRİLİYOR..."
+                $rowInfo.BadgeText.Text         = if ($BadgeOverride) { $BadgeOverride } else { "İNDİRİLİYOR..." }
                 $rowInfo.RowBorder.BorderBrush  = $BrushConverter.ConvertFrom("#F59E0B")
                 $rowInfo.RowBorder.Background   = $BrushConverter.ConvertFrom("#1C1917")
+                if ($rowInfo.ProgressBar) {
+                    $rowInfo.ProgressBar.Visibility = [Windows.Visibility]::Visible
+                    $rowInfo.ProgressBar.Foreground = $BrushConverter.ConvertFrom("#F59E0B")
+                    if ($Percent -lt 0) { $rowInfo.ProgressBar.IsIndeterminate = $true }
+                }
+            }
+            "Extracting" {
+                $rowInfo.BadgeBorder.Background = $BrushConverter.ConvertFrom("#4C1D95")
+                $rowInfo.BadgeText.Foreground   = $BrushConverter.ConvertFrom("#DDD6FE")
+                $rowInfo.BadgeText.Text         = if ($BadgeOverride) { $BadgeOverride } else { "ARŞİV AÇILIYOR..." }
+                $rowInfo.RowBorder.BorderBrush  = $BrushConverter.ConvertFrom("#8B5CF6")
+                $rowInfo.RowBorder.Background   = $BrushConverter.ConvertFrom("#1E1B4B")
+                if ($rowInfo.ProgressBar) {
+                    $rowInfo.ProgressBar.Visibility = [Windows.Visibility]::Visible
+                    $rowInfo.ProgressBar.Foreground = $BrushConverter.ConvertFrom("#8B5CF6")
+                    $rowInfo.ProgressBar.IsIndeterminate = $true
+                }
             }
             "Installing" {
                 $rowInfo.BadgeBorder.Background = $BrushConverter.ConvertFrom("#1E3A8A")
                 $rowInfo.BadgeText.Foreground   = $BrushConverter.ConvertFrom("#93C5FD")
-                $rowInfo.BadgeText.Text         = "SESSİZ KURULUYOR..."
+                $rowInfo.BadgeText.Text         = if ($BadgeOverride) { $BadgeOverride } else { "SESSİZ KURULUYOR..." }
                 $rowInfo.RowBorder.BorderBrush  = $BrushConverter.ConvertFrom("#3B82F6")
                 $rowInfo.RowBorder.Background   = $BrushConverter.ConvertFrom("#172554")
+                if ($rowInfo.ProgressBar) {
+                    $rowInfo.ProgressBar.Visibility = [Windows.Visibility]::Visible
+                    $rowInfo.ProgressBar.Foreground = $BrushConverter.ConvertFrom("#38BDF8")
+                    if ($Percent -lt 0) { $rowInfo.ProgressBar.IsIndeterminate = $true }
+                }
             }
             "Fallback" {
                 $rowInfo.BadgeBorder.Background = $BrushConverter.ConvertFrom("#7C2D12")
                 $rowInfo.BadgeText.Foreground   = $BrushConverter.ConvertFrom("#FED7AA")
-                $rowInfo.BadgeText.Text         = "YEDEK MOTOR..."
+                $rowInfo.BadgeText.Text         = if ($BadgeOverride) { $BadgeOverride } else { "YEDEK MOTOR..." }
                 $rowInfo.RowBorder.BorderBrush  = $BrushConverter.ConvertFrom("#F97316")
+                if ($rowInfo.ProgressBar) {
+                    $rowInfo.ProgressBar.Visibility = [Windows.Visibility]::Visible
+                    $rowInfo.ProgressBar.Foreground = $BrushConverter.ConvertFrom("#F97316")
+                    if ($Percent -lt 0) { $rowInfo.ProgressBar.IsIndeterminate = $true }
+                }
             }
             "Success" {
                 $rowInfo.BadgeBorder.Background = $BrushConverter.ConvertFrom("#065F46")
@@ -1082,6 +1202,12 @@ function Set-AppInstallState {
                 $rowInfo.BadgeText.Text         = "KURULDU"
                 $rowInfo.RowBorder.BorderBrush  = $BrushConverter.ConvertFrom("#059669")
                 $rowInfo.RowBorder.Background   = $BrushConverter.ConvertFrom("#064E3B")
+                if ($rowInfo.ProgressBar) {
+                    $rowInfo.ProgressBar.Visibility = [Windows.Visibility]::Visible
+                    $rowInfo.ProgressBar.IsIndeterminate = $false
+                    $rowInfo.ProgressBar.Foreground = $BrushConverter.ConvertFrom("#10B981")
+                    $rowInfo.ProgressBar.Value = 100
+                }
             }
             "Failed" {
                 $rowInfo.BadgeBorder.Background = $BrushConverter.ConvertFrom("#7F1D1D")
@@ -1089,6 +1215,10 @@ function Set-AppInstallState {
                 $rowInfo.BadgeText.Text         = "BAŞARISIZ"
                 $rowInfo.RowBorder.BorderBrush  = $BrushConverter.ConvertFrom("#DC2626")
                 $rowInfo.RowBorder.Background   = $BrushConverter.ConvertFrom("#450A0A")
+                if ($rowInfo.ProgressBar) {
+                    $rowInfo.ProgressBar.Visibility = [Windows.Visibility]::Collapsed
+                    $rowInfo.ProgressBar.IsIndeterminate = $false
+                }
             }
         }
     }
@@ -1105,7 +1235,7 @@ function Rebuild-StepTrackerPreview {
 
     if ($selectedApps.Count -eq 0) {
         $emptyText = New-Object Windows.Controls.TextBlock
-        $emptyText.Text = "Henüz program seçilmedi. Seçtiğiniz programlar kurulum sırasıyla burada adım adım (Sırada -> İndiriliyor -> Kuruluyor -> Kuruldu) listelenir."
+        $emptyText.Text = "Henüz program seçilmedi. Seçtiğiniz programlar kurulum sırasıyla burada adım adım (Sırada -> % İndirme -> Kuruluyor -> Kuruldu) listelenir."
         $emptyText.Foreground = $BrushConverter.ConvertFrom("#64748B")
         $emptyText.FontSize = 11.5
         $emptyText.TextWrapping = [Windows.TextWrapping]::Wrap
@@ -1124,6 +1254,8 @@ function Rebuild-StepTrackerPreview {
         $rowBorder.CornerRadius = New-Object Windows.CornerRadius(6)
         $rowBorder.Padding = New-Object Windows.Thickness(8, 5, 8, 5)
         $rowBorder.Margin = New-Object Windows.Thickness(0, 0, 0, 4)
+
+        $outerStack = New-Object Windows.Controls.StackPanel
 
         $grid = New-Object Windows.Controls.Grid
         $c0 = New-Object Windows.Controls.ColumnDefinition
@@ -1144,7 +1276,7 @@ function Rebuild-StepTrackerPreview {
         $nameBlock.TextTrimming = [Windows.TextTrimming]::CharacterEllipsis
 
         $detailBlock = New-Object Windows.Controls.TextBlock
-        $detailBlock.Text = if ($app.IsLocal) { "Yerel paket hazır (İndirme gerekmez)" } else { "Kurulum başlatıldığında otomatik indirilecek" }
+        $detailBlock.Text = if ($app.IsLocal) { "Yerel paket hazır (İndirme gerekmez)" } else { "Kurulum başlatıldığında adım adım % ile indirilecek" }
         $detailBlock.FontSize = 10.5
         $detailBlock.Foreground = $BrushConverter.ConvertFrom("#94A3B8")
         $detailBlock.TextTrimming = [Windows.TextTrimming]::CharacterEllipsis
@@ -1169,7 +1301,21 @@ function Rebuild-StepTrackerPreview {
 
         $grid.Children.Add($leftStack) | Out-Null
         $grid.Children.Add($badgeBorder) | Out-Null
-        $rowBorder.Child = $grid
+
+        $miniPb = New-Object Windows.Controls.ProgressBar
+        $miniPb.Height = 4
+        $miniPb.Minimum = 0
+        $miniPb.Maximum = 100
+        $miniPb.Value = 0
+        $miniPb.Margin = New-Object Windows.Thickness(0, 4, 0, 0)
+        $miniPb.Background = $BrushConverter.ConvertFrom("#090D16")
+        $miniPb.Foreground = $BrushConverter.ConvertFrom("#F59E0B")
+        $miniPb.BorderThickness = New-Object Windows.Thickness(0)
+        $miniPb.Visibility = [Windows.Visibility]::Collapsed
+
+        $outerStack.Children.Add($grid) | Out-Null
+        $outerStack.Children.Add($miniPb) | Out-Null
+        $rowBorder.Child = $outerStack
 
         $StepProgressPanel.Children.Add($rowBorder) | Out-Null
         $script:StepRowMap[$app.Id] = @{
@@ -1178,6 +1324,7 @@ function Rebuild-StepTrackerPreview {
             DetailBlock = $detailBlock
             BadgeBorder = $badgeBorder
             BadgeText   = $badgeText
+            ProgressBar = $miniPb
         }
     }
 }
@@ -1402,19 +1549,23 @@ function Set-LogPanelExpanded {
     param([bool]$Expanded)
     if ($Expanded) {
         $script:IsLogCollapsed = $false
-        $BottomPanelRow.Height = New-Object Windows.GridLength(215)
-        $BottomPanelOuterBorder.Padding = New-Object Windows.Thickness(16, 8, 16, 8)
-        $StepTrackerInnerBorder.Padding = New-Object Windows.Thickness(12, 7, 12, 7)
-        $LogPanelInnerBorder.Padding    = New-Object Windows.Thickness(12, 7, 12, 7)
+        $BottomPanelRow.MinHeight = 140
+        $BottomPanelRow.Height = New-Object Windows.GridLength(225)
+        $BottomPanelSplitter.Visibility = [Windows.Visibility]::Visible
+        $BottomPanelOuterBorder.Padding = New-Object Windows.Thickness(14, 7, 14, 7)
+        $StepTrackerInnerBorder.Padding = New-Object Windows.Thickness(11, 7, 11, 7)
+        $LogPanelInnerBorder.Padding    = New-Object Windows.Thickness(11, 7, 11, 7)
         $LogTextBox.Visibility = [Windows.Visibility]::Visible
         $StepProgressScrollViewer.Visibility = [Windows.Visibility]::Visible
         $BtnToggleLogPanel.Content = "Gizle ▼"
     } else {
         $script:IsLogCollapsed = $true
+        $BottomPanelRow.MinHeight = 40
         $BottomPanelRow.Height = [Windows.GridLength]::Auto
-        $BottomPanelOuterBorder.Padding = New-Object Windows.Thickness(16, 5, 16, 5)
-        $StepTrackerInnerBorder.Padding = New-Object Windows.Thickness(12, 5, 12, 5)
-        $LogPanelInnerBorder.Padding    = New-Object Windows.Thickness(12, 5, 12, 5)
+        $BottomPanelSplitter.Visibility = [Windows.Visibility]::Collapsed
+        $BottomPanelOuterBorder.Padding = New-Object Windows.Thickness(14, 4, 14, 4)
+        $StepTrackerInnerBorder.Padding = New-Object Windows.Thickness(11, 5, 11, 5)
+        $LogPanelInnerBorder.Padding    = New-Object Windows.Thickness(11, 5, 11, 5)
         $LogTextBox.Visibility = [Windows.Visibility]::Collapsed
         $StepProgressScrollViewer.Visibility = [Windows.Visibility]::Collapsed
         $BtnToggleLogPanel.Content = "Göster ▲"
@@ -1430,12 +1581,15 @@ $BtnToggleLogPanel.Add_Click({
     Set-LogPanelExpanded -Expanded $script:IsLogCollapsed
 })
 
-# Açılır-Kapanır (Daraltılabilir) Sol Kategori Menüsü (☰)
-$BtnToggleSidebar.Add_Click({
-    $script:IsSidebarCollapsed = -not $script:IsSidebarCollapsed
-    if ($script:IsSidebarCollapsed) {
-        $SidebarColumn.Width = New-Object Windows.GridLength(74)
-        $SidebarBorder.Padding = New-Object Windows.Thickness(4, 14, 4, 14)
+# Açılır-Kapanır (Daraltılabilir) Sol Kategori Menüsü (☰) ve Tam Duyarlı (Responsive) Yerleşim Motoru
+$script:UserPinnedSidebar = $false
+
+function Set-SidebarCollapsed {
+    param([bool]$Collapsed)
+    $script:IsSidebarCollapsed = $Collapsed
+    if ($Collapsed) {
+        $SidebarColumn.Width = New-Object Windows.GridLength(72)
+        $SidebarBorder.Padding = New-Object Windows.Thickness(4, 12, 4, 12)
         $SidebarHeaderTitle.Visibility = [Windows.Visibility]::Collapsed
         $DeveloperCardTextStack.Visibility = [Windows.Visibility]::Collapsed
         $DeveloperLinksGrid.Visibility = [Windows.Visibility]::Collapsed
@@ -1443,23 +1597,138 @@ $BtnToggleSidebar.Add_Click({
         foreach ($tb in $script:CategoryTextBlocks) {
             $tb.Visibility = [Windows.Visibility]::Collapsed
         }
-        foreach ($btn in $CategoryButtons.Values) {
-            $btn.Padding = New-Object Windows.Thickness(6, 9, 6, 9)
+        if ($CategoryButtons) {
+            foreach ($btn in $CategoryButtons.Values) {
+                $btn.Padding = New-Object Windows.Thickness(6, 9, 6, 9)
+            }
         }
     } else {
-        $SidebarColumn.Width = New-Object Windows.GridLength(265)
-        $SidebarBorder.Padding = New-Object Windows.Thickness(12, 14, 12, 14)
+        $SidebarColumn.Width = New-Object Windows.GridLength(255)
+        $SidebarBorder.Padding = New-Object Windows.Thickness(10, 12, 10, 12)
         $SidebarHeaderTitle.Visibility = [Windows.Visibility]::Visible
         $DeveloperCardTextStack.Visibility = [Windows.Visibility]::Visible
         $DeveloperLinksGrid.Visibility = [Windows.Visibility]::Visible
-        $DeveloperCardBorder.Padding = New-Object Windows.Thickness(12, 10, 12, 10)
+        $DeveloperCardBorder.Padding = New-Object Windows.Thickness(10, 9, 10, 9)
         foreach ($tb in $script:CategoryTextBlocks) {
             $tb.Visibility = [Windows.Visibility]::Visible
         }
-        foreach ($btn in $CategoryButtons.Values) {
-            $btn.Padding = New-Object Windows.Thickness(12, 9, 12, 9)
+        if ($CategoryButtons) {
+            foreach ($btn in $CategoryButtons.Values) {
+                $btn.Padding = New-Object Windows.Thickness(12, 9, 12, 9)
+            }
         }
     }
+}
+
+$script:UserResizedBottomPanel = $false
+$BottomPanelSplitter.Add_DragCompleted({
+    $script:UserResizedBottomPanel = $true
+})
+
+function Update-ResponsiveLayout {
+    $winW = $Window.ActualWidth
+    $winH = $Window.ActualHeight
+    if ($winW -le 0) { $winW = $Window.Width }
+    if ($winH -le 0) { $winH = $Window.Height }
+
+    # 1. Dar pencerede sol menüyü otomatik kompakt moda al, genişleyince geri aç (kullanıcı elle kilitlemediyse)
+    if (-not $script:UserPinnedSidebar) {
+        if ($winW -lt 980 -and -not $script:IsSidebarCollapsed) {
+            Set-SidebarCollapsed -Collapsed $true
+        } elseif ($winW -ge 1060 -and $script:IsSidebarCollapsed) {
+            Set-SidebarCollapsed -Collapsed $false
+        }
+    }
+
+    # 2. Üst arama kutusunu dar ekranda 2. satıra tam genişlikte indir, geniş ekranda sağda orantılı tut
+    if ($SearchBorder) {
+        if ($winW -lt 900) {
+            [Windows.Controls.Grid]::SetRow($SearchBorder, 1)
+            [Windows.Controls.Grid]::SetColumn($SearchBorder, 0)
+            [Windows.Controls.Grid]::SetColumnSpan($SearchBorder, 2)
+            $SearchBorder.HorizontalAlignment = [Windows.HorizontalAlignment]::Stretch
+            $SearchBorder.Width = [double]::NaN
+            $SearchBorder.MaxWidth = [double]::PositiveInfinity
+            $SearchBorder.Margin = New-Object Windows.Thickness(0, 8, 0, 0)
+        } else {
+            [Windows.Controls.Grid]::SetRow($SearchBorder, 0)
+            [Windows.Controls.Grid]::SetColumn($SearchBorder, 1)
+            [Windows.Controls.Grid]::SetColumnSpan($SearchBorder, 1)
+            $SearchBorder.HorizontalAlignment = [Windows.HorizontalAlignment]::Right
+            $SearchBorder.MaxWidth = 540
+            $SearchBorder.Width = [Math]::Max(260, [Math]::Min(520, [Math]::Floor($winW * 0.31)))
+            $SearchBorder.Margin = New-Object Windows.Thickness(0)
+        }
+    }
+
+    # 3. Üst metrik kartlarını dar ekranda 2x2, geniş ekranda 4'lü diz
+    if ($MetricsUniformGrid) {
+        $targetCols = if ($winW -lt 980) { 2 } else { 4 }
+        if ($MetricsUniformGrid.Columns -ne $targetCols) {
+            $MetricsUniformGrid.Columns = $targetCols
+        }
+    }
+
+    # 4. Alt süreç/günlük paneli yüksekliğini ekran yüksekliğine orantılı ayarla (kullanıcı sürüklemediyse)
+    if (-not $script:IsLogCollapsed -and -not $script:UserResizedBottomPanel -and $BottomPanelRow) {
+        $ratio = if ($script:IsInstalling) { 0.31 } else { 0.27 }
+        $targetBottomH = [Math]::Max(185, [Math]::Min(360, [Math]::Floor($winH * $ratio)))
+        if ([Math]::Abs($BottomPanelRow.Height.Value - $targetBottomH) -ge 8) {
+            $BottomPanelRow.Height = New-Object Windows.GridLength($targetBottomH)
+        }
+    }
+
+    # 5. Uygulama kartlarının genişliğini mevcut görünüm alanını eşit ve boşluksuz dolduracak şekilde hesapla
+    if ($AppsScrollViewer) {
+        $vpW = $AppsScrollViewer.ViewportWidth
+        if ($vpW -le 100) {
+            $sideW = if ($script:IsSidebarCollapsed) { 72 } else { 255 }
+            $vpW = $winW - $sideW - 44
+        }
+        $usableW = [Math]::Max(260, $vpW - 28)
+
+        # Akıllı kırılım noktaları (1 - 5 sütun)
+        if ($usableW -lt 590)      { $cols = 1 }
+        elseif ($usableW -lt 920)  { $cols = 2 }
+        elseif ($usableW -lt 1280) { $cols = 3 }
+        elseif ($usableW -lt 1680) { $cols = 4 }
+        else                       { $cols = 5 }
+
+        $cardW = [Math]::Floor(($usableW - ($cols * 12) - 4) / $cols)
+        $cardW = [Math]::Max(240, [Math]::Min(460, $cardW))
+
+        foreach ($app in $AllApps) {
+            if ($app.CardRef -and [Math]::Abs($app.CardRef.Width - $cardW) -ge 2) {
+                $app.CardRef.Width = $cardW
+            }
+        }
+    }
+}
+
+$ScheduleResponsiveUpdate = {
+    $Window.Dispatcher.BeginInvoke([Action]{ Update-ResponsiveLayout }, [Windows.Threading.DispatcherPriority]::Loaded) | Out-Null
+}
+
+$BtnToggleSidebar.Add_Click({
+    $script:UserPinnedSidebar = $true
+    Set-SidebarCollapsed -Collapsed (-not $script:IsSidebarCollapsed)
+    & $ScheduleResponsiveUpdate
+})
+
+$Window.Add_SizeChanged({
+    & $ScheduleResponsiveUpdate
+})
+
+$Window.Add_StateChanged({
+    & $ScheduleResponsiveUpdate
+})
+
+$AppsScrollViewer.Add_SizeChanged({
+    & $ScheduleResponsiveUpdate
+})
+
+$Window.Add_Loaded({
+    & $ScheduleResponsiveUpdate
 })
 
 # Etkileşimli Üst Özet Kartları (Toplam Katalog / Kurulacak Seçim / Sistemde Yüklü)
@@ -1492,13 +1761,15 @@ function Show-PackageEditorDialog {
         [switch]$CreateFromCurrentSelection
     )
 
+    $dlgMaxH = [Math]::Max(500, [Math]::Min(650, [Math]::Floor([System.Windows.SystemParameters]::WorkArea.Height * 0.86)))
+
     [xml]$dlgXaml = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Paket Oluştur / Düzenle"
-        Width="560" Height="640"
+        Width="560" Height="$dlgMaxH" MinWidth="460" MinHeight="460"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize"
+        ResizeMode="CanResize"
         Background="#0F172A" Foreground="#F8FAFC"
         FontFamily="Segoe UI">
     <Grid Margin="20">
@@ -1756,8 +2027,9 @@ function Rebuild-PackageButtonsBar {
         $pillGrid.ColumnDefinitions.Add($pc0)
         $pillGrid.ColumnDefinitions.Add($pc1)
 
-        # Sol: Paket Seçim Butonu
+        # Sol: Paket Seçim Butonu (Koyu tema uyumlu şablon -> devre dışı bırakıldığında asla beyaza dönmez)
         $btn = New-Object Windows.Controls.Button
+        $btn.Style = $Window.FindResource("PillInnerButtonStyle")
         $btn.Background = [Windows.Media.Brushes]::Transparent
         $btn.BorderThickness = New-Object Windows.Thickness(0)
         $btn.Foreground = $BrushConverter.ConvertFrom("#FFFFFF")
@@ -1794,8 +2066,9 @@ function Rebuild-PackageButtonsBar {
         $sp.Children.Add($txt) | Out-Null
         $btn.Content = $sp
 
-        # Sağ: Bağımsız ⚙ Düzenle / Yönet Butonu (Click çakışmasını %100 önler)
+        # Sağ: Bağımsız ⚙ Düzenle / Yönet Butonu (Click çakışmasını %100 önler ve devre dışı iken koyu kalır)
         $btnGear = New-Object Windows.Controls.Button
+        $btnGear.Style = $Window.FindResource("PillInnerButtonStyle")
         $btnGear.Background = [Windows.Media.Brushes]::Transparent
         $btnGear.BorderThickness = New-Object Windows.Thickness(1, 0, 0, 0)
         $btnGear.BorderBrush = if ($isGreen) { $BrushConverter.ConvertFrom("#047857") } else { $BrushConverter.ConvertFrom("#334155") }
@@ -2149,7 +2422,7 @@ $BtnClearAll.Add_Click({
 Update-AppFilter
 Update-SelectionCounter
 
-# 13. Asenkron (Arayüzü Dondurmayan) Adım Adım Katılımsız Kurulum Motoru
+# 13. Asenkron (Arayüzü Dondurmayan) Yüzdelikli İndirme, Gerçek Kurulum Doğrulama ve Masaüstü Kısayolu Motoru
 $BtnStartInstall.Add_Click({
     if ($script:IsInstalling) { return }
     $selectedApps = @($AllApps | Where-Object { $_.IsSelected })
@@ -2162,22 +2435,27 @@ $BtnStartInstall.Add_Click({
 
     $script:ShowInstalledOnly = $false
     $script:ShowSelectedOnly  = $true
+    Update-SelectionCounter
     Update-AppFilter
     Rebuild-StepTrackerPreview
 
     $script:IsInstalling = $true
     $BtnStartInstall.IsEnabled     = $false
+    $BtnStartInstall.Content       = "Kurulum Devam Ediyor..."
     $BtnSelectCategory.IsEnabled   = $false
     $BtnClearAll.IsEnabled         = $false
     $BtnRescanInstalled.IsEnabled  = $false
     $PackagesTopBarPanel.IsEnabled = $false
+    $PackagesTopBarPanel.Opacity   = 0.48
+    Update-ResponsiveLayout
 
-    $InstallProgressBar.Maximum = $selectedApps.Count
+    $InstallProgressBar.Maximum = $selectedApps.Count * 100
     $InstallProgressBar.Value   = 0
+    $ProgressPercentText.Text   = "%0"
     $MetricStateText.Text       = "Kurulum Yapılıyor..."
 
     foreach ($app in $selectedApps) {
-        Set-AppInstallState -AppId $app.Id -State "Pending" -DetailText "Kurulum sırası bekleniyor..."
+        Set-AppInstallState -AppId $app.Id -State "Pending" -DetailText "Kurulum sırası bekleniyor..." -Percent 0
     }
 
     Write-GuiLog "=================================================================="
@@ -2185,24 +2463,29 @@ $BtnStartInstall.Add_Click({
     Write-GuiLog "=================================================================="
 
     $syncHash = [hashtable]::Synchronized(@{
-        LogQueue     = [System.Collections.Concurrent.ConcurrentQueue[string]]::new()
-        StateQueue   = [System.Collections.Concurrent.ConcurrentQueue[PSCustomObject]]::new()
-        CurrentStep  = "Kurulum hazırlığı yapılıyor..."
-        SummaryLine  = "Kurulum başlatıldı..."
-        Completed    = 0
-        Total        = $selectedApps.Count
-        IsFinished   = $false
-        SuccessCount = 0
-        FailCount    = 0
+        LogQueue       = [System.Collections.Concurrent.ConcurrentQueue[string]]::new()
+        StateQueue     = [System.Collections.Concurrent.ConcurrentQueue[PSCustomObject]]::new()
+        CurrentStep    = "Kurulum hazırlığı yapılıyor..."
+        SummaryLine    = "Kurulum başlatıldı..."
+        Completed      = 0
+        ProgressValue  = 0
+        OverallPercent = 0
+        Total          = $selectedApps.Count
+        IsFinished     = $false
+        SuccessCount   = 0
+        FailCount      = 0
     })
 
     $appsPayload = $selectedApps | ForEach-Object {
         [PSCustomObject]@{
-            Id         = $_.Id
-            Name       = $_.Name
-            ScriptPath = $_.ScriptPath
-            WingetId   = $_.WingetId
-            IsLocal    = $_.IsLocal
+            Id            = $_.Id
+            Name          = $_.Name
+            Category      = $_.Category
+            ScriptPath    = $_.ScriptPath
+            WingetId      = $_.WingetId
+            IsLocal       = $_.IsLocal
+            DetectPattern = $_.DetectPattern
+            WasInstalled  = $_.IsInstalled
         }
     }
 
@@ -2213,29 +2496,776 @@ $BtnStartInstall.Add_Click({
     $runspace.SessionStateProxy.SetVariable("syncHash", $syncHash)
     $runspace.SessionStateProxy.SetVariable("appsPayload", $appsPayload)
     $runspace.SessionStateProxy.SetVariable("ScriptRoot", $ScriptRoot)
+    $runspace.SessionStateProxy.SetVariable("IsAdminSession", $isAdmin)
 
     $psCmd = [powershell]::Create().AddScript({
         $ProgressPreference = 'SilentlyContinue'
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        try {
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 -bor 3072
+        } catch {
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        }
 
         $hasWinget = $null -ne (Get-Command winget.exe -ErrorAction SilentlyContinue)
 
         function Send-AppState {
-            param([string]$AppId, [string]$State, [string]$Detail)
+            param(
+                [string]$AppId,
+                [string]$State,
+                [string]$Detail,
+                [string]$Badge = "",
+                [int]$Percent = -1
+            )
             $syncHash.StateQueue.Enqueue([PSCustomObject]@{
-                AppId  = $AppId
-                State  = $State
-                Detail = $Detail
+                AppId   = $AppId
+                State   = $State
+                Detail  = $Detail
+                Badge   = $Badge
+                Percent = $Percent
             })
         }
 
+        function Update-OverallProgress {
+            param([int]$AppIndex, [int]$StepPct)
+            $clamped = [Math]::Max(0, [Math]::Min(100, $StepPct))
+            $val = (($AppIndex - 1) * 100) + $clamped
+            $maxVal = [Math]::Max(1, $syncHash.Total * 100)
+            $syncHash.ProgressValue  = $val
+            $syncHash.OverallPercent = [int][Math]::Floor(($val * 100.0) / $maxVal)
+        }
+
+        function Get-UninstallSnapshot {
+            $regPaths = @(
+                "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*",
+                "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*",
+                "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*"
+            )
+            $list = New-Object System.Collections.Generic.List[PSCustomObject]
+            foreach ($rp in $regPaths) {
+                try {
+                    $items = Get-ItemProperty -Path $rp -ErrorAction SilentlyContinue
+                    foreach ($it in $items) {
+                        if ($it.DisplayName) {
+                            $list.Add([PSCustomObject]@{
+                                Key             = [string]$it.PSPath
+                                DisplayName     = [string]$it.DisplayName
+                                DisplayVersion  = if ($it.DisplayVersion) { [string]$it.DisplayVersion } else { "" }
+                                InstallLocation = if ($it.InstallLocation) { ([string]$it.InstallLocation).Trim().Trim('"') } else { "" }
+                                DisplayIcon     = if ($it.DisplayIcon) { [string]$it.DisplayIcon } else { "" }
+                                UninstallString = if ($it.UninstallString) { [string]$it.UninstallString } else { "" }
+                            })
+                        }
+                    }
+                } catch {}
+            }
+            return $list
+        }
+
+        function Get-LnkMap {
+            param([string[]]$Dirs)
+            $map = @{}
+            foreach ($d in $Dirs) {
+                if ($d -and (Test-Path -LiteralPath $d)) {
+                    Get-ChildItem -LiteralPath $d -Filter "*.lnk" -Recurse -File -ErrorAction SilentlyContinue | ForEach-Object {
+                        $map[$_.FullName.ToLowerInvariant()] = $_.FullName
+                    }
+                }
+            }
+            return $map
+        }
+
+        function Resolve-ExeFromRawString {
+            param([string]$RawStr)
+            if ([string]::IsNullOrWhiteSpace($RawStr)) { return $null }
+            $s = $RawStr.Trim()
+            if ($s -match '^"([^"]+\.exe)"') {
+                $cand = $Matches[1]
+            } elseif ($s -match '([A-Za-z]:\\[^",;\r\n]+\.exe)') {
+                $cand = $Matches[1]
+            } else {
+                $cand = ($s -split ',')[0].Trim().Trim('"')
+            }
+            if ($cand -and $cand -match '\.exe$' -and (Test-Path -LiteralPath $cand)) {
+                $leaf = Split-Path -Leaf $cand
+                if ($leaf -notmatch '^(msiexec|unins|uninstall|setup|update|updater|helper|crash)') {
+                    return $cand
+                }
+            }
+            return $null
+        }
+
+        function Get-KnownAppExecutables {
+            param([string]$AppId)
+            $pf   = $env:ProgramFiles
+            $pf86 = ${env:ProgramFiles(x86)}
+            $lad  = $env:LOCALAPPDATA
+            $ad   = $env:APPDATA
+            $map = @{
+                "Install_Adobe_Acrobat_Pro.ps1"        = @("$pf\Adobe\Acrobat DC\Acrobat\Acrobat.exe", "$pf86\Adobe\Acrobat DC\Acrobat\Acrobat.exe")
+                "Install_Adobe_Acrobat_Reader.ps1"     = @("$pf\Adobe\Acrobat DC\Acrobat\Acrobat.exe", "$pf86\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe")
+                "Install_Google_Chrome.ps1"            = @("$pf\Google\Chrome\Application\chrome.exe", "$pf86\Google\Chrome\Application\chrome.exe")
+                "Install_Firefox.ps1"                  = @("$pf\Mozilla Firefox\firefox.exe", "$pf86\Mozilla Firefox\firefox.exe")
+                "Install_Brave.ps1"                    = @("$pf\BraveSoftware\Brave-Browser\Application\brave.exe", "$lad\BraveSoftware\Brave-Browser\Application\brave.exe")
+                "Install_Microsoft_Edge.ps1"           = @("$pf86\Microsoft\Edge\Application\msedge.exe", "$pf\Microsoft\Edge\Application\msedge.exe")
+                "Install_Opera.ps1"                    = @("$pf\Opera\opera.exe", "$lad\Programs\Opera\opera.exe")
+                "Install_Vivaldi.ps1"                  = @("$pf\Vivaldi\Application\vivaldi.exe", "$lad\Vivaldi\Application\vivaldi.exe")
+                "Install_WinRAR.ps1"                   = @("$pf\WinRAR\WinRAR.exe", "$pf86\WinRAR\WinRAR.exe")
+                "Install_7-Zip.ps1"                    = @("$pf\7-Zip\7zFM.exe", "$pf86\7-Zip\7zFM.exe")
+                "Install_PeaZip.ps1"                   = @("$pf\PeaZip\peazip.exe")
+                "Install_AnyDesk.ps1"                  = @("$pf86\AnyDesk\AnyDesk.exe", "$pf\AnyDesk\AnyDesk.exe")
+                "Install_TeamViewer.ps1"               = @("$pf\TeamViewer\TeamViewer.exe", "$pf86\TeamViewer\TeamViewer.exe")
+                "Install_OpenVPN.ps1"                  = @("$pf\OpenVPN Connect\OpenVPNConnect.exe", "$pf\OpenVPN\bin\openvpn-gui.exe")
+                "Install_SafeNet_SAC.ps1"              = @("$pf\SafeNet\Authentication\SAC\x64\SACTools.exe", "$pf\SafeNet\Authentication\SAC\x32\SACTools.exe")
+                "Install_DtxgateSigner.ps1"            = @("$pf\Dtxgate\DtxgateSigner\DtxgateSigner.exe", "$pf86\Dtxgate\DtxgateSigner\DtxgateSigner.exe", "$pf\ArkSigner\ArkSigner.exe", "$pf86\ArkSigner\ArkSigner.exe")
+                "Install_Notepad-Plus-Plus.ps1"        = @("$pf\Notepad++\notepad++.exe", "$pf86\Notepad++\notepad++.exe")
+                "Install_Visual_Studio_Code.ps1"       = @("$pf\Microsoft VS Code\Code.exe", "$lad\Programs\Microsoft VS Code\Code.exe")
+                "Install_Sublime_Text.ps1"             = @("$pf\Sublime Text\sublime_text.exe", "$pf\Sublime Text 3\sublime_text.exe")
+                "Install_PuTTY.ps1"                    = @("$pf\PuTTY\putty.exe", "$pf86\PuTTY\putty.exe")
+                "Install_WinSCP.ps1"                   = @("$pf86\WinSCP\WinSCP.exe", "$pf\WinSCP\WinSCP.exe")
+                "Install_FileZilla.ps1"                = @("$pf\FileZilla FTP Client\filezilla.exe")
+                "Install_VLC_Media_Player.ps1"         = @("$pf\VideoLAN\VLC\vlc.exe", "$pf86\VideoLAN\VLC\vlc.exe")
+                "Install_Foxit_Reader.ps1"             = @("$pf86\Foxit Software\Foxit PDF Reader\FoxitPDFReader.exe", "$pf\Foxit Software\Foxit PDF Reader\FoxitPDFReader.exe")
+                "Install_Sumatra_PDF.ps1"              = @("$pf\SumatraPDF\SumatraPDF.exe", "$lad\SumatraPDF\SumatraPDF.exe")
+                "Install_LibreOffice.ps1"              = @("$pf\LibreOffice\program\soffice.exe")
+                "Install_Everything.ps1"               = @("$pf\Everything\Everything.exe", "$pf86\Everything\Everything.exe")
+                "Install_WinDirStat.ps1"               = @("$pf86\WinDirStat\windirstat.exe", "$pf\WinDirStat\WinDirStat.exe")
+                "Install_Revo_Uninstaller.ps1"         = @("$pf\VS Revo Group\Revo Uninstaller\RevoUnin.exe", "$pf86\VS Revo Group\Revo Uninstaller\RevoUnin.exe")
+                "Install_Zoom.ps1"                     = @("$pf\Zoom\bin\Zoom.exe", "$pf86\Zoom\bin\Zoom.exe", "$ad\Zoom\bin\Zoom.exe")
+                "Install_Discord.ps1"                  = @("$lad\Discord\Update.exe")
+                "Install_Telegram.ps1"                 = @("$ad\Telegram Desktop\Telegram.exe", "$pf\Telegram Desktop\Telegram.exe")
+                "Install_Thunderbird.ps1"              = @("$pf\Mozilla Thunderbird\thunderbird.exe")
+                "Install_OBS_Studio.ps1"               = @("$pf\obs-studio\bin\64bit\obs64.exe")
+                "Install_ShareX.ps1"                   = @("$pf\ShareX\ShareX.exe")
+                "Install_Greenshot.ps1"                = @("$pf\Greenshot\Greenshot.exe")
+                "Install_Paint.NET.ps1"                = @("$pf\paint.net\paintdotnet.exe")
+                "Install_Audacity.ps1"                 = @("$pf\Audacity\Audacity.exe")
+                "Install_Spotify.ps1"                  = @("$ad\Spotify\Spotify.exe")
+                "Install_qBittorrent.ps1"              = @("$pf\qBittorrent\qbittorrent.exe")
+                "Install_Google_Earth.ps1"             = @("$pf\Google\Google Earth Pro\client\googleearth.exe")
+                "Install_Oracle_VM_VirtualBox.ps1"     = @("$pf\Oracle\VirtualBox\VirtualBox.exe")
+                "Install_Steam.ps1"                    = @("$pf86\Steam\steam.exe")
+                "Install_Malwarebytes.ps1"             = @("$pf\Malwarebytes\Anti-Malware\mbam.exe")
+            }
+            if ($map.ContainsKey($AppId)) { return $map[$AppId] }
+            return @()
+        }
+
+        function Resolve-InstalledAppInfo {
+            param(
+                $App,
+                $BeforeReg,
+                $AfterReg,
+                [string]$ReportedDir,
+                [string]$ReportedExe,
+                [string[]]$NewStartLnks
+            )
+
+            $beforeKeys = @{}
+            foreach ($b in $BeforeReg) { $beforeKeys[$b.Key] = $true }
+            $newEntries = @($AfterReg | Where-Object { -not $beforeKeys.ContainsKey($_.Key) })
+
+            $matchedEntry = $null
+            if ($App.DetectPattern -and $App.DetectPattern -notmatch 'NeverMatch') {
+                $matchedEntry = $newEntries | Where-Object { $_.DisplayName -match $App.DetectPattern } | Select-Object -First 1
+                if (-not $matchedEntry) {
+                    $matchedEntry = $AfterReg | Where-Object { $_.DisplayName -match $App.DetectPattern } | Select-Object -First 1
+                }
+            }
+            if (-not $matchedEntry -and $newEntries.Count -gt 0) {
+                $matchedEntry = $newEntries | Where-Object { $_.DisplayName -notmatch 'Microsoft Visual C\+\+|Windows Update|Security Update' } | Select-Object -First 1
+                if (-not $matchedEntry) { $matchedEntry = $newEntries[0] }
+            }
+
+            $mainExe = $null
+            if ($ReportedExe -and (Test-Path -LiteralPath $ReportedExe)) {
+                $mainExe = $ReportedExe
+            }
+            if (-not $mainExe) {
+                foreach ($cand in (Get-KnownAppExecutables -AppId $App.Id)) {
+                    if ($cand -and (Test-Path -LiteralPath $cand)) {
+                        $mainExe = $cand
+                        break
+                    }
+                }
+            }
+            if (-not $mainExe -and $matchedEntry) {
+                $mainExe = Resolve-ExeFromRawString -RawStr $matchedEntry.DisplayIcon
+            }
+            if (-not $mainExe -and $NewStartLnks -and $NewStartLnks.Count -gt 0) {
+                try {
+                    $wshTmp = New-Object -ComObject WScript.Shell
+                    foreach ($lnk in $NewStartLnks) {
+                        $bn = [System.IO.Path]::GetFileNameWithoutExtension($lnk)
+                        if ($bn -match 'Uninstall|Kaldır|Help|Readme|Update|Website|Manual|License|Release Notes') { continue }
+                        $sc = $wshTmp.CreateShortcut($lnk)
+                        if ($sc.TargetPath -and $sc.TargetPath -match '\.exe$' -and (Test-Path -LiteralPath $sc.TargetPath)) {
+                            $mainExe = $sc.TargetPath
+                            break
+                        }
+                    }
+                } catch {}
+            }
+
+            $installDir = ""
+            if ($ReportedDir -and (Test-Path -LiteralPath $ReportedDir)) {
+                $installDir = $ReportedDir
+            } elseif ($matchedEntry -and $matchedEntry.InstallLocation -and (Test-Path -LiteralPath $matchedEntry.InstallLocation)) {
+                $installDir = $matchedEntry.InstallLocation
+            } elseif ($mainExe) {
+                $installDir = Split-Path -Parent $mainExe
+            } elseif ($matchedEntry -and $matchedEntry.UninstallString) {
+                $uExe = Resolve-ExeFromRawString -RawStr $matchedEntry.UninstallString
+                if ($uExe) { $installDir = Split-Path -Parent $uExe }
+            }
+
+            if (-not $mainExe -and $installDir -and (Test-Path -LiteralPath $installDir)) {
+                $exeCand = Get-ChildItem -LiteralPath $installDir -Filter "*.exe" -File -ErrorAction SilentlyContinue |
+                    Where-Object { $_.Name -notmatch '^(unins|uninstall|setup|update|updater|crash|helper|elevat|report|vcredist)' } |
+                    Sort-Object Length -Descending |
+                    Select-Object -First 1
+                if ($exeCand) { $mainExe = $exeCand.FullName }
+            }
+
+            $verified = $false
+            if ($matchedEntry -or ($mainExe -and (Test-Path -LiteralPath $mainExe)) -or ($NewStartLnks -and $NewStartLnks.Count -gt 0)) {
+                $verified = $true
+            } elseif ($App.Category -eq "Sistem Bileşenleri (.NET / C++)" -or $App.DetectPattern -match 'NeverMatch') {
+                $verified = $true
+            }
+
+            return [PSCustomObject]@{
+                Verified    = $verified
+                InstallDir  = $installDir
+                MainExe     = $mainExe
+                Version     = if ($matchedEntry) { $matchedEntry.DisplayVersion } else { "" }
+                DisplayName = if ($matchedEntry) { $matchedEntry.DisplayName } else { $App.Name }
+            }
+        }
+
+        function Ensure-DesktopShortcuts {
+            param(
+                $App,
+                $InstallInfo,
+                [string[]]$NewStartLnks,
+                [string[]]$NewDesktopLnks
+            )
+
+            $result = New-Object System.Collections.Generic.List[string]
+
+            # Saf sistem çalışma zamanları (GUI uygulaması olmayanlar) için kısayol gerekmez
+            if ($App.Category -eq "Sistem Bileşenleri (.NET / C++)" -or $App.Id -match 'Install_Java_JRE|Install_Java_JDK') {
+                $syncHash.LogQueue.Enqueue("   [MASAÜSTÜ KISAYOLU] Sistem çalışma zamanı bileşeni olduğu için masaüstü kısayolu gerekmez.")
+                return $result
+            }
+
+            $publicDesktop = [Environment]::GetFolderPath('CommonDesktopDirectory')
+            $userDesktop   = [Environment]::GetFolderPath('Desktop')
+            $targetDesktop = $userDesktop
+            if ($IsAdminSession -and $publicDesktop -and (Test-Path -LiteralPath $publicDesktop)) {
+                $targetDesktop = $publicDesktop
+            }
+
+            $wsh = New-Object -ComObject WScript.Shell
+
+            # Mevcut tüm masaüstü kısayollarının hedeflerini topla (çift kısayol önleme)
+            $existingTargets = @{}
+            $existingNames   = @{}
+            foreach ($dd in @($publicDesktop, $userDesktop)) {
+                if ($dd -and (Test-Path -LiteralPath $dd)) {
+                    Get-ChildItem -LiteralPath $dd -Filter "*.lnk" -File -ErrorAction SilentlyContinue | ForEach-Object {
+                        $existingNames[$_.BaseName.ToLowerInvariant()] = $_.FullName
+                        try {
+                            $sc = $wsh.CreateShortcut($_.FullName)
+                            if ($sc.TargetPath) {
+                                $existingTargets[$sc.TargetPath.ToLowerInvariant()] = $_.FullName
+                            }
+                        } catch {}
+                    }
+                }
+            }
+
+            function New-SafeDesktopShortcut {
+                param([string]$ShortcutName, [string]$TargetExe, [string]$Arguments = "", [string]$IconLoc = "", [string]$Description = "")
+                if ([string]::IsNullOrWhiteSpace($TargetExe) -or -not (Test-Path -LiteralPath $TargetExe)) { return $null }
+                $keyTarget = $TargetExe.ToLowerInvariant()
+                if ($existingTargets.ContainsKey($keyTarget)) {
+                    return "MEVCUT:" + $existingTargets[$keyTarget]
+                }
+                $cleanName = ($ShortcutName -replace '[\\/:*?"<>|]', ' ').Trim()
+                if ([string]::IsNullOrWhiteSpace($cleanName)) { $cleanName = [System.IO.Path]::GetFileNameWithoutExtension($TargetExe) }
+                if ($existingNames.ContainsKey($cleanName.ToLowerInvariant())) {
+                    return "MEVCUT:" + $existingNames[$cleanName.ToLowerInvariant()]
+                }
+                $lnkPath = Join-Path $targetDesktop ($cleanName + ".lnk")
+                try {
+                    $sc = $wsh.CreateShortcut($lnkPath)
+                    $sc.TargetPath = $TargetExe
+                    if ($Arguments) { $sc.Arguments = $Arguments }
+                    $sc.WorkingDirectory = Split-Path -Parent $TargetExe
+                    $sc.IconLocation = if ($IconLoc) { $IconLoc } else { "$TargetExe,0" }
+                    $sc.Description = if ($Description) { $Description } else { $cleanName }
+                    $sc.Save()
+                    $existingTargets[$keyTarget] = $lnkPath
+                    $existingNames[$cleanName.ToLowerInvariant()] = $lnkPath
+                    return "OLUSTURULDU:" + $lnkPath
+                } catch {
+                    return $null
+                }
+            }
+
+            # Kurulum sırasında zaten masaüstüne kısayol eklendiyse raporla
+            if ($NewDesktopLnks -and $NewDesktopLnks.Count -gt 0) {
+                foreach ($dl in $NewDesktopLnks) {
+                    $result.Add($dl)
+                    $syncHash.LogQueue.Enqueue("   [MASAÜSTÜ KISAYOLU] Kurulum sırasında oluşturuldu: $dl")
+                }
+            }
+
+            # Özel durum: Microsoft Office (Word, Excel, PowerPoint, Outlook kısayolları)
+            if ($App.Id -like "*Office365*") {
+                $officeDirs = @(
+                    (Join-Path $env:ProgramFiles "Microsoft Office\root\Office16"),
+                    (Join-Path ${env:ProgramFiles(x86)} "Microsoft Office\root\Office16")
+                )
+                $officeApps = @(
+                    @{ Name = "Word";       Exe = "WINWORD.EXE" },
+                    @{ Name = "Excel";      Exe = "EXCEL.EXE" },
+                    @{ Name = "PowerPoint"; Exe = "POWERPNT.EXE" },
+                    @{ Name = "Outlook";    Exe = "OUTLOOK.EXE" }
+                )
+                foreach ($oa in $officeApps) {
+                    foreach ($od in $officeDirs) {
+                        $exePath = Join-Path $od $oa.Exe
+                        if (Test-Path -LiteralPath $exePath) {
+                            $res = New-SafeDesktopShortcut -ShortcutName $oa.Name -TargetExe $exePath -Description "Microsoft $($oa.Name)"
+                            if ($res) {
+                                if ($res.StartsWith("OLUSTURULDU:")) {
+                                    $p = $res.Substring(12)
+                                    $result.Add($p)
+                                    $syncHash.LogQueue.Enqueue("   [MASAÜSTÜ KISAYOLU] Oluşturuldu: $p -> $exePath")
+                                } elseif ($res.StartsWith("MEVCUT:")) {
+                                    $p = $res.Substring(7)
+                                    $result.Add($p)
+                                    $syncHash.LogQueue.Enqueue("   [MASAÜSTÜ KISAYOLU] Zaten mevcut: $p")
+                                }
+                            }
+                            break
+                        }
+                    }
+                }
+                return $result
+            }
+
+            # Eğer kurulum sırasında yeni kısayol oluşmadıysa 4 katmanlı keşif ile mutlaka oluştur
+            if ($result.Count -eq 0) {
+                # Katman 1: Kurulum sırasında Başlat Menüsüne eklenen yeni ana kısayollar
+                if ($NewStartLnks -and $NewStartLnks.Count -gt 0) {
+                    $goodLnks = @($NewStartLnks | Where-Object {
+                        $bn = [System.IO.Path]::GetFileNameWithoutExtension($_)
+                        $bn -notmatch 'Uninstall|Kaldır|Help|Yardım|Readme|Update|Güncelle|Website|Web Sitesi|Manual|Kılavuz|License|Release Notes|Troubleshooting|Console|Command Prompt'
+                    })
+                    foreach ($sl in ($goodLnks | Select-Object -First 3)) {
+                        try {
+                            $srcSc = $wsh.CreateShortcut($sl)
+                            if ($srcSc.TargetPath -and $srcSc.TargetPath -match '\.exe$' -and (Test-Path -LiteralPath $srcSc.TargetPath)) {
+                                $bn = [System.IO.Path]::GetFileNameWithoutExtension($sl)
+                                $res = New-SafeDesktopShortcut -ShortcutName $bn -TargetExe $srcSc.TargetPath -Arguments $srcSc.Arguments -IconLoc $srcSc.IconLocation -Description $App.Name
+                                if ($res) {
+                                    if ($res.StartsWith("OLUSTURULDU:")) {
+                                        $p = $res.Substring(12)
+                                        $result.Add($p)
+                                        $syncHash.LogQueue.Enqueue("   [MASAÜSTÜ KISAYOLU] Oluşturuldu: $p -> $($srcSc.TargetPath)")
+                                    } elseif ($res.StartsWith("MEVCUT:")) {
+                                        $p = $res.Substring(7)
+                                        $result.Add($p)
+                                        $syncHash.LogQueue.Enqueue("   [MASAÜSTÜ KISAYOLU] Zaten mevcut: $p")
+                                    }
+                                }
+                            }
+                        } catch {}
+                    }
+                }
+
+                # Katman 2: Doğrudan algılanan / bilinen ana çalıştırılabilir (.exe)
+                if ($result.Count -eq 0 -and $InstallInfo.MainExe -and (Test-Path -LiteralPath $InstallInfo.MainExe)) {
+                    $cleanShortcutName = ($App.Name -replace '\s*\([^)]*\)', '').Trim()
+                    if ([string]::IsNullOrWhiteSpace($cleanShortcutName)) { $cleanShortcutName = $App.Name }
+                    $res = New-SafeDesktopShortcut -ShortcutName $cleanShortcutName -TargetExe $InstallInfo.MainExe -Description $App.Name
+                    if ($res) {
+                        if ($res.StartsWith("OLUSTURULDU:")) {
+                            $p = $res.Substring(12)
+                            $result.Add($p)
+                            $syncHash.LogQueue.Enqueue("   [MASAÜSTÜ KISAYOLU] Oluşturuldu: $p -> $($InstallInfo.MainExe)")
+                        } elseif ($res.StartsWith("MEVCUT:")) {
+                            $p = $res.Substring(7)
+                            $result.Add($p)
+                            $syncHash.LogQueue.Enqueue("   [MASAÜSTÜ KISAYOLU] Zaten mevcut: $p")
+                        }
+                    }
+                }
+
+                # Katman 3: Mevcut Başlat Menüsünde program adıyla eşleşen kısayol ara
+                if ($result.Count -eq 0) {
+                    $smDirs = @(
+                        [Environment]::GetFolderPath('CommonPrograms'),
+                        [Environment]::GetFolderPath('Programs')
+                    )
+                    $baseKeyword = ($App.Name -replace '\s*\([^)]*\)', '').Trim()
+                    foreach ($sd in $smDirs) {
+                        if (-not $sd -or -not (Test-Path -LiteralPath $sd)) { continue }
+                        $foundLnk = Get-ChildItem -LiteralPath $sd -Filter "*.lnk" -Recurse -File -ErrorAction SilentlyContinue |
+                            Where-Object {
+                                ($_.BaseName -like "*$baseKeyword*" -or ($App.DetectPattern -and $_.BaseName -match $App.DetectPattern)) -and
+                                $_.BaseName -notmatch 'Uninstall|Kaldır|Help|Readme|Update|Website|Manual'
+                            } | Select-Object -First 1
+                        if ($foundLnk) {
+                            try {
+                                $srcSc = $wsh.CreateShortcut($foundLnk.FullName)
+                                if ($srcSc.TargetPath -and (Test-Path -LiteralPath $srcSc.TargetPath)) {
+                                    $res = New-SafeDesktopShortcut -ShortcutName $foundLnk.BaseName -TargetExe $srcSc.TargetPath -Arguments $srcSc.Arguments -IconLoc $srcSc.IconLocation -Description $App.Name
+                                    if ($res) {
+                                        if ($res.StartsWith("OLUSTURULDU:")) {
+                                            $p = $res.Substring(12)
+                                            $result.Add($p)
+                                            $syncHash.LogQueue.Enqueue("   [MASAÜSTÜ KISAYOLU] Oluşturuldu: $p -> $($srcSc.TargetPath)")
+                                        } elseif ($res.StartsWith("MEVCUT:")) {
+                                            $p = $res.Substring(7)
+                                            $result.Add($p)
+                                            $syncHash.LogQueue.Enqueue("   [MASAÜSTÜ KISAYOLU] Zaten mevcut: $p")
+                                        }
+                                        break
+                                    }
+                                }
+                            } catch {}
+                        }
+                    }
+                }
+            }
+
+            if ($result.Count -eq 0) {
+                $syncHash.LogQueue.Enqueue("   [MASAÜSTÜ KISAYOLU] Uygun çalıştırılabilir dosya bulunamadı (uygulama arka plan aracı olabilir).")
+            }
+
+            return $result
+        }
+
+        function New-InstrumentedRunnerScript {
+            param([string]$OriginalScriptPath)
+            $rawContent = [System.IO.File]::ReadAllText($OriginalScriptPath, [System.Text.Encoding]::UTF8)
+
+            # Eğer betik zaten yerel @@DL_PROGRESS@@ protokolünü destekliyorsa doğrudan çalıştır
+            if ($rawContent -match '@@DL_PROGRESS@@') {
+                return [PSCustomObject]@{ Path = $OriginalScriptPath; IsTemp = $false }
+            }
+
+            $origDir = (Split-Path -Parent $OriginalScriptPath).Replace("'", "''")
+
+            $preamble = @"
+`$ProgressPreference = 'SilentlyContinue'
+try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 } catch {}
+try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 -bor 3072 } catch { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 }
+`$__HKM_OrigScriptDir = '$origDir'
+
+function Invoke-HKMTrackedDownload {
+    param(
+        [string]`$Url,
+        [string]`$OutFile,
+        [object]`$ExistingWebClient = `$null
+    )
+    if ([string]::IsNullOrWhiteSpace(`$Url)) { throw "İndirme adresi (URL) alınamadı." }
+    if ([string]::IsNullOrWhiteSpace(`$OutFile)) { throw "Hedef dosya yolu belirtilmedi." }
+
+    Write-Output "@@STAGE@@DOWNLOAD|Kurulum paketi indiriliyor..."
+    Write-Output "@@URL@@`$Url"
+    Write-Output "@@TEMPFILE@@`$OutFile"
+
+    `$response = `$null
+    `$respStream = `$null
+    `$fileStream = `$null
+    try {
+        `$req = [System.Net.HttpWebRequest]::Create(`$Url)
+        `$req.Method = "GET"
+        `$req.AllowAutoRedirect = `$true
+        `$req.Timeout = 60000
+        `$req.ReadWriteTimeout = 120000
+        `$req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+        if (`$ExistingWebClient -and `$ExistingWebClient.Headers) {
+            foreach (`$hk in `$ExistingWebClient.Headers.AllKeys) {
+                if (`$hk -ieq 'User-Agent') { `$req.UserAgent = `$ExistingWebClient.Headers[`$hk] }
+                elseif (`$hk -ieq 'Referer') { `$req.Referer = `$ExistingWebClient.Headers[`$hk] }
+                elseif (`$hk -ieq 'Accept') { `$req.Accept = `$ExistingWebClient.Headers[`$hk] }
+            }
+        }
+
+        `$response = `$req.GetResponse()
+        `$totalBytes = [long]`$response.ContentLength
+        `$respStream = `$response.GetResponseStream()
+        `$parentDir = Split-Path -Parent `$OutFile
+        if (`$parentDir -and -not (Test-Path -LiteralPath `$parentDir)) {
+            New-Item -ItemType Directory -Path `$parentDir -Force | Out-Null
+        }
+        `$fileStream = New-Object System.IO.FileStream(`$OutFile, [System.IO.FileMode]::Create, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
+
+        `$buffer = New-Object byte[] 131072
+        `$totalRead = [long]0
+        `$lastPct = -1
+        `$sw = [System.Diagnostics.Stopwatch]::StartNew()
+        `$lastTick = [long]0
+
+        while ((`$read = `$respStream.Read(`$buffer, 0, `$buffer.Length)) -gt 0) {
+            `$fileStream.Write(`$buffer, 0, `$read)
+            `$totalRead += `$read
+            `$ms = `$sw.ElapsedMilliseconds
+            if (`$totalBytes -gt 0) {
+                `$pct = [int][Math]::Floor((`$totalRead * 100.0) / `$totalBytes)
+                if (`$pct -gt 100) { `$pct = 100 }
+                if ((`$pct -ne `$lastPct -and (`$pct -ge (`$lastPct + 2) -or `$pct -eq 100)) -or (`$ms - `$lastTick) -ge 700) {
+                    `$lastPct = `$pct
+                    `$lastTick = `$ms
+                    `$dlMB = [Math]::Round(`$totalRead / 1MB, 1)
+                    `$totMB = [Math]::Round(`$totalBytes / 1MB, 1)
+                    `$sec = [Math]::Max(0.1, `$sw.Elapsed.TotalSeconds)
+                    `$spd = [Math]::Round((`$totalRead / 1MB) / `$sec, 1)
+                    Write-Output ("@@DL_PROGRESS@@{0}|{1}|{2}|{3}" -f `$pct, `$dlMB.ToString([System.Globalization.CultureInfo]::InvariantCulture), `$totMB.ToString([System.Globalization.CultureInfo]::InvariantCulture), `$spd.ToString([System.Globalization.CultureInfo]::InvariantCulture))
+                }
+            } elseif ((`$ms - `$lastTick) -ge 800) {
+                `$lastTick = `$ms
+                `$dlMB = [Math]::Round(`$totalRead / 1MB, 1)
+                `$sec = [Math]::Max(0.1, `$sw.Elapsed.TotalSeconds)
+                `$spd = [Math]::Round((`$totalRead / 1MB) / `$sec, 1)
+                Write-Output ("@@DL_PROGRESS@@-1|{0}|0|{1}" -f `$dlMB.ToString([System.Globalization.CultureInfo]::InvariantCulture), `$spd.ToString([System.Globalization.CultureInfo]::InvariantCulture))
+            }
+        }
+
+        `$fileStream.Flush()
+        `$fileStream.Close(); `$fileStream = `$null
+        `$respStream.Close(); `$respStream = `$null
+        `$response.Close(); `$response = `$null
+
+        `$finalMB = [Math]::Round((Get-Item -LiteralPath `$OutFile).Length / 1MB, 1)
+        Write-Output ("@@DL_PROGRESS@@100|{0}|{0}|0" -f `$finalMB.ToString([System.Globalization.CultureInfo]::InvariantCulture))
+        Write-Output ("@@DL_DONE@@{0}|{1}" -f `$OutFile, `$finalMB.ToString([System.Globalization.CultureInfo]::InvariantCulture))
+    } catch {
+        if (`$fileStream) { try { `$fileStream.Close() } catch {} }
+        if (`$respStream) { try { `$respStream.Close() } catch {} }
+        if (`$response)   { try { `$response.Close() } catch {} }
+        Write-Output "@@LOG@@İndirme hatası: `$(`$_.Exception.Message)"
+        exit 1
+    }
+}
+
+"@
+
+            $transformed = $rawContent
+            # $PSScriptRoot referanslarını orijinal klasöre bağla (yerel MSI/EXE betikleri için)
+            $transformed = $transformed -replace '\$PSScriptRoot\b', '$__HKM_OrigScriptDir'
+            # (New-Object System.Net.WebClient).DownloadFile(url, out)
+            $transformed = [regex]::Replace($transformed, '\(New-Object\s+System\.Net\.WebClient\)\.DownloadFile\(([^,\r\n]+),\s*([^)\r\n]+)\)', 'Invoke-HKMTrackedDownload -Url ($1) -OutFile ($2)')
+            # $wc.DownloadFile(url, out)
+            $transformed = [regex]::Replace($transformed, '(\$\w+)\.DownloadFile\(([^,\r\n]+),\s*([^)\r\n]+)\)', 'Invoke-HKMTrackedDownload -Url ($2) -OutFile ($3) -ExistingWebClient $1')
+            # Invoke-WebRequest ... -Uri $dlLink -OutFile $InstallerPath ...
+            $transformed = [regex]::Replace($transformed, 'Invoke-WebRequest[^\r\n]*-Uri\s+(\S+)[^\r\n]*-OutFile\s+(\S+)[^\r\n]*', 'Invoke-HKMTrackedDownload -Url ($1) -OutFile ($2)')
+            # Start-Process öncesi kurulum aşaması sinyali ekle
+            $transformed = [regex]::Replace($transformed, '(?m)^([ \t]*)(Start-Process\b)', '$1Write-Output "@@STAGE@@INSTALL|Sessiz kurulum çalıştırılıyor..."' + "`r`n" + '$1$2')
+
+            $tempScript = Join-Path $env:TEMP ("HKM_Run_" + [Guid]::NewGuid().ToString("N") + ".ps1")
+            [System.IO.File]::WriteAllText($tempScript, ($preamble + $transformed), (New-Object System.Text.UTF8Encoding($true)))
+            return [PSCustomObject]@{ Path = $tempScript; IsTemp = $true }
+        }
+
+        function Invoke-TrackedProcess {
+            param(
+                [string]$FilePath,
+                [string]$Arguments,
+                [string]$AppId,
+                [string]$AppName,
+                [int]$AppIndex,
+                [bool]$IsWinget = $false
+            )
+
+            $psi = New-Object System.Diagnostics.ProcessStartInfo
+            $psi.FileName               = $FilePath
+            $psi.Arguments              = $Arguments
+            $psi.UseShellExecute        = $false
+            $psi.CreateNoWindow         = $true
+            $psi.RedirectStandardOutput = $true
+            $psi.RedirectStandardError  = $true
+            $psi.StandardOutputEncoding = [System.Text.Encoding]::UTF8
+            $psi.StandardErrorEncoding  = [System.Text.Encoding]::UTF8
+
+            $proc = New-Object System.Diagnostics.Process
+            $proc.StartInfo = $psi
+            [void]$proc.Start()
+
+            $reportedDir = ""
+            $reportedExe = ""
+            $stderrLines = New-Object System.Collections.Generic.List[string]
+            $lastLoggedMilestone = -1
+            $lastLoggedUnknownMB = 0
+
+            $outTask = $proc.StandardOutput.ReadLineAsync()
+            $errTask = $proc.StandardError.ReadLineAsync()
+            $outDone = $false
+            $errDone = $false
+
+            while (-not ($outDone -and $errDone)) {
+                $didWork = $false
+
+                if (-not $outDone -and $outTask.IsCompleted) {
+                    $didWork = $true
+                    $line = $outTask.Result
+                    if ($null -eq $line) {
+                        $outDone = $true
+                    } else {
+                        $outTask = $proc.StandardOutput.ReadLineAsync()
+                        $trimLine = $line.Trim()
+                        if (-not [string]::IsNullOrEmpty($trimLine)) {
+                            if ($trimLine.StartsWith("@@URL@@")) {
+                                $syncHash.LogQueue.Enqueue("   [KAYNAK] İndirme adresi: $($trimLine.Substring(7))")
+                            } elseif ($trimLine.StartsWith("@@TEMPFILE@@")) {
+                                $syncHash.LogQueue.Enqueue("   [GEÇİCİ DOSYA] İndirme klasörü/dosyası: $($trimLine.Substring(12))")
+                            } elseif ($trimLine.StartsWith("@@DL_PROGRESS@@")) {
+                                $parts = $trimLine.Substring(15) -split '\|'
+                                if ($parts.Length -ge 4) {
+                                    $pct = [int]$parts[0]
+                                    $dlMB = $parts[1]
+                                    $totMB = $parts[2]
+                                    $spd = $parts[3]
+                                    if ($pct -ge 0) {
+                                        $detailStr = if ([double]::Parse($spd, [System.Globalization.CultureInfo]::InvariantCulture) -gt 0) {
+                                            "İndiriliyor: %$pct ($dlMB / $totMB MB • $spd MB/sn)"
+                                        } else {
+                                            "İndiriliyor: %$pct ($dlMB / $totMB MB)"
+                                        }
+                                        Send-AppState -AppId $AppId -State "Downloading" -Detail $detailStr -Badge "İNDİRİLİYOR %$pct" -Percent $pct
+                                        $syncHash.CurrentStep = "Adım $AppIndex/$($syncHash.Total): $AppName indiriliyor (%$pct)"
+                                        Update-OverallProgress -AppIndex $AppIndex -StepPct ([int]($pct * 0.55))
+
+                                        # Canlı işlem günlüğüne %1'de hemen ve ardından her %5'te bir (%5, %10, ..., %100) adım adım yaz
+                                        $milestone = if ($pct -ge 1 -and $pct -lt 5) { 1 } else { [int]([Math]::Floor($pct / 5.0) * 5) }
+                                        if ($milestone -gt $lastLoggedMilestone -and $milestone -gt 0) {
+                                            $lastLoggedMilestone = $milestone
+                                            $spdTxt = if ([double]::Parse($spd, [System.Globalization.CultureInfo]::InvariantCulture) -gt 0) { " ($spd MB/sn)" } else { "" }
+                                            $syncHash.LogQueue.Enqueue("   [İNDİRME %$pct] $dlMB MB / $totMB MB$spdTxt")
+                                        }
+                                    } else {
+                                        $detailStr = "İndiriliyor: $dlMB MB ($spd MB/sn)"
+                                        Send-AppState -AppId $AppId -State "Downloading" -Detail $detailStr -Badge "$dlMB MB" -Percent -1
+                                        $dlNum = [double]::Parse($dlMB, [System.Globalization.CultureInfo]::InvariantCulture)
+                                        if ($dlNum -ge ($lastLoggedUnknownMB + 10)) {
+                                            $lastLoggedUnknownMB = [int]$dlNum
+                                            $syncHash.LogQueue.Enqueue("   [İNDİRME] $dlMB MB indirildi ($spd MB/sn)...")
+                                        }
+                                    }
+                                }
+                            } elseif ($trimLine.StartsWith("@@DL_DONE@@")) {
+                                $parts = $trimLine.Substring(11) -split '\|'
+                                if ($parts.Length -ge 2) {
+                                    $syncHash.LogQueue.Enqueue("   [İNDİRME TAMAMLANDI] %100 ($($parts[1]) MB) -> $($parts[0])")
+                                }
+                            } elseif ($trimLine.StartsWith("@@STAGE@@")) {
+                                $payload = $trimLine.Substring(9)
+                                $sp = $payload -split '\|', 3
+                                $st = $sp[0]
+                                $msg = if ($sp.Length -gt 1) { $sp[1] } else { "" }
+                                $stagePct = -1
+                                if ($sp.Length -gt 2 -and $sp[2] -match '^\d+$') {
+                                    $stagePct = [int]$sp[2]
+                                }
+                                if ($st -eq "EXTRACT") {
+                                    Send-AppState -AppId $AppId -State "Extracting" -Detail $msg -Badge "ARŞİV AÇILIYOR" -Percent -1
+                                    $syncHash.CurrentStep = "Adım $AppIndex/$($syncHash.Total): $AppName arşivi açılıyor..."
+                                    Update-OverallProgress -AppIndex $AppIndex -StepPct 60
+                                    $syncHash.LogQueue.Enqueue("   [ARŞİV] $msg")
+                                } elseif ($st -eq "INSTALL") {
+                                    if ($stagePct -ge 0) {
+                                        Send-AppState -AppId $AppId -State "Installing" -Detail $msg -Badge "KURULUYOR %$stagePct" -Percent $stagePct
+                                        $syncHash.CurrentStep = "Adım $AppIndex/$($syncHash.Total): $AppName kuruluyor (%$stagePct)"
+                                        Update-OverallProgress -AppIndex $AppIndex -StepPct ([int](62 + ($stagePct * 0.34)))
+                                    } else {
+                                        Send-AppState -AppId $AppId -State "Installing" -Detail $msg -Badge "KURULUYOR..." -Percent -1
+                                        $syncHash.CurrentStep = "Adım $AppIndex/$($syncHash.Total): $AppName sessiz kuruluyor..."
+                                        Update-OverallProgress -AppIndex $AppIndex -StepPct 72
+                                    }
+                                    $syncHash.LogQueue.Enqueue("   [KURULUM] $msg")
+                                } elseif ($st -eq "DOWNLOAD") {
+                                    Send-AppState -AppId $AppId -State "Downloading" -Detail $msg -Badge "İNDİRİLİYOR %0" -Percent 0
+                                }
+                            } elseif ($trimLine.StartsWith("@@INSTALL_DIR@@")) {
+                                $reportedDir = $trimLine.Substring(15).Trim()
+                            } elseif ($trimLine.StartsWith("@@APP_EXE@@")) {
+                                $reportedExe = $trimLine.Substring(11).Trim()
+                            } elseif ($trimLine.StartsWith("@@LOG@@")) {
+                                $syncHash.LogQueue.Enqueue("   [BİLGİ] $($trimLine.Substring(7))")
+                            } elseif ($IsWinget) {
+                                # Winget canlı yüzdelik ve durum satırlarını yakala
+                                if ($trimLine -match '(\d{1,3})%') {
+                                    $wpct = [int]$Matches[1]
+                                    if ($wpct -ge 0 -and $wpct -le 100) {
+                                        Send-AppState -AppId $AppId -State "Fallback" -Detail "Winget indiriyor/kuruyor: %$wpct" -Badge "WINGET %$wpct" -Percent $wpct
+                                        Update-OverallProgress -AppIndex $AppIndex -StepPct ([int](50 + ($wpct * 0.4)))
+                                        $wMile = [int]([Math]::Floor($wpct / 20.0) * 20)
+                                        if ($wMile -gt $lastLoggedMilestone -and $wMile -gt 0) {
+                                            $lastLoggedMilestone = $wMile
+                                            $syncHash.LogQueue.Enqueue("   [WINGET %$wpct] İndirme/kurulum ilerliyor...")
+                                        }
+                                    }
+                                } elseif ($trimLine -match 'Successfully installed|Başarıyla yüklendi|Installer hash does not match|Found |Starting package install|Downloading ') {
+                                    $syncHash.LogQueue.Enqueue("   [WINGET] $trimLine")
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (-not $errDone -and $errTask.IsCompleted) {
+                    $didWork = $true
+                    $eLine = $errTask.Result
+                    if ($null -eq $eLine) {
+                        $errDone = $true
+                    } else {
+                        $errTask = $proc.StandardError.ReadLineAsync()
+                        $et = $eLine.Trim()
+                        if (-not [string]::IsNullOrEmpty($et)) {
+                            $stderrLines.Add($et)
+                        }
+                    }
+                }
+
+                if (-not $didWork) {
+                    Start-Sleep -Milliseconds 60
+                }
+            }
+
+            $proc.WaitForExit()
+            $code = $proc.ExitCode
+            $proc.Dispose()
+
+            return [PSCustomObject]@{
+                ExitCode    = $code
+                ReportedDir = $reportedDir
+                ReportedExe = $reportedExe
+                StderrLines = $stderrLines
+            }
+        }
+
         function Invoke-WingetSilent {
-            param([string]$PackageId)
+            param([string]$PackageId, [string]$AppId, [string]$AppName, [int]$AppIndex)
             if (-not $hasWinget -or [string]::IsNullOrWhiteSpace($PackageId)) { return $false }
             $wingetArgs = "install --id `"$PackageId`" --exact --silent --accept-package-agreements --accept-source-agreements --disable-interactivity"
-            $proc = Start-Process -FilePath "winget.exe" -ArgumentList $wingetArgs -Wait -PassThru -WindowStyle Hidden
-            return ($proc.ExitCode -eq 0 -or $proc.ExitCode -eq -1978335189)
+            $res = Invoke-TrackedProcess -FilePath "winget.exe" -Arguments $wingetArgs -AppId $AppId -AppName $AppName -AppIndex $AppIndex -IsWinget $true
+            $syncHash.LogQueue.Enqueue("   [WINGET ÇIKIŞ KODU] $($res.ExitCode)")
+            return ($res.ExitCode -eq 0 -or $res.ExitCode -eq -1978335189)
         }
+
+        $startMenuDirs = @(
+            [Environment]::GetFolderPath('CommonPrograms'),
+            [Environment]::GetFolderPath('Programs')
+        )
+        $desktopDirs = @(
+            [Environment]::GetFolderPath('CommonDesktopDirectory'),
+            [Environment]::GetFolderPath('Desktop')
+        )
 
         $index = 0
         foreach ($app in $appsPayload) {
@@ -2244,17 +3274,28 @@ $BtnStartInstall.Add_Click({
 
             $syncHash.CurrentStep = "Adım $index / $($syncHash.Total): $($app.Name) işleniyor..."
             $syncHash.SummaryLine = "Şu an kurulan ($index/$($syncHash.Total)): $($app.Name)"
+            Update-OverallProgress -AppIndex $index -StepPct 2
             $syncHash.LogQueue.Enqueue("------------------------------------------------------------------")
             $syncHash.LogQueue.Enqueue("[ADIM $index/$($syncHash.Total)] $($app.Name) süreci başlatıldı.")
 
-            $installed = $false
+            # Kurulum öncesi sistem anlık görüntüsü (Kayıt Defteri + Başlat Menüsü + Masaüstü)
+            $beforeReg     = Get-UninstallSnapshot
+            $beforeSmLnks  = Get-LnkMap -Dirs $startMenuDirs
+            $beforeDtLnks  = Get-LnkMap -Dirs $desktopDirs
+
+            $installed   = $false
+            $reportedDir = ""
+            $reportedExe = ""
+            $lastExitCode = -1
+            $tempWrapper  = $null
+
             try {
                 if ($app.IsLocal) {
-                    Send-AppState -AppId $app.Id -State "Installing" -Detail "Adım 1/2: Yerel kurulum paketi sessiz kuruluyor..."
-                    $syncHash.LogQueue.Enqueue("   [1/2] Yerel kurulum dosyası doğrulandı, sessiz kurulum başlatılıyor...")
+                    Send-AppState -AppId $app.Id -State "Installing" -Detail "Yerel kurulum paketi sessiz kuruluyor..." -Badge "KURULUYOR..." -Percent -1
+                    $syncHash.LogQueue.Enqueue("   [KAYNAK] Yerel kurulum paketi: $($app.ScriptPath)")
                 } else {
-                    Send-AppState -AppId $app.Id -State "Downloading" -Detail "Adım 1/2: Kurulum dosyası indiriliyor ve sessiz kuruluyor..."
-                    $syncHash.LogQueue.Enqueue("   [1/2] Resmi sunucudan güncel 64-bit kurulum paketi indiriliyor...")
+                    Send-AppState -AppId $app.Id -State "Downloading" -Detail "İndirme bağlantısı hazırlanıyor (%0)..." -Badge "İNDİRİLİYOR %0" -Percent 0
+                    $syncHash.LogQueue.Enqueue("   [1/2] Resmi sunucudan güncel kurulum paketi sorgulanıyor ve indiriliyor...")
                 }
 
                 $isOfficeApp = ($app.Id -like "*Office365*")
@@ -2262,62 +3303,120 @@ $BtnStartInstall.Add_Click({
                 if ($isOfficeApp) {
                     $officeExe = Join-Path $ScriptRoot "office_setup.exe"
                     $officeXml = Join-Path $ScriptRoot "configuration.xml"
-                    Send-AppState -AppId $app.Id -State "Installing" -Detail "office_setup.exe /configure configuration.xml ile Office 2021 kuruluyor..."
-                    $syncHash.LogQueue.Enqueue("   [1/2] Yerel office_setup.exe ve configuration.xml (ProPlus2021Volume tr-tr) başlatılıyor...")
+                    $officeTargetDir = Join-Path $env:ProgramFiles "Microsoft Office"
+                    Send-AppState -AppId $app.Id -State "Installing" -Detail "Microsoft Office 2021 kuruluyor (office_setup.exe)..." -Badge "KURULUYOR..." -Percent -1
+                    $syncHash.LogQueue.Enqueue("   [KAYNAK] Yerel dosya: $officeExe + $officeXml")
+                    $syncHash.LogQueue.Enqueue("   [HEDEF KLASÖR] $officeTargetDir")
                     $proc = Start-Process -FilePath $officeExe -ArgumentList "/configure `"$officeXml`"" -PassThru -WindowStyle Hidden
                     $lastOfficeNoticeSec = 0
                     while (-not $proc.HasExited) {
                         Start-Sleep -Milliseconds 500
                         $elapsedNow = [int]$sw.Elapsed.TotalSeconds
-                        if ($elapsedNow -ge ($lastOfficeNoticeSec + 20)) {
+                        if ($elapsedNow -ge ($lastOfficeNoticeSec + 15)) {
                             $lastOfficeNoticeSec = $elapsedNow
-                            Send-AppState -AppId $app.Id -State "Installing" -Detail "Microsoft Office 2021 kuruluyor ($elapsedNow sn geçti, lütfen bekleyin)..."
+                            $approxPct = [Math]::Min(92, [int](($elapsedNow / 240.0) * 100))
+                            Send-AppState -AppId $app.Id -State "Installing" -Detail "Microsoft Office 2021 kuruluyor (~%$approxPct • $elapsedNow sn geçti)..." -Badge "KURULUYOR ~%$approxPct" -Percent $approxPct
+                            Update-OverallProgress -AppIndex $index -StepPct $approxPct
+                            $syncHash.LogQueue.Enqueue("   [OFFICE %$approxPct] Kurulum devam ediyor ($elapsedNow sn)...")
                         }
                     }
                     $proc.WaitForExit()
-                    $installed = ($proc.ExitCode -eq 0 -or $proc.ExitCode -eq 3010)
+                    $lastExitCode = $proc.ExitCode
+                    $syncHash.LogQueue.Enqueue("   [ÇIKIŞ KODU] office_setup.exe: $lastExitCode")
+                    $installed = ($lastExitCode -eq 0 -or $lastExitCode -eq 3010)
+                    if (Test-Path -LiteralPath (Join-Path $officeTargetDir "root\Office16")) {
+                        $reportedDir = Join-Path $officeTargetDir "root\Office16"
+                    }
                 }
                 elseif (Test-Path -LiteralPath $app.ScriptPath) {
-                    $proc = Start-Process -FilePath "powershell.exe" -ArgumentList "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$($app.ScriptPath)`"" -PassThru -WindowStyle Hidden
+                    $runner = New-InstrumentedRunnerScript -OriginalScriptPath $app.ScriptPath
+                    if ($runner.IsTemp) { $tempWrapper = $runner.Path }
 
-                    $switchedToInstalling = $app.IsLocal
-                    while (-not $proc.HasExited) {
-                        Start-Sleep -Milliseconds 500
-                        $elapsedNow = [int]$sw.Elapsed.TotalSeconds
-                        if (-not $switchedToInstalling -and $elapsedNow -ge 3) {
-                            $switchedToInstalling = $true
-                            Send-AppState -AppId $app.Id -State "Installing" -Detail "Adım 2/2: İndirildi, onay beklemeden sessiz kuruluyor..."
-                            $syncHash.LogQueue.Enqueue("   [2/2] Kurulum paketi arka planda sessiz parametrelerle (/qn /S) kuruluyor...")
-                        }
+                    $psArgs = "-NoProfile -ExecutionPolicy Bypass -File `"$($runner.Path)`""
+                    $procRes = Invoke-TrackedProcess -FilePath "powershell.exe" -Arguments $psArgs -AppId $app.Id -AppName $app.Name -AppIndex $index
+                    $lastExitCode = $procRes.ExitCode
+                    if ($procRes.ReportedDir) { $reportedDir = $procRes.ReportedDir }
+                    if ($procRes.ReportedExe) { $reportedExe = $procRes.ReportedExe }
+                    $syncHash.LogQueue.Enqueue("   [ÇIKIŞ KODU] Kurulum betiği çıkış kodu: $lastExitCode")
+
+                    $installed = ($lastExitCode -eq 0 -or $lastExitCode -eq 3010)
+                    if (-not $installed -and $procRes.StderrLines.Count -gt 0) {
+                        $errPreview = ($procRes.StderrLines | Select-Object -First 2) -join " | "
+                        $syncHash.LogQueue.Enqueue("   [HATA DETAYI] $errPreview")
                     }
-                    $proc.WaitForExit()
-                    $installed = ($proc.ExitCode -eq 0 -or $proc.ExitCode -eq 3010)
                 }
 
+                # Kurulum sonrası gerçek doğrulama anlık görüntüsü
+                $afterReg    = Get-UninstallSnapshot
+                $afterSmLnks = Get-LnkMap -Dirs $startMenuDirs
+                $afterDtLnks = Get-LnkMap -Dirs $desktopDirs
+                $newSmLnks   = @($afterSmLnks.Keys | Where-Object { -not $beforeSmLnks.ContainsKey($_) } | ForEach-Object { $afterSmLnks[$_] })
+                $newDtLnks   = @($afterDtLnks.Keys | Where-Object { -not $beforeDtLnks.ContainsKey($_) } | ForEach-Object { $afterDtLnks[$_] })
+
+                $installInfo = Resolve-InstalledAppInfo -App $app -BeforeReg $beforeReg -AfterReg $afterReg -ReportedDir $reportedDir -ReportedExe $reportedExe -NewStartLnks $newSmLnks
+
+                # Eğer betik çıkış kodu 0 döndüyse ama program gerçekte kurulmadıysa (örn. sessiz hata), sahte "Kuruldu" demeyi engelle!
+                if ($installed -and -not $installInfo.Verified -and -not $app.WasInstalled -and -not $isOfficeApp) {
+                    $syncHash.LogQueue.Enqueue("   [DOĞRULAMA UYARISI] Betik hata vermeden kapandı ancak program sistemde doğrulanamadı!")
+                    $installed = $false
+                }
+
+                # Yedek Winget kurulumu
                 if (-not $installed -and -not $isOfficeApp -and $hasWinget -and $app.WingetId) {
-                    Send-AppState -AppId $app.Id -State "Fallback" -Detail "Alternatif: Windows Paket Yöneticisi (Winget) ile kuruluyor..."
-                    $syncHash.LogQueue.Enqueue("   [YEDEK ADIM] Yerel betik tamamlanamadı, Winget üzerinden sessiz kuruluyor ($($app.WingetId))...")
-                    $installed = Invoke-WingetSilent -PackageId $app.WingetId
+                    Send-AppState -AppId $app.Id -State "Fallback" -Detail "Alternatif: Winget ile sessiz kuruluyor ($($app.WingetId))..." -Badge "WINGET..." -Percent -1
+                    $syncHash.LogQueue.Enqueue("   [YEDEK ADIM] Yerel betik tamamlanamadı, Winget üzerinden kuruluyor ($($app.WingetId))...")
+                    $wingetOk = Invoke-WingetSilent -PackageId $app.WingetId -AppId $app.Id -AppName $app.Name -AppIndex $index
+
+                    $afterReg    = Get-UninstallSnapshot
+                    $afterSmLnks = Get-LnkMap -Dirs $startMenuDirs
+                    $afterDtLnks = Get-LnkMap -Dirs $desktopDirs
+                    $newSmLnks   = @($afterSmLnks.Keys | Where-Object { -not $beforeSmLnks.ContainsKey($_) } | ForEach-Object { $afterSmLnks[$_] })
+                    $newDtLnks   = @($afterDtLnks.Keys | Where-Object { -not $beforeDtLnks.ContainsKey($_) } | ForEach-Object { $afterDtLnks[$_] })
+                    $installInfo = Resolve-InstalledAppInfo -App $app -BeforeReg $beforeReg -AfterReg $afterReg -ReportedDir $reportedDir -ReportedExe $reportedExe -NewStartLnks $newSmLnks
+
+                    $installed = $wingetOk -or $installInfo.Verified
                 }
             } catch {
                 $syncHash.LogQueue.Enqueue("   [HATA] $($_.Exception.Message)")
                 $installed = $false
+            } finally {
+                if ($tempWrapper -and (Test-Path -LiteralPath $tempWrapper)) {
+                    Remove-Item -LiteralPath $tempWrapper -Force -ErrorAction SilentlyContinue
+                }
             }
 
             $sw.Stop()
             $elapsedSec = [Math]::Max(1, [int]$sw.Elapsed.TotalSeconds)
 
             if ($installed) {
+                # Kurulum klasörü, sürüm, ana dosya ve masaüstü kısayolu bilgilerini canlı günlüğe yaz
+                if ($installInfo.InstallDir) {
+                    $syncHash.LogQueue.Enqueue("   [KURULUM KLASÖRÜ] $($installInfo.InstallDir)")
+                } else {
+                    $syncHash.LogQueue.Enqueue("   [KURULUM KLASÖRÜ] Sistem varsayılan dizini (Windows / Program Files)")
+                }
+                if ($installInfo.MainExe) {
+                    $syncHash.LogQueue.Enqueue("   [ANA UYGULAMA] $($installInfo.MainExe)")
+                }
+                if ($installInfo.Version) {
+                    $syncHash.LogQueue.Enqueue("   [SÜRÜM] $($installInfo.Version)")
+                }
+
+                # Kurulan her program için Masaüstü Kısayolu oluştur / doğrula
+                $createdShortcuts = Ensure-DesktopShortcuts -App $app -InstallInfo $installInfo -NewStartLnks $newSmLnks -NewDesktopLnks $newDtLnks
+
                 $syncHash.SuccessCount++
-                Send-AppState -AppId $app.Id -State "Success" -Detail "Tamamlandı: Başarıyla kuruldu ($elapsedSec sn)"
-                $syncHash.LogQueue.Enqueue("   [KURULDU] $($app.Name) kurulumu $elapsedSec saniyede tamamlandı.")
+                $folderNote = if ($installInfo.InstallDir) { " • $($installInfo.InstallDir)" } else { "" }
+                Send-AppState -AppId $app.Id -State "Success" -Detail "Kuruldu ($elapsedSec sn)$folderNote" -Badge "KURULDU" -Percent 100
+                $syncHash.LogQueue.Enqueue("   [KURULDU] $($app.Name) kurulumu $elapsedSec saniyede başarıyla tamamlandı.")
             } else {
                 $syncHash.FailCount++
-                Send-AppState -AppId $app.Id -State "Failed" -Detail "Hata: Kurulum tamamlanamadı ($elapsedSec sn)"
-                $syncHash.LogQueue.Enqueue("   [BAŞARISIZ] $($app.Name) kurulumu tamamlanamadı veya iptal edildi.")
+                Send-AppState -AppId $app.Id -State "Failed" -Detail "Hata: Kurulum doğrulanamadı veya başarısız oldu ($elapsedSec sn)" -Badge "BAŞARISIZ" -Percent -1
+                $syncHash.LogQueue.Enqueue("   [BAŞARISIZ] $($app.Name) kurulumu tamamlanamadı veya sistemde doğrulanamadı (Çıkış Kodu: $lastExitCode).")
             }
 
             $syncHash.Completed = $index
+            Update-OverallProgress -AppIndex $index -StepPct 100
         }
 
         $syncHash.CurrentStep = "Tüm Süreç Tamamlandı ($($syncHash.SuccessCount) Kuruldu, $($syncHash.FailCount) Hatalı)"
@@ -2347,7 +3446,7 @@ $BtnStartInstall.Add_Click({
 
         $stateUpdate = $null
         while ($sh.StateQueue.TryDequeue([ref]$stateUpdate)) {
-            Set-AppInstallState -AppId $stateUpdate.AppId -State $stateUpdate.State -DetailText $stateUpdate.Detail
+            Set-AppInstallState -AppId $stateUpdate.AppId -State $stateUpdate.State -DetailText $stateUpdate.Detail -BadgeOverride $stateUpdate.Badge -Percent $stateUpdate.Percent
         }
 
         $msg = $null
@@ -2357,7 +3456,8 @@ $BtnStartInstall.Add_Click({
 
         $ProgressStepText.Text    = $sh.CurrentStep
         $SelectedSummaryText.Text = $sh.SummaryLine
-        $InstallProgressBar.Value = $sh.Completed
+        $InstallProgressBar.Value = $sh.ProgressValue
+        $ProgressPercentText.Text = "%$($sh.OverallPercent)"
         $StepCounterBadge.Text    = "$($sh.Completed) / $($sh.Total) Tamamlandı"
 
         if ($sh.IsFinished) {
@@ -2376,7 +3476,11 @@ $BtnStartInstall.Add_Click({
             $BtnClearAll.IsEnabled         = $true
             $BtnRescanInstalled.IsEnabled  = $true
             $PackagesTopBarPanel.IsEnabled = $true
+            $PackagesTopBarPanel.Opacity   = 1.0
+            $selCnt = @($AllApps | Where-Object { $_.IsSelected }).Count
+            $BtnStartInstall.Content       = "Seçilenleri Onaysız Kur ($selCnt)"
             Scan-InstalledApplications -SilentLog
+            Update-ResponsiveLayout
         }
     })
 
